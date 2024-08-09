@@ -1,6 +1,8 @@
 package com.thirdparty.ticketing.domain.member.service;
 
-public class InvalidTokenException extends RuntimeException {
+import com.thirdparty.ticketing.domain.common.TicketingException;
+
+public class InvalidTokenException extends TicketingException {
     public InvalidTokenException(String message) {
         super(message);
     }
