@@ -5,6 +5,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import com.thirdparty.ticketing.global.config.SecurityConfig;
 import com.thirdparty.ticketing.support.RestDocsControllerTest.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Import(RestDocsConfig.class)
+@Import({RestDocsConfig.class, SecurityConfig.class})
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class RestDocsControllerTest {
 
