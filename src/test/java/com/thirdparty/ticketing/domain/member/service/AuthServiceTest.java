@@ -8,6 +8,7 @@ import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
 import com.thirdparty.ticketing.global.security.JJwtProvider;
+import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,7 +63,7 @@ class AuthServiceTest {
             rawPassword = "test1234";
             String password = passwordEncoder.encode(rawPassword);
             MemberRole memberRole = MemberRole.USER;
-            savedMember = new Member(email, password, memberRole);
+            savedMember = new Member(email, password, memberRole, ZonedDateTime.now());
             authService = new AuthService(
                     memberRepository,
                     passwordEncoder,

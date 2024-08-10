@@ -10,6 +10,7 @@ import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
 import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,7 +44,7 @@ class JJwtProviderTest {
         @DisplayName("새로운 액세스 토큰을 반환한다.")
         void createAccessToken() {
             //given
-            Member member = new Member("test@test.com", "password", MemberRole.USER);
+            Member member = new Member("test@test.com", "password", MemberRole.USER, ZonedDateTime.now());
             memberRepository.save(member);
 
             //when
@@ -63,7 +64,7 @@ class JJwtProviderTest {
 
         @BeforeEach
         void setUp() {
-            member = new Member("test@test.com", "password", MemberRole.USER);
+            member = new Member("test@test.com", "password", MemberRole.USER, ZonedDateTime.now());
             memberRepository.save(member);
 
             accessToken = jwtProvider.createAccessToken(member);

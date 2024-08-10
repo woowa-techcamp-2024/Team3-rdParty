@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole;
 
-    public Member(String email, String password, MemberRole memberRole) {
+    public Member(String email, String password, MemberRole memberRole, ZonedDateTime createdAt) {
+        super(createdAt);
         this.email = email;
         this.password = password;
         this.memberRole = memberRole;
