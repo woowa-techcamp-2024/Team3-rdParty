@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @WebMvcTest(controllers = DocumentationTest.class)
 @Import(DocsController.class)
 @DisplayName("API 문서 테스트 코드 작성 시")
-public class DocumentationTest extends RestDocsControllerTest {
+public class DocumentationTest extends BaseControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;

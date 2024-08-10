@@ -10,7 +10,7 @@ import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.global.config.SecurityConfig;
 import com.thirdparty.ticketing.global.config.WebConfig;
-import com.thirdparty.ticketing.support.RestDocsControllerTest.RestDocsConfig;
+import com.thirdparty.ticketing.support.BaseControllerTest.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Import({RestDocsConfig.class, SecurityConfig.class, WebConfig.class})
 @ExtendWith(RestDocumentationExtension.class)
-public abstract class RestDocsControllerTest {
+public abstract class BaseControllerTest {
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -37,35 +37,35 @@ public abstract class RestDocsControllerTest {
 
     protected String adminBearerToken;
 
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected RestDocumentationResultHandler restDocs;
+
     @TestConfiguration
     public static class RestDocsConfig {
 
         @Bean
         public RestDocumentationResultHandler write() {
             return MockMvcRestDocumentation.document(
-                    "{class-name}/{method-name}",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())
+                "{class-name}/{method-name}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())
             );
         }
     }
 
-    protected MockMvc mockMvc;
-
-    @Autowired
-    protected RestDocumentationResultHandler restDocs;
-
     @BeforeEach
     void setUp(
-            WebApplicationContext applicationContext,
-            RestDocumentationContextProvider documentationContextProvider) {
+        WebApplicationContext applicationContext,
+        RestDocumentationContextProvider documentationContextProvider) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
-                .alwaysDo(print())
-                .alwaysDo(restDocs)
-                .apply(
-                        MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-                .addFilter(new CharacterEncodingFilter("UTF-8", true))
-                .build();
+            .alwaysDo(print())
+            .alwaysDo(restDocs)
+            .apply(
+                MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
+            .addFilter(new CharacterEncodingFilter("UTF-8", true))
+            .build();
 
         Member admin = new Member("admin@admin.com", "password", MemberRole.ADMIN);
         this.adminBearerToken = "Bearer " + jwtProvider.createAccessToken(admin);

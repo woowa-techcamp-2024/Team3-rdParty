@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.global.security.LoginMemberArgumentResolverTest.ResolverTestController;
-import com.thirdparty.ticketing.support.RestDocsControllerTest;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @WebMvcTest(controllers = ResolverTestController.class)
-class LoginMemberArgumentResolverTest extends RestDocsControllerTest {
+class LoginMemberArgumentResolverTest extends BaseControllerTest {
 
     @RestController
     @RequestMapping("/api/test/resolver")
