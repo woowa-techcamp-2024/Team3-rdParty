@@ -5,7 +5,11 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.global.config.SecurityConfig;
+import com.thirdparty.ticketing.global.config.WebConfig;
 import com.thirdparty.ticketing.support.RestDocsControllerTest.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +26,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Import({RestDocsConfig.class, SecurityConfig.class})
+@Import({RestDocsConfig.class, SecurityConfig.class, WebConfig.class})
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class RestDocsControllerTest {
+
+    protected static final String AUTHORIZATION_HEADER = "Authorization";
+
+    @Autowired
+    protected JwtProvider jwtProvider;
+
+    protected String adminBearerToken;
 
     @TestConfiguration
     public static class RestDocsConfig {
@@ -55,5 +66,8 @@ public abstract class RestDocsControllerTest {
                         MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
+        Member admin = new Member("admin@admin.com", "password", MemberRole.ADMIN);
+        this.adminBearerToken = "Bearer " + jwtProvider.createAccessToken(admin);
     }
 }
