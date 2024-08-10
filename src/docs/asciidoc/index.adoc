@@ -12,3 +12,25 @@
 = 장소(Place)
 
 = 티켓(Ticket)
+
+= API 문서화 예시
+
+== GET 문서화
+
+=== request
+
+operation::documentation-test/get-docs[snippets='http-request,query-parameters']
+
+=== response
+
+operation::documentation-test/get-docs[snippets='http-response,response-fields']
+
+== POST 문서화
+
+=== request
+
+operation::documentation-test/post-docs[snippets='http-request,path-parameters,request-fields']
+
+=== response
+
+operation::documentation-test/post-docs[snippets='http-response,response-fields']
