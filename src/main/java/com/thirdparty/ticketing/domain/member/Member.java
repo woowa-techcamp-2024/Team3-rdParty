@@ -30,6 +30,12 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole;
 
+    public Member(String email, String password, MemberRole memberRole) {
+        this.email = email;
+        this.password = password;
+        this.memberRole = memberRole;
+    }
+
     public Member(String email, String password, MemberRole memberRole, ZonedDateTime createdAt) {
         super(createdAt);
         this.email = email;
