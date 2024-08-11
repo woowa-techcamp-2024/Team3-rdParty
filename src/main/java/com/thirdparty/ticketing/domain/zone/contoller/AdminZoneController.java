@@ -6,6 +6,7 @@ import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
 import com.thirdparty.ticketing.global.security.Authentication;
 import com.thirdparty.ticketing.global.security.AuthenticationContext;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class AdminZoneController {
 
     @PostMapping
     public ResponseEntity<Void> createZones(
-            @PathVariable long performanceId,
-            @RequestBody ZoneCreationRequest zoneCreationRequest
+            @PathVariable("performanceId") long performanceId,
+            @RequestBody @Valid ZoneCreationRequest zoneCreationRequest
     ) {
         Authentication authentication = authenticationContext.getAuthentication();
         String authority = authentication.getAuthority();
