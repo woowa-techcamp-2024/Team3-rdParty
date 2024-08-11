@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.zone.service;
 
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.List;
 
@@ -18,24 +21,35 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @DataJpaTest
 public class AdminZoneServiceTest {
     private AdminZoneService adminZoneService;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
+
     @Autowired
     private ZoneRepository zoneRepository;
 
+    @Autowired
+    private PerformanceRepository performanceRepository;
+
     @BeforeEach
     void setUpBase() {
-        adminZoneService = new AdminZoneService(zoneRepository);
+        adminZoneService = new AdminZoneService(zoneRepository, performanceRepository);
     }
 
     @Nested
     @DisplayName("createZones 메서드를 호출할 때")
     class CreateZonesTest {
 
-        private long performanceId;
+        private Long performanceId;
         private ZoneCreationRequest zoneCreationRequest;
 
         @BeforeEach
         void setUp() {
-            performanceId = 1L;
+            Performance performance = Performance.builder()
+                    .build();
+            performance = testEntityManager.persistAndFlush(performance);
+            performanceId = performance.getPerformanceId();
+
             zoneCreationRequest = new ZoneCreationRequest();
             ZoneCreationElement zone1 = new ZoneCreationElement();
             zone1.setZoneName("VIP");

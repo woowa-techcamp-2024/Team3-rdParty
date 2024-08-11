@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.zone.service;
 
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
@@ -13,20 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminZoneService {
     private final ZoneRepository zoneRepository;
+    private final PerformanceRepository performanceRepository;
 
     @Transactional
     public void createZones(Long performanceId, ZoneCreationRequest zoneCreationRequest) {
-        List<Zone> zones = convertDtoToEntity(performanceId, zoneCreationRequest);
+        Performance performance = performanceRepository.findById(performanceId).orElseThrow();
+        List<Zone> zones = convertDtoToEntity(performance, zoneCreationRequest);
         zoneRepository.saveAll(zones);
     }
 
-    private List<Zone> convertDtoToEntity(Long performanceId, ZoneCreationRequest zoneCreationRequest) {
-        //TODO: Performance 구현 후 필드 주입
+    private List<Zone> convertDtoToEntity(Performance performance, ZoneCreationRequest zoneCreationRequest) {
         return zoneCreationRequest.getZones()
                 .stream()
                 .map(zoneElement ->
                         Zone.builder()
-//                                .performance(performanceId)
+                                .performance(performance)
                                 .zoneName(zoneElement.getZoneName())
                                 .build()
                 ).toList();

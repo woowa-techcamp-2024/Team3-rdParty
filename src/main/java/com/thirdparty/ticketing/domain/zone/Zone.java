@@ -1,11 +1,8 @@
 package com.thirdparty.ticketing.domain.zone;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.thirdparty.ticketing.domain.performance.Performance;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +20,9 @@ public class Zone extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long zoneId;
 
-    //TODO: performance 구현 후 연관관계 연결
-//    private Object performance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "performance_id", nullable = false)
+    private Performance performance;
 
     private String zoneName;
 }
