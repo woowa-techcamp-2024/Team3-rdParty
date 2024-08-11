@@ -6,6 +6,7 @@ import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class AdminSeatService {
     private final SeatRepository seatRepository;
 
+    @Transactional
     public void createSeats(Long zoneId, SeatCreationRequest seatCreationRequest) {
         List<Seat> seats = convertDtoToEntity(zoneId, seatCreationRequest);
         seatRepository.saveAll(seats);
