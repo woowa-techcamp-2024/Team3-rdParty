@@ -78,4 +78,3 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         return objectMapper.writeValueAsString(seatCreationRequest);
     }
 }
-
