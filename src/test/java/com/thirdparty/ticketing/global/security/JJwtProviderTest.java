@@ -79,7 +79,7 @@ class JJwtProviderTest {
             CustomClaims customClaims = jwtProvider.parseAccessToken(accessToken);
 
             //then
-            assertThat(customClaims.getMemberId()).isEqualTo(member.getMemberId());
+            assertThat(customClaims.getEmail()).isEqualTo(member.getEmail());
             assertThat(customClaims.getMemberRole()).isEqualTo(member.getMemberRole());
         }
 
