@@ -5,6 +5,7 @@ import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class AdminZoneService {
     private final ZoneRepository zoneRepository;
 
+    @Transactional
     public void createZones(Long performanceId, ZoneCreationRequest zoneCreationRequest) {
         List<Zone> zones = convertDtoToEntity(performanceId, zoneCreationRequest);
         zoneRepository.saveAll(zones);
