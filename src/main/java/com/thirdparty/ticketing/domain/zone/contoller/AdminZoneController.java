@@ -6,16 +6,17 @@ import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
 import com.thirdparty.ticketing.global.security.Authentication;
 import com.thirdparty.ticketing.global.security.AuthenticationContext;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller("/api/performances/{performanceId}/zones")
+@RestController
+@RequestMapping("/api/performances/{performanceId}/zones")
 @RequiredArgsConstructor
 public class AdminZoneController {
     private final AuthenticationContext authenticationContext;
@@ -24,11 +25,11 @@ public class AdminZoneController {
     @PostMapping
     public ResponseEntity<Void> createZones(
             @PathVariable long performanceId,
-            @RequestBody @Valid ZoneCreationRequest zoneCreationRequest
+            @RequestBody ZoneCreationRequest zoneCreationRequest
     ) {
         Authentication authentication = authenticationContext.getAuthentication();
         String authority = authentication.getAuthority();
-        MemberRole memberRole = MemberRole.valueOf(authority);
+        MemberRole memberRole = MemberRole.find(authority);
 
         if (memberRole != MemberRole.ADMIN) {
             throw new TicketingException("");
