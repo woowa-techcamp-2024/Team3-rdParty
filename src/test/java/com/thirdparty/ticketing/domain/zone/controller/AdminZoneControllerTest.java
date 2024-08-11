@@ -46,8 +46,6 @@ public class AdminZoneControllerTest extends BaseControllerTest {
         long performanceId = 1L;
         String content = createBodyContent();
 
-        doNothing().when(adminZoneService).createZones(eq(performanceId), any(ZoneCreationRequest.class));
-
         //when
         ResultActions result = mockMvc.perform(post("/api/performances/{performanceId}/zones", performanceId)
                 .header(AUTHORIZATION_HEADER, adminBearerToken)
