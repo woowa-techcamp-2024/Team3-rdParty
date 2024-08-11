@@ -24,7 +24,7 @@ public class Zone extends BaseEntity {
     private Long zoneId;
 
     //TODO: performance 구현 후 연관관계 연결
-    private Object performance;
+//    private Object performance;
 
     private String zoneName;
 }

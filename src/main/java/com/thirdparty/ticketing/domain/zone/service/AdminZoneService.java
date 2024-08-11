@@ -24,7 +24,7 @@ public class AdminZoneService {
                 .stream()
                 .map(zoneElement ->
                         Zone.builder()
-                                .performance(performanceId)
+//                                .performance(performanceId)
                                 .zoneName(zoneElement.getZoneName())
                                 .build()
                 ).toList();
