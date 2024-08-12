@@ -53,7 +53,7 @@ public class AdminSeatService {
                 .distinct()
                 .toList();
 
-        List<SeatGrade> seatGrades = seatGradeRepository.findByPerformanceIdAndGradeNameIn(performanceId, gradeNames);
+        List<SeatGrade> seatGrades = seatGradeRepository.findByPerformanceIdAndGradeNames(performanceId, gradeNames);
         Map<String, SeatGrade> seatGradeMap = seatGrades.stream()
                 .collect(Collectors.toMap(SeatGrade::getGradeName, seatGrade -> seatGrade));
 
