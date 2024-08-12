@@ -1,6 +1,6 @@
 package com.thirdparty.ticketing.domain.member.controller;
 
-import com.thirdparty.ticketing.domain.member.controller.request.CreateMemberRequest;
+import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.service.MemberService;
 import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<CreateMemberResponse> createMember(
-            @RequestBody @Valid CreateMemberRequest request) {
+            @RequestBody @Valid MemberCreationRequest request) {
         CreateMemberResponse response = memberService.createMember(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

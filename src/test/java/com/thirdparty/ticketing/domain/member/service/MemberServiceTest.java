@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.catchException;
 
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.controller.request.CreateMemberRequest;
+import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +50,7 @@ class MemberServiceTest {
             //given
             String email = "email@email.com";
             String password = "password";
-            CreateMemberRequest request = new CreateMemberRequest(email, password);
+            MemberCreationRequest request = new MemberCreationRequest(email, password);
 
             //when
             CreateMemberResponse response = memberService.createMember(request);
@@ -79,7 +79,7 @@ class MemberServiceTest {
                     .build();
             memberRepository.save(member);
 
-            CreateMemberRequest request = new CreateMemberRequest(duplicateEmail, password);
+            MemberCreationRequest request = new MemberCreationRequest(duplicateEmail, password);
 
             //when
             Exception exception = catchException(() -> memberService.createMember(request));

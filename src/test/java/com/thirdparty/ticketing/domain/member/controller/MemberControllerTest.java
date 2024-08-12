@@ -9,7 +9,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.member.controller.request.CreateMemberRequest;
+import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.service.MemberService;
 import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 import com.thirdparty.ticketing.support.BaseControllerTest;
@@ -35,7 +35,7 @@ class MemberControllerTest extends BaseControllerTest {
     @DisplayName("회원 생성 API 호출")
     void createMember() throws Exception {
         //given
-        CreateMemberRequest request = new CreateMemberRequest("eamil@email.com", "password");
+        MemberCreationRequest request = new MemberCreationRequest("eamil@email.com", "password");
 
         given(memberService.createMember(any())).willReturn(new CreateMemberResponse(1L));
 

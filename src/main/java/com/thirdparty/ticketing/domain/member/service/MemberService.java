@@ -2,7 +2,7 @@ package com.thirdparty.ticketing.domain.member.service;
 
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.controller.request.CreateMemberRequest;
+import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 import jakarta.transaction.Transactional;
@@ -17,7 +17,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CreateMemberResponse createMember(CreateMemberRequest request) {
+    public CreateMemberResponse createMember(MemberCreationRequest request) {
         memberRepository.findByEmail(request.getEmail())
                 .ifPresent(member -> {
                     throw new DuplicateResourceException("중복된 이메일입니다.");

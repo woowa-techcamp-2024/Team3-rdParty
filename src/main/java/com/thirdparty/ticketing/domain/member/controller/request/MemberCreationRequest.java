@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateMemberRequest {
+public class MemberCreationRequest {
     @NotBlank(message = "이메일은 공백일 수 없습니다.")
     @Email(message = "입력값이 이메일 형식을 만족하지 않습니다.")
     private String email;
