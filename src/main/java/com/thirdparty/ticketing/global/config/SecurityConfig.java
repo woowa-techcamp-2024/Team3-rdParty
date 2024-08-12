@@ -1,7 +1,6 @@
 package com.thirdparty.ticketing.global.config;
 
 import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.global.security.AuthenticationContext;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.PasswordEncoder;
 import com.thirdparty.ticketing.global.security.AuthenticationFilter;
@@ -51,11 +50,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public AuthenticationContext authenticationContext() {
-        return new AuthenticationContext();
     }
 
     @Bean
