@@ -18,9 +18,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class UserPerformanceServiceTest {
+class MemberPerformanceServiceTest {
 
-    private UserPerformanceService userPerformanceService;
+    private MemberPerformanceService memberPerformanceService;
 
     @Autowired
     private TestEntityManager testEntityManager;
@@ -30,7 +30,7 @@ class UserPerformanceServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        userPerformanceService = new UserPerformanceService(performanceRepository);
+        memberPerformanceService = new MemberPerformanceService(performanceRepository);
     }
 
     @Nested
@@ -61,7 +61,7 @@ class UserPerformanceServiceTest {
             testEntityManager.flush();
 
             // When
-            List<PerformanceElement> performanceElements = userPerformanceService.getPerformances();
+            List<PerformanceElement> performanceElements = memberPerformanceService.getPerformances();
 
             // Then
             assertThat(performanceElements).isNotEmpty()

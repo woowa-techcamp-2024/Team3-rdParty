@@ -1,7 +1,7 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
-import com.thirdparty.ticketing.domain.performance.service.UserPerformanceService;
+import com.thirdparty.ticketing.domain.performance.service.MemberPerformanceService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,12 +19,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserPerformanceControllerTest.class)
-@Import(UserPerformanceController.class)
-class UserPerformanceControllerTest extends BaseControllerTest {
+@WebMvcTest(MemberPerformanceControllerTest.class)
+@Import(MemberPerformanceController.class)
+class MemberPerformanceControllerTest extends BaseControllerTest {
 
     @MockBean
-    private UserPerformanceService userPerformanceService;
+    private MemberPerformanceService memberPerformanceService;
 
     @Test
     @DisplayName("GET /api/performances")
@@ -36,7 +36,7 @@ class UserPerformanceControllerTest extends BaseControllerTest {
         performanceElement.setPerformancePlace("테스트 장소");
         performanceElement.setPerformanceShowtime(ZonedDateTime.now());
 
-        when(userPerformanceService.getPerformances()).thenReturn(List.of(performanceElement));
+        when(memberPerformanceService.getPerformances()).thenReturn(List.of(performanceElement));
 
         //when
         ResultActions result = mockMvc.perform(get("/api/performances")

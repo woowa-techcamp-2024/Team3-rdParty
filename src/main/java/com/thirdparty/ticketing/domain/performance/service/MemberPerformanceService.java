@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserPerformanceService {
+public class MemberPerformanceService {
 
     private final PerformanceRepository performanceRepository;
 
