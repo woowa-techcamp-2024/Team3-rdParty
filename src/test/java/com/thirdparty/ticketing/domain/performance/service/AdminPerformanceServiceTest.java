@@ -1,8 +1,10 @@
 package com.thirdparty.ticketing.domain.performance.service;
 
-import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
-import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
+import static org.assertj.core.api.Assertions.*;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -10,48 +12,53 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.ZonedDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 
 @DataJpaTest
 class AdminPerformanceServiceTest {
 
-    private AdminPerformanceService adminPerformanceService;
+	private AdminPerformanceService adminPerformanceService;
 
-    @Autowired
-    private PerformanceRepository performanceRepository;
+	@Autowired
+	private PerformanceRepository performanceRepository;
 
-    @BeforeEach
-    void setUpBase() {
-        adminPerformanceService = new AdminPerformanceService(performanceRepository);
-    }
+	@BeforeEach
+	void setUpBase() {
+		adminPerformanceService = new AdminPerformanceService(performanceRepository);
+	}
 
-    @Nested
-    @DisplayName("createPerformance 메서드를 호출할 때")
-    class CreatePerformance {
+	@Nested
+	@DisplayName("createPerformance 메서드를 호출할 때")
+	class CreatePerformance {
 
-        private PerformanceCreationRequest performanceCreationRequest;
+		private PerformanceCreationRequest request;
 
-        @BeforeEach
-        void setUp() {
-            performanceCreationRequest = new PerformanceCreationRequest();
-            performanceCreationRequest.setPerformanceName("공연 이름");
-            performanceCreationRequest.setPerformancePlace("공연 장소");
-            performanceCreationRequest.setPerformanceShowtime(ZonedDateTime.now());
-        }
+		@BeforeEach
+		void setUp() {
+			request = new PerformanceCreationRequest();
+			request.setPerformanceName("공연 이름");
+			request.setPerformancePlace("공연 장소");
+			request.setPerformanceShowtime(ZonedDateTime.now());
+		}
 
-        @Test
-        @DisplayName("공연이 성공적으로 생성된다.")
-        void createPerformance_Success() {
-            // When
-            adminPerformanceService.createPerformance(performanceCreationRequest);
+		@Test
+		@DisplayName("공연이 성공적으로 생성된다.")
+		void createPerformance_Success() {
+			// When
+			adminPerformanceService.createPerformance(request);
 
-            // Then
-            Performance performance = performanceRepository.findById(1L).orElseThrow();
-            assertEquals(performance.getPerformanceName(), performanceCreationRequest.getPerformanceName());
-            assertEquals(performance.getPerformancePlace(), performanceCreationRequest.getPerformancePlace());
-        }
-    }
+			// Then
+			Optional<Performance> optionalPerformance = performanceRepository.findAll().stream().findFirst();
+
+			assertThat(optionalPerformance).isNotEmpty().get().satisfies(
+				performance -> {
+					assertThat(performance.getPerformanceName()).isEqualTo(request.getPerformanceName());
+					assertThat(performance.getPerformancePlace()).isEqualTo(request.getPerformancePlace());
+				}
+			);
+		}
+	}
 
 }
