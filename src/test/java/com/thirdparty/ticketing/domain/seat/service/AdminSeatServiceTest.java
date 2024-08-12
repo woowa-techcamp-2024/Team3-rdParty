@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.seat.service;
 
+import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,10 +44,19 @@ class AdminSeatServiceTest {
 
         @BeforeEach
         void setUp() {
+            // Create and save a Performance entity
+            Performance performance = Performance.builder()
+                .performanceName("공연 이름")
+                .performancePlace("공연 장소")
+                .performanceShowtime(ZonedDateTime.now())
+                .build();
+            performance = testEntityManager.persistAndFlush(performance);
+
             // Create and save a Zone entity
             Zone zone = Zone.builder()
-                    .zoneName("VIP")
-                    .build();
+                .zoneName("VIP")
+                .performance(performance)
+                .build();
             zone = testEntityManager.persistAndFlush(zone);
             zoneId = zone.getZoneId();
 
