@@ -7,6 +7,8 @@ import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
@@ -25,67 +27,96 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 class AdminSeatServiceTest {
-
     @Autowired
     private TestEntityManager testEntityManager;
-
     @Autowired
     private SeatRepository seatRepository;
     @Autowired
     private SeatGradeRepository seatGradeRepository;
-
     private AdminSeatService adminSeatService;
 
+    private Performance performance;
+    private Zone zone;
+
     @BeforeEach
-    void setUpExternal() {
+    void setUpBase() {
         adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository);
+        setUpPerformance();
+        setUpZone();
+    }
+
+    private void setUpPerformance() {
+        Performance performance = Performance.builder()
+                .performanceName("공연")
+                .performancePlace("장소")
+                .performanceShowtime(ZonedDateTime.of(2024, 8, 23, 14, 30, 0, 0, ZoneId.of("Asia/Seoul")))
+                .build();
+        testEntityManager.persistAndFlush(performance);
+        this.performance = performance;
+    }
+
+    private void setUpZone() {
+        Zone zone = Zone.builder()
+                .zoneName("VIP")
+                .performance(performance)
+                .build();
+        testEntityManager.persistAndFlush(zone);
+        this.zone = zone;
+    }
+
+    @Nested
+    @DisplayName("createSeatGrades 메서드를 호출할 때")
+    class CreateSeatGradesTest {
+
+        @Test
+        @DisplayName("좌석 등급이 성공적으로 생성된다.")
+        void createSeats_Success() {
+            // Given
+            SeatGradeCreationRequest seatGradeCreationRequest = makeRequest();
+
+            // When
+            adminSeatService.createSeatGrades(performance.getPerformanceId(), seatGradeCreationRequest);
+
+            // Then
+            List<SeatGrade> seatGrades = seatGradeRepository.findAll();
+            SeatGrade seatGrade1 = seatGrades.get(0);
+            SeatGrade seatGrade2 = seatGrades.get(1);
+
+            assertThat(seatGrades).hasSize(2);
+            assertThat(seatGrade1.getPerformance().getPerformanceId()).isEqualTo(performance.getPerformanceId());
+            assertThat(seatGrade1.getGradeName()).isEqualTo("Grade1");
+            assertThat(seatGrade1.getPrice()).isEqualTo(10000L);
+
+            assertThat(seatGrade2.getPerformance().getPerformanceId()).isEqualTo(performance.getPerformanceId());
+            assertThat(seatGrade2.getGradeName()).isEqualTo("Grade2");
+            assertThat(seatGrade2.getPrice()).isEqualTo(20000L);
+
+        }
+
+        private SeatGradeCreationRequest makeRequest() {
+            SeatGradeCreationRequest request = new SeatGradeCreationRequest();
+
+            SeatGradeCreationElement seatGrade1 = new SeatGradeCreationElement();
+            seatGrade1.setGradeName("Grade1");
+            seatGrade1.setPrice(10000L);
+            SeatGradeCreationElement seatGrade2 = new SeatGradeCreationElement();
+            seatGrade2.setGradeName("Grade2");
+            seatGrade2.setPrice(20000L);
+
+            request.setSeatGrades(List.of(seatGrade1, seatGrade2));
+            return request;
+        }
     }
 
     @Nested
     @DisplayName("createSeats 메서드를 호출할 때")
     class CreateSeatsTest {
-        private Performance performance;
-        private Zone zone;
         private SeatGrade seatGrade1;
         private SeatGrade seatGrade2;
-        private SeatCreationRequest seatCreationRequest;
 
         @BeforeEach
         void setUp() {
-            setUpPerformance();
-            setUpZone();
             setUpSeatGrades();
-
-            SeatCreationElement seat1 = new SeatCreationElement();
-            seat1.setSeatCode("A01");
-            seat1.setGradeName(seatGrade1.getGradeName());
-            SeatCreationElement seat2 = new SeatCreationElement();
-            seat2.setSeatCode("B01");
-            seat2.setGradeName(seatGrade2.getGradeName());
-
-            seatCreationRequest = new SeatCreationRequest();
-            seatCreationRequest.setSeats(List.of(
-                    seat1, seat2
-            ));
-        }
-
-        private void setUpPerformance() {
-            Performance performance = Performance.builder()
-                    .performanceName("공연")
-                    .performancePlace("장소")
-                    .performanceShowtime(ZonedDateTime.of(2024, 8, 23, 14, 30, 0, 0, ZoneId.of("Asia/Seoul")))
-                    .build();
-            testEntityManager.persistAndFlush(performance);
-            this.performance = performance;
-        }
-
-        private void setUpZone() {
-            Zone zone = Zone.builder()
-                    .zoneName("VIP")
-                    .performance(performance)
-                    .build();
-            testEntityManager.persistAndFlush(zone);
-            this.zone = zone;
         }
 
         private void setUpSeatGrades() {
@@ -101,6 +132,7 @@ class AdminSeatServiceTest {
                     .build();
             testEntityManager.persistAndFlush(seatGrade1);
             testEntityManager.persistAndFlush(seatGrade2);
+
             this.seatGrade1 = seatGrade1;
             this.seatGrade2 = seatGrade2;
         }
@@ -109,7 +141,7 @@ class AdminSeatServiceTest {
         @DisplayName("좌석이 성공적으로 생성된다.")
         void createSeats_Success() {
             // Given
-            // No additional setup required
+            SeatCreationRequest seatCreationRequest = makeRequest();
 
             // When
             adminSeatService.createSeats(performance.getPerformanceId(), zone.getZoneId(), seatCreationRequest);
@@ -127,6 +159,23 @@ class AdminSeatServiceTest {
             assertThat(seat2.getSeatCode()).isEqualTo("B01");
             assertThat(seat2.getZone().getZoneId()).isEqualTo(zone.getZoneId());
             assertThat(seat2.getSeatGrade().getSeatGradeId()).isEqualTo(seatGrade2.getSeatGradeId());
+        }
+
+        private SeatCreationRequest makeRequest() {
+            SeatCreationRequest request = new SeatCreationRequest();
+
+            SeatCreationElement seat1 = new SeatCreationElement();
+            seat1.setSeatCode("A01");
+            seat1.setGradeName(seatGrade1.getGradeName());
+            SeatCreationElement seat2 = new SeatCreationElement();
+            seat2.setSeatCode("B01");
+            seat2.setGradeName(seatGrade2.getGradeName());
+
+            request.setSeats(
+                    List.of(seat1, seat2)
+            );
+
+            return request;
         }
     }
 }
