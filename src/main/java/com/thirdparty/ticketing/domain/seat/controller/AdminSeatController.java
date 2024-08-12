@@ -1,10 +1,9 @@
-package com.thirdparty.ticketing.domain.zone.contoller;
+package com.thirdparty.ticketing.domain.seat.controller;
 
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
-import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
-import com.thirdparty.ticketing.global.security.Authentication;
+import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import com.thirdparty.ticketing.global.security.AuthenticationContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,26 +16,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/performances/{performanceId}/zones")
+@RequestMapping("/api/performances/{performancesId}/zones/{zoneId}/seats")
 @RequiredArgsConstructor
-public class AdminZoneController {
+public class AdminSeatController {
+    private final AdminSeatService adminSeatService;
     private final AuthenticationContext authenticationContext;
-    private final AdminZoneService adminZoneService;
 
     @PostMapping
-    public ResponseEntity<Void> createZones(
-            @PathVariable("performanceId") long performanceId,
-            @RequestBody @Valid ZoneCreationRequest zoneCreationRequest
+    public ResponseEntity<Void> createSeats(
+            @PathVariable("zoneId") Long zoneId,
+            @RequestBody @Valid SeatCreationRequest seatCreationRequest
     ) {
-        Authentication authentication = authenticationContext.getAuthentication();
-        String authority = authentication.getAuthority();
+        String authority = authenticationContext.getAuthentication().getAuthority();
         MemberRole memberRole = MemberRole.find(authority);
-
         if (memberRole != MemberRole.ADMIN) {
             throw new TicketingException("");
         }
 
-        adminZoneService.createZones(performanceId, zoneCreationRequest);
+        adminSeatService.createSeats(zoneId, seatCreationRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
