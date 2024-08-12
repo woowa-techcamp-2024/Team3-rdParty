@@ -4,7 +4,7 @@ import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
-import com.thirdparty.ticketing.global.security.Authentication;
+import com.thirdparty.ticketing.global.security.JwtAuthentication;
 import com.thirdparty.ticketing.global.security.AuthenticationContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,8 +27,8 @@ public class AdminZoneController {
             @PathVariable long performanceId,
             @RequestBody ZoneCreationRequest zoneCreationRequest
     ) {
-        Authentication authentication = authenticationContext.getAuthentication();
-        String authority = authentication.getAuthority();
+        JwtAuthentication jwtAuthentication = authenticationContext.getAuthentication();
+        String authority = jwtAuthentication.getAuthority();
         MemberRole memberRole = MemberRole.find(authority);
 
         if (memberRole != MemberRole.ADMIN) {

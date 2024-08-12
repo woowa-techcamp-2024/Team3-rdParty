@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.support;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.thirdparty.ticketing.domain.member.Member;
@@ -48,24 +49,25 @@ public abstract class BaseControllerTest {
         @Bean
         public RestDocumentationResultHandler write() {
             return MockMvcRestDocumentation.document(
-                "{class-name}/{method-name}",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint())
+                    "{class-name}/{method-name}",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())
             );
         }
     }
 
     @BeforeEach
     void setUp(
-        WebApplicationContext applicationContext,
-        RestDocumentationContextProvider documentationContextProvider) {
+            WebApplicationContext applicationContext,
+            RestDocumentationContextProvider documentationContextProvider) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
-            .alwaysDo(print())
-            .alwaysDo(restDocs)
-            .apply(
-                MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-            .addFilter(new CharacterEncodingFilter("UTF-8", true))
-            .build();
+                .alwaysDo(print())
+                .alwaysDo(restDocs)
+                .apply(springSecurity())
+                .apply(
+                        MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                .build();
 
         Member admin = new Member("admin@admin.com", "password", MemberRole.ADMIN);
         this.adminBearerToken = "Bearer " + jwtProvider.createAccessToken(admin);
