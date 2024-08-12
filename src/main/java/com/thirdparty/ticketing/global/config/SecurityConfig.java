@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.config;
 
 import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.PasswordEncoder;
 import com.thirdparty.ticketing.global.security.AuthenticationFilter;
@@ -10,6 +11,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,7 +38,17 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(request -> request
-                        .anyRequest().permitAll())
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/performances",
+                                "/api/performances/*/zones",
+                                "/api/performances/*/zones/*/seats"
+                        ).hasAuthority(MemberRole.ADMIN.getValue())
+                        .requestMatchers(
+                                "/api/performances/**",
+                                "/api/tickets/**"
+                        ).authenticated()
+                        .anyRequest().permitAll()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new AuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
