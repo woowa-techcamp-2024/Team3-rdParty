@@ -1,7 +1,11 @@
 package com.thirdparty.ticketing.domain.seat.controller;
 
+import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
+import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import jakarta.validation.Valid;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,22 +14,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
-import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
-
-import lombok.RequiredArgsConstructor;
-
 @RestController
-@RequestMapping("/api/performances/{performancesId}/zones/{zoneId}/seats")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AdminSeatController {
     private final AdminSeatService adminSeatService;
 
-    @PostMapping
+    @PostMapping("/performances/{performanceId}/zones/{zoneId}/seats")
     public ResponseEntity<Void> createSeats(
             @PathVariable("zoneId") Long zoneId,
-            @RequestBody @Valid SeatCreationRequest seatCreationRequest) {
+            @RequestBody @Valid SeatCreationRequest seatCreationRequest
+    ) {
         adminSeatService.createSeats(zoneId, seatCreationRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @PostMapping("/performances/{performanceId}/grades")
+    public ResponseEntity<Void> createSeatGrades(
+            @PathVariable("performanceId") long performanceId,
+            @RequestBody @Valid SeatGradeCreationRequest seatGradeCreationRequest
+    ) {
+        adminSeatService.createSeatGrades(performanceId, seatGradeCreationRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 }
