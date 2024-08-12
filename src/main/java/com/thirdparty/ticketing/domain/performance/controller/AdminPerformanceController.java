@@ -1,32 +1,31 @@
-package com.thirdparty.ticketing.domain.zone.contoller;
+package com.thirdparty.ticketing.domain.performance.controller;
 
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
-import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
+import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.service.AdminPerformanceService;
 import com.thirdparty.ticketing.global.security.Authentication;
 import com.thirdparty.ticketing.global.security.AuthenticationContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/performances/{performanceId}/zones")
 @RequiredArgsConstructor
-public class AdminZoneController {
+@RequestMapping("/api/performances")
+public class AdminPerformanceController {
+
     private final AuthenticationContext authenticationContext;
-    private final AdminZoneService adminZoneService;
+    private final AdminPerformanceService adminPerformanceService;
 
     @PostMapping
-    public ResponseEntity<Void> createZones(
-            @PathVariable("performanceId") long performanceId,
-            @RequestBody @Valid ZoneCreationRequest zoneCreationRequest
+    public ResponseEntity<Void> createPerformance(
+            @RequestBody @Valid PerformanceCreationRequest performanceCreationRequest
     ) {
         Authentication authentication = authenticationContext.getAuthentication();
         String authority = authentication.getAuthority();
@@ -36,7 +35,7 @@ public class AdminZoneController {
             throw new TicketingException("");
         }
 
-        adminZoneService.createZones(performanceId, zoneCreationRequest);
+        adminPerformanceService.createPerformance(performanceCreationRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
