@@ -1,5 +1,12 @@
 package com.thirdparty.ticketing.domain.zone.controller;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.zone.contoller.AdminZoneController;
@@ -7,6 +14,7 @@ import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +24,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminZoneControllerTest.class)
 @Import(AdminZoneController.class)
@@ -47,7 +43,7 @@ public class AdminZoneControllerTest extends BaseControllerTest {
         String content = createBodyContent();
 
         //when
-        ResultActions result = mockMvc.perform(post("/api/performances/{performanceId}/zones", performanceId)
+        ResultActions result = mockMvc.perform(post ("/api/performances/{performanceId}/zones", performanceId)
                 .header(AUTHORIZATION_HEADER, adminBearerToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));

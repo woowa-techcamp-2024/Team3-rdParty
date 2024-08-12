@@ -6,25 +6,30 @@ import static org.assertj.core.api.Assertions.catchException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-class AuthenticationInterceptorTest {
+class AuthenticationFilterTest {
 
-    private AuthenticationInterceptor authenticationInterceptor;
+    private AuthenticationFilter authenticationFilter;
     private JwtProvider jwtProvider;
-    private AuthenticationContext authenticationContext;
+    private MockFilterChain filterChain;
 
     @BeforeEach
     void setUp() {
-        authenticationContext = new AuthenticationContext();
         jwtProvider = new JJwtProvider("test", 3600, "thisisjusttestaccesssecretsodontworry");
-        authenticationInterceptor = new AuthenticationInterceptor(jwtProvider,
-            authenticationContext);
+        authenticationFilter = new AuthenticationFilter(jwtProvider);
+        filterChain = new MockFilterChain();
     }
 
     @Nested
@@ -61,14 +66,17 @@ class AuthenticationInterceptorTest {
                 httpServletRequest.addHeader("Authorization", bearerAccessToken);
 
                 //when
-                boolean result = authenticationInterceptor.preHandle(httpServletRequest,
-                    httpServletResponse,
-                    null);
+                authenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
                 //then
-                assertThat(result).isTrue();
-                Authentication authentication = authenticationContext.getAuthentication();
-                assertThat(authentication).isNotNull();
+                CustomClaims customClaims = jwtProvider.parseAccessToken(accessToken);
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                assertThat(authentication).isNotNull().isInstanceOf(UsernamePasswordAuthenticationToken.class)
+                        .satisfies(auth -> {
+                            assertThat(auth.getPrincipal()).isEqualTo(customClaims.getEmail());
+                            assertThat(auth.getAuthorities()).map(GrantedAuthority::getAuthority)
+                                    .containsExactlyElementsOf(customClaims.getMemberRole().getAuthorities());
+                        });
             }
 
             @Test
@@ -80,8 +88,8 @@ class AuthenticationInterceptorTest {
 
                 //when
                 Exception exception = catchException(
-                    () -> authenticationInterceptor.preHandle(httpServletRequest,
-                        httpServletResponse, null));
+                        () -> authenticationFilter.doFilterInternal(httpServletRequest,
+                                httpServletResponse, filterChain));
 
                 //then
                 assertThat(exception).isInstanceOf(AuthenticationException.class);
@@ -96,54 +104,14 @@ class AuthenticationInterceptorTest {
             @DisplayName("무시한다.")
             void ignoreAuthenticationProcess_WhenNotContainsAuthorizationHeader() throws Exception {
                 //given
-                MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
                 //when
-                boolean result = authenticationInterceptor.preHandle(mockHttpServletRequest,
-                    httpServletResponse,
-                    null);
+                authenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
                 //then
-                assertThat(result).isTrue();
-                Authentication authentication = authenticationContext.getAuthentication();
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 assertThat(authentication).isNull();
             }
-        }
-    }
-
-    @Nested
-    @DisplayName("afterCompletion 호출 시")
-    class AfterCompletionTest {
-
-        private MockHttpServletRequest httpServletRequest;
-        private MockHttpServletResponse httpServletResponse;
-        private Member member;
-        private String accessToken;
-
-        @BeforeEach
-        void setUp() {
-            httpServletRequest = new MockHttpServletRequest();
-            httpServletResponse = new MockHttpServletResponse();
-            member = new Member("email@email.com", "password", MemberRole.USER);
-            accessToken = jwtProvider.createAccessToken(member);
-        }
-
-        @Test
-        @DisplayName("인증 컨텍스트에서 사용자 정보를 제거한다.")
-        void afterCompletion() throws Exception {
-            //given
-            String bearerAccessToken = "Bearer " + accessToken;
-            httpServletRequest.addHeader("Authorization", bearerAccessToken);
-            authenticationInterceptor.preHandle(httpServletRequest, httpServletResponse,
-                null);
-
-            //when
-            authenticationInterceptor.afterCompletion(httpServletRequest,
-                httpServletResponse, null, null);
-
-            //then
-            Authentication authentication = authenticationContext.getAuthentication();
-            assertThat(authentication).isNull();
         }
     }
 }

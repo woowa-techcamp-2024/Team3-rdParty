@@ -1,10 +1,11 @@
 package com.thirdparty.ticketing.global.security;
 
 import com.thirdparty.ticketing.domain.member.MemberRole;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class Authentication {
+public class JwtAuthentication {
 
     private final String email;
     private final MemberRole memberRole;
@@ -20,5 +21,9 @@ public class Authentication {
 
     public String getCredential() {
         return accessToken;
+    }
+
+    public Set<String> getAuthorities() {
+        return memberRole.getAuthorities();
     }
 }
