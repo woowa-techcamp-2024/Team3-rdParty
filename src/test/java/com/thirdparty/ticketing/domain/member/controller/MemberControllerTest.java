@@ -8,11 +8,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
-import com.thirdparty.ticketing.domain.member.service.MemberService;
-import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,38 +17,48 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.service.MemberService;
+import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
+import com.thirdparty.ticketing.support.BaseControllerTest;
+
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest extends BaseControllerTest {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
-    @MockBean
-    private MemberService memberService;
+    @MockBean private MemberService memberService;
 
     @Test
     @DisplayName("회원 생성 API 호출")
     void createMember() throws Exception {
-        //given
+        // given
         MemberCreationRequest request = new MemberCreationRequest("eamil@email.com", "password");
 
         given(memberService.createMember(any())).willReturn(new CreateMemberResponse(1L));
 
-        //when
-        ResultActions result = mockMvc.perform(post("/api/members")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(request)));
+        // when
+        ResultActions result =
+                mockMvc.perform(
+                        post("/api/members")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(request)));
 
-        //then
+        // then
         result.andExpect(status().isCreated())
-                .andDo(restDocs.document(
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                                fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("회원ID")
-                        )
-                ));
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("email")
+                                                .type(JsonFieldType.STRING)
+                                                .description("이메일"),
+                                        fieldWithPath("password")
+                                                .type(JsonFieldType.STRING)
+                                                .description("비밀번호")),
+                                responseFields(
+                                        fieldWithPath("memberId")
+                                                .type(JsonFieldType.NUMBER)
+                                                .description("회원ID"))));
     }
 }

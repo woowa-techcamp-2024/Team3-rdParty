@@ -3,13 +3,9 @@ package com.thirdparty.ticketing.domain.member.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
-import com.thirdparty.ticketing.global.security.JJwtProvider;
 import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,35 +13,40 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
+import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
+import com.thirdparty.ticketing.global.security.JJwtProvider;
+
 @DataJpaTest
 class AuthServiceTest {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private MemberRepository memberRepository;
 
     private PasswordEncoder passwordEncoder;
-    private JwtProvider jwtProvider = new JJwtProvider(
-            "test", 3600,
-            "thisisjusttestaccesssecretsodontworry");
+    private JwtProvider jwtProvider =
+            new JJwtProvider("test", 3600, "thisisjusttestaccesssecretsodontworry");
 
     @BeforeEach
     void setUp() {
-        passwordEncoder = new PasswordEncoder() {
+        passwordEncoder =
+                new PasswordEncoder() {
 
-            @Override
-            public String encode(String rawPassword) {
-                return new StringBuilder(rawPassword).reverse().toString();
-            }
+                    @Override
+                    public String encode(String rawPassword) {
+                        return new StringBuilder(rawPassword).reverse().toString();
+                    }
 
-            @Override
-            public void checkMatches(Member member, String rawPassword) {
-                String encodedPassword = encode(rawPassword);
-                if (encodedPassword.equals(member.getPassword())) {
-                    return;
-                }
-                throw new NoSuchElementException("이메일/패스워드가 일치하지 않습니다.");
-            }
-        };
+                    @Override
+                    public void checkMatches(Member member, String rawPassword) {
+                        String encodedPassword = encode(rawPassword);
+                        if (encodedPassword.equals(member.getPassword())) {
+                            return;
+                        }
+                        throw new NoSuchElementException("이메일/패스워드가 일치하지 않습니다.");
+                    }
+                };
     }
 
     @Nested
@@ -64,22 +65,19 @@ class AuthServiceTest {
             String password = passwordEncoder.encode(rawPassword);
             MemberRole memberRole = MemberRole.USER;
             savedMember = new Member(email, password, memberRole, ZonedDateTime.now());
-            authService = new AuthService(
-                    memberRepository,
-                    passwordEncoder,
-                    jwtProvider);
+            authService = new AuthService(memberRepository, passwordEncoder, jwtProvider);
         }
 
         @Test
         @DisplayName("액세스 토큰과 회원 ID를 반환한다.")
         void login() {
-            //given
+            // given
             memberRepository.save(savedMember);
 
-            //when
+            // when
             LoginResponse response = authService.login(email, rawPassword);
 
-            //then
+            // then
             assertThat(response.getAccessToken()).isNotBlank();
             assertThat(response.getMemberId()).isEqualTo(savedMember.getMemberId());
         }
@@ -87,28 +85,28 @@ class AuthServiceTest {
         @Test
         @DisplayName("예외(noSuchElement): 이메일과 일치하는 회원이 없으면")
         void noSuchElement_WhenEmailIsNotMatches() {
-            //given
+            // given
             String wrongEmail = "wrongEmail";
             memberRepository.save(savedMember);
 
-            //when
+            // when
             Exception exception = catchException(() -> authService.login(wrongEmail, rawPassword));
 
-            //then
+            // then
             assertThat(exception).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
         @DisplayName("예외(noSuchElement): 회원의 비밀번호와 일치하지 않으면")
         void noSuchElement_WhenPasswordIsNotMatches() {
-            //given
+            // given
             String wrongPassword = "wrongPassword";
             memberRepository.save(savedMember);
 
-            //when
+            // when
             Exception exception = catchException(() -> authService.login(email, wrongPassword));
 
-            //then
+            // then
             assertThat(exception).isInstanceOf(NoSuchElementException.class);
         }
     }

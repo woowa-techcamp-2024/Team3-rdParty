@@ -1,13 +1,14 @@
 package com.thirdparty.ticketing.global.security;
 
+import java.util.NoSuchElementException;
+
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.service.PasswordEncoder;
-import java.util.NoSuchElementException;
 
 public class BCryptPasswordEncoder implements PasswordEncoder {
 
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder
-            = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder =
+            new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
 
     @Override
     public String encode(String rawPassword) {

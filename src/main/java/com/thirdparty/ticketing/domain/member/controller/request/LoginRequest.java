@@ -2,8 +2,10 @@ package com.thirdparty.ticketing.domain.member.controller.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+
 import org.hibernate.validator.constraints.Length;
+
+import lombok.Data;
 
 @Data
 public class LoginRequest {

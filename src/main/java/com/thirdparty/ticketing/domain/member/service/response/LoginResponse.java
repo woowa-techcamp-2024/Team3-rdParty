@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.domain.member.service.response;
 
 import com.thirdparty.ticketing.domain.member.Member;
+
 import lombok.Data;
 
 @Data

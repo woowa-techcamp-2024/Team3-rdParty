@@ -1,7 +1,5 @@
 package com.thirdparty.ticketing.domain.seat;
 
-import com.thirdparty.ticketing.domain.BaseEntity;
-import com.thirdparty.ticketing.domain.zone.Zone;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
+import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.zone.Zone;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

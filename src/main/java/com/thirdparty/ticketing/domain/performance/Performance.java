@@ -1,9 +1,12 @@
 package com.thirdparty.ticketing.domain.performance;
 
-import com.thirdparty.ticketing.domain.BaseEntity;
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.ZonedDateTime;
+
+import jakarta.persistence.*;
+
+import com.thirdparty.ticketing.domain.BaseEntity;
+
+import lombok.*;
 
 @Entity
 @Table(name = "performance")
@@ -22,5 +25,4 @@ public class Performance extends BaseEntity {
     private String performancePlace;
 
     private ZonedDateTime performanceShowtime;
-
 }
