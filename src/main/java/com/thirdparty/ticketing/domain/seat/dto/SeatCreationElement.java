@@ -8,4 +8,7 @@ import lombok.Data;
 public class SeatCreationElement {
     @NotBlank(message = "좌석코드는 공백일 수 없습니다.")
     private String seatCode;
+
+    @NotBlank(message = "좌석 등급을 지정해야 합니다.")
+    private String gradeName;
 }

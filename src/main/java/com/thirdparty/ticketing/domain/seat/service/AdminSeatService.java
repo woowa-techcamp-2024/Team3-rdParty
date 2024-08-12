@@ -1,19 +1,21 @@
 package com.thirdparty.ticketing.domain.seat.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
+import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
 import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,20 +24,46 @@ public class AdminSeatService {
     private final SeatGradeRepository seatGradeRepository;
 
     @Transactional
-    public void createSeats(Long zoneId, SeatCreationRequest seatCreationRequest) {
-        List<Seat> seats = convertDtoToEntity(zoneId, seatCreationRequest);
+    public void createSeats(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
+        List<Seat> seats = convertDtoToEntity(performanceId, zoneId, seatCreationRequest);
         seatRepository.saveAll(seats);
     }
 
-    private List<Seat> convertDtoToEntity(Long zoneId, SeatCreationRequest seatCreationRequest) {
-        return seatCreationRequest.getSeats().stream()
-                .map(
-                        seat ->
-                                Seat.builder()
-                                        .zone(Zone.builder().zoneId(zoneId).build())
-                                        .seatCode(seat.getSeatCode())
-                                        .build())
+    private List<Seat> convertDtoToEntity(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
+        Map<String, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
+
+        return seatCreationRequest.getSeats().stream().map(seat -> {
+                    return Seat.builder()
+                            .zone(Zone.builder().zoneId(zoneId).build())
+                            .seatGrade(seatGradeMap.get(seat.getGradeName()))
+                            .seatCode(seat.getSeatCode())
+                            .build();
+                }
+        ).toList();
+    }
+
+    /**
+     * N+1 문제를 방지하기 위해 요청된 gradeName 목록을 미리 조회합니다.
+     * Map<gradeName, SeatGrade> 형태로 구조화해서 반환합니다.
+     */
+    private Map<String, SeatGrade> findSeatGrades(long performanceId, SeatCreationRequest seatCreationRequest) {
+        List<String> gradeNames = seatCreationRequest.getSeats()
+                .stream()
+                .map(SeatCreationElement::getGradeName)
+                .distinct()
                 .toList();
+
+        List<SeatGrade> seatGrades = seatGradeRepository.findByPerformanceIdAndGradeNameIn(performanceId, gradeNames);
+        Map<String, SeatGrade> seatGradeMap = seatGrades.stream()
+                .collect(Collectors.toMap(SeatGrade::getGradeName, seatGrade -> seatGrade));
+
+        seatCreationRequest.getSeats().forEach(seat -> {
+            if (!seatGradeMap.containsKey(seat.getGradeName())) {
+                throw new TicketingException("");
+            }
+        });
+
+        return seatGradeMap;
     }
 
     @Transactional

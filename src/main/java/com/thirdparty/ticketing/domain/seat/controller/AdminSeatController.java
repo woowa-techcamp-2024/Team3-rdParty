@@ -22,10 +22,11 @@ public class AdminSeatController {
 
     @PostMapping("/performances/{performanceId}/zones/{zoneId}/seats")
     public ResponseEntity<Void> createSeats(
-            @PathVariable("zoneId") Long zoneId,
+            @PathVariable("performanceId") long performanceId,
+            @PathVariable("zoneId") long zoneId,
             @RequestBody @Valid SeatCreationRequest seatCreationRequest
     ) {
-        adminSeatService.createSeats(zoneId, seatCreationRequest);
+        adminSeatService.createSeats(performanceId, zoneId, seatCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
