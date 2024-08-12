@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -46,6 +47,9 @@ public class AdminZoneServiceTest {
         @BeforeEach
         void setUp() {
             Performance performance = Performance.builder()
+                    .performanceName("공연 이름")
+                    .performancePlace("공연 장소")
+                    .performanceShowtime(ZonedDateTime.now())
                     .build();
             performance = testEntityManager.persistAndFlush(performance);
             performanceId = performance.getPerformanceId();
