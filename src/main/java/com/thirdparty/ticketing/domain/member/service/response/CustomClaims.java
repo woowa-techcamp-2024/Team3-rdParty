@@ -2,14 +2,11 @@ package com.thirdparty.ticketing.domain.member.service.response;
 
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 public class CustomClaims {
-    private Long memberId;
-    private MemberRole memberRole;
-
-    public CustomClaims(Long memberId, MemberRole memberRole) {
-        this.memberId = memberId;
-        this.memberRole = memberRole;
-    }
+    private final String email;
+    private final MemberRole memberRole;
 }

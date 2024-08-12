@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.diffplug.spotless' version '6.23.3'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'com.thirdparty'
@@ -15,6 +16,7 @@ java {
 }
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -24,16 +26,15 @@ repositories {
     mavenCentral()
 }
 
-spotless {
-    java {
-        target 'src/**/*.java' // 대상 파일 지정
-    }
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
@@ -46,8 +47,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    //security
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 tasks.named('test') {
@@ -56,10 +62,31 @@ tasks.named('test') {
 
 spotless {
     java {
+        target 'src/**/*.java' // 대상 파일 지정
         googleJavaFormat().aosp()
         importOrder('java', 'javax', 'jakarta', 'org', 'com')
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
     }
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+tasks.register('copyDocument', Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
 }

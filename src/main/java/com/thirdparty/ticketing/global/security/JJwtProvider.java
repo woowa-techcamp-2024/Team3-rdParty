@@ -39,9 +39,9 @@ public class JJwtProvider implements JwtProvider {
     public CustomClaims parseAccessToken(String accessToken) {
         try {
             Claims payload = accessTokenParser.parseSignedClaims(accessToken).getPayload();
-            Long memberId = Long.valueOf(payload.getSubject());
+            String email = payload.getSubject();
             MemberRole memberRole = MemberRole.find(payload.get(ROLE, String.class));
-            return new CustomClaims(memberId, memberRole);
+            return new CustomClaims(email, memberRole);
         } catch (ExpiredJwtException e) {
             throw new ExpiredTokenException("액세스 토큰이 만료되었습니다.");
         } catch (RuntimeException e) {
@@ -57,7 +57,7 @@ public class JJwtProvider implements JwtProvider {
         return Jwts.builder()
                 .issuer(issuer)
                 .issuedAt(now)
-                .subject(member.getMemberId().toString())
+                .subject(member.getEmail())
                 .expiration(expiresAt)
                 .claim(ROLE, member.getMemberRole().getValue())
                 .signWith(secretKey)
