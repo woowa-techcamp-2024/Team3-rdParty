@@ -50,8 +50,8 @@ class UserZoneControllerTest extends BaseControllerTest {
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 responseFields(
-                                        fieldWithPath("item").description("구역 목록"),
-                                        fieldWithPath("item[].zoneId").description("구역 ID"),
-                                        fieldWithPath("item[].zoneName").description("구역 이름"))));
+                                        fieldWithPath("items").description("구역 목록"),
+                                        fieldWithPath("items[].zoneId").description("구역 ID"),
+                                        fieldWithPath("items[].zoneName").description("구역 이름"))));
     }
 }

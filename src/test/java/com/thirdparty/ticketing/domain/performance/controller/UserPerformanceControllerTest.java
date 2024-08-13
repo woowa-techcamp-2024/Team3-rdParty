@@ -47,13 +47,13 @@ class UserPerformanceControllerTest extends BaseControllerTest {
                 .andDo(
                         restDocs.document(
                                 responseFields(
-                                        fieldWithPath("item").description("공연 목록"),
-                                        fieldWithPath("item[].performanceId").description("공연 ID"),
-                                        fieldWithPath("item[].performanceName")
+                                        fieldWithPath("items").description("공연 목록"),
+                                        fieldWithPath("items[].performanceId").description("공연 ID"),
+                                        fieldWithPath("items[].performanceName")
                                                 .description("공연 이름"),
-                                        fieldWithPath("item[].performancePlace")
+                                        fieldWithPath("items[].performancePlace")
                                                 .description("공연 장소"),
-                                        fieldWithPath("item[].performanceShowtime")
+                                        fieldWithPath("items[].performanceShowtime")
                                                 .description("공연 시간"))));
     }
 }

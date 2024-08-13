@@ -135,7 +135,7 @@ public class SeatServiceTest {
             ItemResult<SeatElement> seats = seatService.getSeats(zone.getZoneId());
 
             // Then
-            List<SeatElement> seatElements = seats.getItem();
+            List<SeatElement> seatElements = seats.getItems();
             SeatElement seatElement1 = seatElements.get(0);
             SeatElement seatElement2 = seatElements.get(1);
 

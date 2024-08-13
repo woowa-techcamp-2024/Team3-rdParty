@@ -68,7 +68,7 @@ class UserPerformanceServiceTest {
                     userPerformanceService.getPerformances();
 
             // Then
-            assertThat(performanceElements.getItem())
+            assertThat(performanceElements.getItems())
                     .isNotEmpty()
                     .hasSize(2)
                     .satisfies(
