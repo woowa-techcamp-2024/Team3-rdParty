@@ -19,8 +19,6 @@ operation::member-controller-test/create-member[snippets='http-response,response
 
 = 공연(Performance)
 
-= 장소(Place)
-
 = 좌석(Seat)
 
 == 관리자 좌석 등급 생성 API
@@ -42,6 +40,16 @@ operation::admin-seat-controller-test/create-seats[snippets='http-request,path-p
 === response
 
 operation::admin-seat-controller-test/create-seat-grades[snippets='http-response']
+
+== 구역의 좌석 목록 조회
+
+=== request
+
+operation::seat-controller-test/get-zones[snippets='http-request,path-parameters']
+
+=== response
+
+operation::seat-controller-test/get-zones[snippets='http-response,response-fields']
 
 = 티켓(Ticket)
 

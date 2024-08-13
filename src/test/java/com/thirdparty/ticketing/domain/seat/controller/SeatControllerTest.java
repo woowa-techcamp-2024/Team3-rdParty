@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.ItemResult;
@@ -58,10 +59,17 @@ public class SeatControllerTest extends BaseControllerTest {
                                         parameterWithName("performanceId").description("공연 ID"),
                                         parameterWithName("zoneId").description("구역 ID")),
                                 responseFields(
-                                        fieldWithPath("items").description("좌석 목록"),
-                                        fieldWithPath("items[].seatId").description("좌석 ID"),
-                                        fieldWithPath("items[].seatCode").description("좌석 코드"),
+                                        fieldWithPath("items")
+                                                .type(JsonFieldType.ARRAY)
+                                                .description("좌석 목록"),
+                                        fieldWithPath("items[].seatId")
+                                                .type(JsonFieldType.NUMBER)
+                                                .description("좌석 ID"),
+                                        fieldWithPath("items[].seatCode")
+                                                .type(JsonFieldType.STRING)
+                                                .description("좌석 코드"),
                                         fieldWithPath("items[].seatAvailable")
+                                                .type(JsonFieldType.BOOLEAN)
                                                 .description("좌석 선택 가능 여부"))));
     }
 }
