@@ -8,9 +8,9 @@ import lombok.Data;
 
 @Data
 public class TicketElement {
-    private final UUID id;
+    private final UUID serialNumber;
 
     public static TicketElement of(Ticket ticket) {
-        return new TicketElement(ticket.getTicketId());
+        return new TicketElement(ticket.getTicketSerialNumber());
     }
 }

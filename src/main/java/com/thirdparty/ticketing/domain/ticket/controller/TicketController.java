@@ -23,8 +23,10 @@ public class TicketController {
     private final TicketService ticketService;
 
     @GetMapping("/members/tickets")
-    public ResponseEntity<ItemResult<TicketElement>> selectMyTickets(@LoginMember String email) {
-        return ResponseEntity.ok().body(ticketService.selectMyTicket(email));
+    public ResponseEntity<ItemResult<TicketElement>> selectMyTickets(
+            @LoginMember String memberEmail) {
+        ItemResult<TicketElement> tickets = ticketService.selectMyTicket(memberEmail);
+        return ResponseEntity.ok().body(tickets);
     }
 
     @PostMapping("/seats/select")

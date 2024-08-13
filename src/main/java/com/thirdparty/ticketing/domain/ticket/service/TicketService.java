@@ -26,10 +26,10 @@ public abstract class TicketService {
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException("Member not found"));
 
-        List<TicketElement> ticketElementList =
+        List<TicketElement> tickets =
                 ticketRepository.findAllByMember(member).stream().map(TicketElement::of).toList();
 
-        return ItemResult.of(ticketElementList);
+        return ItemResult.of(tickets);
     }
 
     public abstract void selectSeat(SeatSelectionRequest seatSelectionRequest);
