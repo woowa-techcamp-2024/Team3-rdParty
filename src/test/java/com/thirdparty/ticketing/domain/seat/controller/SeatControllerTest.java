@@ -16,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -26,7 +25,6 @@ import com.thirdparty.ticketing.domain.seat.service.SeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(SeatController.class)
-@Import(SeatController.class)
 public class SeatControllerTest extends BaseControllerTest {
     @MockBean private SeatService seatService;
 

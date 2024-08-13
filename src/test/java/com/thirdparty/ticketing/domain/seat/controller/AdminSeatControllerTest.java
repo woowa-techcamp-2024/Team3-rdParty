@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -27,7 +26,6 @@ import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(AdminSeatController.class)
-@Import(AdminSeatController.class)
 public class AdminSeatControllerTest extends BaseControllerTest {
 
     @MockBean private AdminSeatService adminSeatService;
