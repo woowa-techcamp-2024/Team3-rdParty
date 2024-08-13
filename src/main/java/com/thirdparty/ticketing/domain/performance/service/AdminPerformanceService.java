@@ -1,7 +1,7 @@
 package com.thirdparty.ticketing.domain.performance.service;
 
 import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

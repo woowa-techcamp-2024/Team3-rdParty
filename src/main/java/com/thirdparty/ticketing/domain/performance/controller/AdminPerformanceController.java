@@ -1,6 +1,6 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.service.AdminPerformanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

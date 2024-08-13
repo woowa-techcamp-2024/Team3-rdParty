@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.performance.controller.request;
+package com.thirdparty.ticketing.domain.performance.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

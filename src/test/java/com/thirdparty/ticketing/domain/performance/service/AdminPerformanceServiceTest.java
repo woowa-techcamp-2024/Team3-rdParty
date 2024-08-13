@@ -3,7 +3,7 @@ package com.thirdparty.ticketing.domain.performance.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import java.time.ZonedDateTime;
 import java.util.Optional;
