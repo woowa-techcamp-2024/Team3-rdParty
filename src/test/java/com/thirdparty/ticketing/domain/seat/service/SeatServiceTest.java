@@ -20,7 +20,7 @@ import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
-import com.thirdparty.ticketing.domain.seat.dto.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;

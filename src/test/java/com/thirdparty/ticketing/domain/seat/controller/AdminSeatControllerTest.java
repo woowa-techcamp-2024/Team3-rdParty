@@ -19,10 +19,10 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 

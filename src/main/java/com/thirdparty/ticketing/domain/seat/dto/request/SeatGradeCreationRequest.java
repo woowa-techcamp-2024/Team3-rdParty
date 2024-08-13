@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.seat.dto;
+package com.thirdparty.ticketing.domain.seat.dto.request;
 
 import java.util.List;
 

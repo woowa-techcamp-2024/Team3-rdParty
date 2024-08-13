@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.seat.dto.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.service.SeatService;
 
 import lombok.RequiredArgsConstructor;

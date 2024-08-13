@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.seat.dto.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.seat.dto.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.service.SeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
