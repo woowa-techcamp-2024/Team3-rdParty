@@ -1,11 +1,12 @@
 package com.thirdparty.ticketing.domain.waitingroom;
 
-import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class WaitingAspect {
@@ -14,9 +15,9 @@ public class WaitingAspect {
 
     private Object waitingRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String)authentication.getPrincipal();
+        String email = (String) authentication.getPrincipal();
         UserInfo userInfo = new UserInfo(email);
-        if(waitingManager.isReadyToHandle(userInfo)){
+        if (waitingManager.isReadyToHandle(userInfo)) {
             return joinPoint.proceed();
         } else {
             long waitingNumber = waitingManager.enterWaitingRoom(userInfo);
