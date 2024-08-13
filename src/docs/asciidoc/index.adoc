@@ -21,6 +21,28 @@ operation::member-controller-test/create-member[snippets='http-response,response
 
 = 장소(Place)
 
+= 좌석(Seat)
+
+== 관리자 좌석 등급 생성 API
+
+=== request
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-request,path-parameters,request-fields']
+
+=== response
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-response']
+
+== 관리자 좌석 생성 API
+
+=== request
+
+operation::admin-seat-controller-test/create-seats[snippets='http-request,path-parameters,request-fields']
+
+=== response
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-response']
+
 = 티켓(Ticket)
 
 = API 문서화 예시
