@@ -1,11 +1,10 @@
 package com.thirdparty.ticketing.domain.zone.service;
 
-import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
-import com.thirdparty.ticketing.domain.zone.Zone;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
-import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,23 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
+import com.thirdparty.ticketing.domain.zone.Zone;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
+import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 
 @DataJpaTest
 public class AdminZoneServiceTest {
     private AdminZoneService adminZoneService;
 
-    @Autowired
-    private TestEntityManager testEntityManager;
+    @Autowired private TestEntityManager testEntityManager;
 
-    @Autowired
-    private ZoneRepository zoneRepository;
+    @Autowired private ZoneRepository zoneRepository;
 
-    @Autowired
-    private PerformanceRepository performanceRepository;
+    @Autowired private PerformanceRepository performanceRepository;
 
     @BeforeEach
     void setUpBase() {
@@ -46,11 +44,12 @@ public class AdminZoneServiceTest {
 
         @BeforeEach
         void setUp() {
-            Performance performance = Performance.builder()
-                    .performanceName("공연 이름")
-                    .performancePlace("공연 장소")
-                    .performanceShowtime(ZonedDateTime.now())
-                    .build();
+            Performance performance =
+                    Performance.builder()
+                            .performanceName("공연 이름")
+                            .performancePlace("공연 장소")
+                            .performanceShowtime(ZonedDateTime.now())
+                            .build();
             performance = testEntityManager.persistAndFlush(performance);
             performanceId = performance.getPerformanceId();
 
@@ -60,9 +59,7 @@ public class AdminZoneServiceTest {
             ZoneCreationElement zone2 = new ZoneCreationElement();
             zone2.setZoneName("General");
 
-            zoneCreationRequest.setZones(List.of(
-                    zone1, zone2
-            ));
+            zoneCreationRequest.setZones(List.of(zone1, zone2));
         }
 
         @Test

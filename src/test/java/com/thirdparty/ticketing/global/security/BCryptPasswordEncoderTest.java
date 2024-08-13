@@ -3,18 +3,20 @@ package com.thirdparty.ticketing.global.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.domain.member.Member;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.thirdparty.ticketing.domain.member.Member;
+
 class BCryptPasswordEncoderTest {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    private static final Pattern BCRYPT_PATTERN
-            = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
+    private static final Pattern BCRYPT_PATTERN =
+            Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
     @Nested
     @DisplayName("encode 호출 시")
@@ -23,26 +25,26 @@ class BCryptPasswordEncoderTest {
         @Test
         @DisplayName("패스워드를 암호화한다.")
         void encodePassword() {
-            //given
+            // given
             String rawPassword = "password";
 
-            //when
+            // when
             String encodedPassword = bCryptPasswordEncoder.encode(rawPassword);
 
-            //then
+            // then
             assertThat(encodedPassword).isNotEqualTo(rawPassword);
         }
 
         @Test
         @DisplayName("패스워드를 BCrypt 형식으로 암호화한다.")
         void encodePassword_UsingBCrypt() {
-            //given
+            // given
             String rawPassword = "password";
 
-            //when
+            // when
             String encodedPassword = bCryptPasswordEncoder.encode(rawPassword);
 
-            //then
+            // then
             assertThat(BCRYPT_PATTERN.matcher(encodedPassword).matches()).isTrue();
         }
     }
@@ -54,33 +56,33 @@ class BCryptPasswordEncoderTest {
         @Test
         @DisplayName("사용자의 암호화된 패스워드와 입력된 raw 패스워드가 같으면 예외를 던지지 않는다.")
         void doesNotThrowException_WhenEqualsMemberPasswordAndRawPassword() {
-            //given
+            // given
             String rawPassword = "password";
-            Member member = Member.builder()
-                    .password(bCryptPasswordEncoder.encode(rawPassword))
-                    .build();
+            Member member =
+                    Member.builder().password(bCryptPasswordEncoder.encode(rawPassword)).build();
 
-            //when
-            Exception exception = catchException(() -> bCryptPasswordEncoder.checkMatches(member, rawPassword));
+            // when
+            Exception exception =
+                    catchException(() -> bCryptPasswordEncoder.checkMatches(member, rawPassword));
 
-            //then
+            // then
             assertThat(exception).doesNotThrowAnyException();
         }
 
         @Test
         @DisplayName("예외(noSuchElement): 사용자의 암호화된 패스워드와 입력된 raw 패스워드가 같지 않으면")
         void noSuchElement_WhenNotEqualsMemberPasswordAndRawPassword() {
-            //given
+            // given
             String rawPassword = "password";
-            Member member = Member.builder()
-                    .password(bCryptPasswordEncoder.encode(rawPassword))
-                    .build();
+            Member member =
+                    Member.builder().password(bCryptPasswordEncoder.encode(rawPassword)).build();
             String wrongPassword = rawPassword + "a";
 
-            //when
-            Exception exception = catchException(() -> bCryptPasswordEncoder.checkMatches(member, wrongPassword));
+            // when
+            Exception exception =
+                    catchException(() -> bCryptPasswordEncoder.checkMatches(member, wrongPassword));
 
-            //then
+            // then
             assertThat(exception).isInstanceOf(NoSuchElementException.class);
         }
     }

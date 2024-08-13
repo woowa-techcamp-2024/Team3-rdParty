@@ -1,19 +1,22 @@
 package com.thirdparty.ticketing.global.security;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
 import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,9 +33,7 @@ public class JJwtProvider implements JwtProvider {
         this.issuer = issuer;
         this.expirySeconds = expirySeconds;
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenParser = Jwts.parser()
-                .verifyWith(secretKey)
-                .build();
+        this.accessTokenParser = Jwts.parser().verifyWith(secretKey).build();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.thirdparty.ticketing.global.security;
 
-import com.thirdparty.ticketing.domain.member.MemberRole;
 import java.util.Set;
+
+import com.thirdparty.ticketing.domain.member.MemberRole;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.diffplug.spotless' version '6.23.3'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
@@ -56,8 +57,18 @@ dependencies {
 }
 
 tasks.named('test') {
-    outputs.dir snippetsDir
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        target 'src/**/*.java' // 대상 파일 지정
+        googleJavaFormat().aosp()
+        importOrder('java', 'javax', 'jakarta', 'org', 'com')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 asciidoctor {

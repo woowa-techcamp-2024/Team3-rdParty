@@ -1,15 +1,17 @@
 package com.thirdparty.ticketing.domain.zone.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +26,15 @@ public class AdminZoneService {
         zoneRepository.saveAll(zones);
     }
 
-    private List<Zone> convertDtoToEntity(Performance performance, ZoneCreationRequest zoneCreationRequest) {
-        return zoneCreationRequest.getZones()
-                .stream()
-                .map(zoneElement ->
-                        Zone.builder()
-                                .performance(performance)
-                                .zoneName(zoneElement.getZoneName())
-                                .build()
-                ).toList();
+    private List<Zone> convertDtoToEntity(
+            Performance performance, ZoneCreationRequest zoneCreationRequest) {
+        return zoneCreationRequest.getZones().stream()
+                .map(
+                        zoneElement ->
+                                Zone.builder()
+                                        .performance(performance)
+                                        .zoneName(zoneElement.getZoneName())
+                                        .build())
+                .toList();
     }
 }
