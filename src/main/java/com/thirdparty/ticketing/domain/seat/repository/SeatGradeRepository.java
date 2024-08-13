@@ -13,10 +13,10 @@ public interface SeatGradeRepository extends JpaRepository<SeatGrade, Integer> {
             SELECT sg 
             FROM SeatGrade sg
             WHERE sg.performance.id = :performanceId 
-            AND sg.gradeName IN :gradeNames
+            AND sg.seatGradeId IN :gradeIds
             """)
     List<SeatGrade> findByPerformanceIdAndGradeNames(
             @Param("performanceId") long performanceId,
-            @Param("gradeNames") List<String> gradeNames
+            @Param("gradeIds") List<Long> gradeIds
     );
 }

@@ -56,14 +56,14 @@ public class AdminSeatService {
     }
 
     private List<Seat> convertDtoToEntity(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
-        Map<String, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
+        Map<Long, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
 
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new TicketingException(""));
 
         return seatCreationRequest.getSeats().stream().map(seat -> Seat.builder()
                 .zone(zone)
-                .seatGrade(seatGradeMap.get(seat.getGradeName()))
+                .seatGrade(seatGradeMap.get(seat.getGradeId()))
                 .seatCode(seat.getSeatCode())
                 .build()
         ).toList();
@@ -73,19 +73,19 @@ public class AdminSeatService {
      * N+1 문제를 방지하기 위해 요청된 gradeName 목록을 미리 조회합니다.
      * Map<gradeName, SeatGrade> 형태로 구조화해서 반환합니다.
      */
-    private Map<String, SeatGrade> findSeatGrades(long performanceId, SeatCreationRequest seatCreationRequest) {
-        List<String> gradeNames = seatCreationRequest.getSeats()
+    private Map<Long, SeatGrade> findSeatGrades(long performanceId, SeatCreationRequest seatCreationRequest) {
+        List<Long> gradeIds = seatCreationRequest.getSeats()
                 .stream()
-                .map(SeatCreationElement::getGradeName)
+                .map(SeatCreationElement::getGradeId)
                 .distinct()
                 .toList();
 
-        List<SeatGrade> seatGrades = seatGradeRepository.findByPerformanceIdAndGradeNames(performanceId, gradeNames);
-        Map<String, SeatGrade> seatGradeMap = seatGrades.stream()
-                .collect(Collectors.toMap(SeatGrade::getGradeName, seatGrade -> seatGrade));
+        List<SeatGrade> seatGrades = seatGradeRepository.findByPerformanceIdAndGradeNames(performanceId, gradeIds);
+        Map<Long, SeatGrade> seatGradeMap = seatGrades.stream()
+                .collect(Collectors.toMap(SeatGrade::getSeatGradeId, seatGrade -> seatGrade));
 
         seatCreationRequest.getSeats().forEach(seat -> {
-            if (!seatGradeMap.containsKey(seat.getGradeName())) {
+            if (!seatGradeMap.containsKey(seat.getGradeId())) {
                 throw new TicketingException("");
             }
         });

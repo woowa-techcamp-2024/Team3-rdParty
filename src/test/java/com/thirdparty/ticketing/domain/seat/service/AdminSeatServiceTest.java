@@ -173,10 +173,10 @@ class AdminSeatServiceTest {
 
             SeatCreationElement seat1 = new SeatCreationElement();
             seat1.setSeatCode("A01");
-            seat1.setGradeName(seatGrade1.getGradeName());
+            seat1.setGradeId(seatGrade1.getSeatGradeId());
             SeatCreationElement seat2 = new SeatCreationElement();
             seat2.setSeatCode("B01");
-            seat2.setGradeName(seatGrade2.getGradeName());
+            seat2.setGradeId(seatGrade2.getSeatGradeId());
 
             request.setSeats(
                     List.of(seat1, seat2)

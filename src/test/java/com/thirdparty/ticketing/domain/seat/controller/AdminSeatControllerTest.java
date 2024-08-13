@@ -38,7 +38,7 @@ public class AdminSeatControllerTest extends BaseControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("POST /api/performances/{performancesId}/zones/{zoneId}/seats 요청")
+    @DisplayName("관리자 좌석 생성 API")
     void createSeats() throws Exception {
         // given
         long performanceId = 1L;
@@ -61,7 +61,7 @@ public class AdminSeatControllerTest extends BaseControllerTest {
                         ),
                         requestFields(
                                 fieldWithPath("seats[].seatCode").type(JsonFieldType.STRING).description("좌석 코드"),
-                                fieldWithPath("seats[].gradeName").type(JsonFieldType.STRING).description("좌석 등급명")
+                                fieldWithPath("seats[].gradeId").type(JsonFieldType.NUMBER).description("좌석 등급 id")
                         )
                 ));
     }
@@ -70,11 +70,10 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         SeatCreationRequest seatCreationRequest = new SeatCreationRequest();
         SeatCreationElement seat1 = new SeatCreationElement();
         seat1.setSeatCode("A01");
-        seat1.setGradeName("Grade1");
+        seat1.setGradeId(1L);
         SeatCreationElement seat2 = new SeatCreationElement();
         seat2.setSeatCode("B01");
-        seat2.setGradeName("Grade2");
-
+        seat2.setGradeId(2L);
 
         seatCreationRequest.setSeats(List.of(
                 seat1, seat2
