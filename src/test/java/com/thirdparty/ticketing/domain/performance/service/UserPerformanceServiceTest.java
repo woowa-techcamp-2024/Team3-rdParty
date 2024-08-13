@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.performance.service;
 
+import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
@@ -18,9 +19,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class MemberPerformanceServiceTest {
+class UserPerformanceServiceTest {
 
-    private MemberPerformanceService memberPerformanceService;
+    private UserPerformanceService userPerformanceService;
 
     @Autowired
     private TestEntityManager testEntityManager;
@@ -30,7 +31,7 @@ class MemberPerformanceServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        memberPerformanceService = new MemberPerformanceService(performanceRepository);
+        userPerformanceService = new UserPerformanceService(performanceRepository);
     }
 
     @Nested
@@ -61,10 +62,10 @@ class MemberPerformanceServiceTest {
             testEntityManager.flush();
 
             // When
-            List<PerformanceElement> performanceElements = memberPerformanceService.getPerformances();
+            ItemResult<PerformanceElement> performanceElements = userPerformanceService.getPerformances();
 
             // Then
-            assertThat(performanceElements).isNotEmpty()
+            assertThat(performanceElements.getItem()).isNotEmpty()
                     .hasSize(2)
                     .satisfies(elements -> {
                         assertThat(elements.get(0))

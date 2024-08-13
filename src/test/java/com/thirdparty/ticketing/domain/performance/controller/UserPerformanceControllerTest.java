@@ -1,7 +1,8 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
+import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
-import com.thirdparty.ticketing.domain.performance.service.MemberPerformanceService;
+import com.thirdparty.ticketing.domain.performance.service.UserPerformanceService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,30 +14,29 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MemberPerformanceControllerTest.class)
-@Import(MemberPerformanceController.class)
-class MemberPerformanceControllerTest extends BaseControllerTest {
+@WebMvcTest(UserPerformanceControllerTest.class)
+@Import(UserPerformanceController.class)
+class UserPerformanceControllerTest extends BaseControllerTest {
 
     @MockBean
-    private MemberPerformanceService memberPerformanceService;
+    private UserPerformanceService userPerformanceService;
 
     @Test
     @DisplayName("GET /api/performances")
     void getPerformances() throws Exception {
         //given
-        PerformanceElement performanceElement = new PerformanceElement();
-        performanceElement.setPerformanceId(1L);
-        performanceElement.setPerformanceName("테스트 공연");
-        performanceElement.setPerformancePlace("테스트 장소");
-        performanceElement.setPerformanceShowtime(ZonedDateTime.now());
+        PerformanceElement performanceElement = new PerformanceElement(
+            1L, "테스트 공연", "테스트 장소", ZonedDateTime.now()
+        );
 
-        when(memberPerformanceService.getPerformances()).thenReturn(List.of(performanceElement));
+        given(userPerformanceService.getPerformances()).willReturn(ItemResult.of(List.of(performanceElement)));
 
         //when
         ResultActions result = mockMvc.perform(get("/api/performances")

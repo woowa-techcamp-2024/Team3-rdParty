@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.performance.service;
 
+import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,14 +10,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberPerformanceService {
+public class UserPerformanceService {
 
     private final PerformanceRepository performanceRepository;
 
-    public List<PerformanceElement> getPerformances() {
-        return performanceRepository.findAll()
+    public ItemResult<PerformanceElement> getPerformances() {
+        return ItemResult.of(performanceRepository.findAll()
                 .stream()
                 .map(PerformanceElement::of)
-                .toList();
+                .toList());
     }
 }
