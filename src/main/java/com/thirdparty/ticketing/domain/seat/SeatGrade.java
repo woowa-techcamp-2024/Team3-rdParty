@@ -1,7 +1,9 @@
 package com.thirdparty.ticketing.domain.seat;
 
-import com.thirdparty.ticketing.domain.performance.Performance;
 import jakarta.persistence.*;
+
+import com.thirdparty.ticketing.domain.performance.Performance;
+
 import lombok.*;
 
 @Entity

@@ -2,6 +2,18 @@ package com.thirdparty.ticketing.domain.seat.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.seat.Seat;
@@ -13,32 +25,15 @@ import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 class AdminSeatServiceTest {
-    @Autowired
-    private TestEntityManager testEntityManager;
-    @Autowired
-    private SeatRepository seatRepository;
-    @Autowired
-    private SeatGradeRepository seatGradeRepository;
-    @Autowired
-    private ZoneRepository zoneRepository;
-    @Autowired
-    private PerformanceRepository performanceRepository;
+    @Autowired private TestEntityManager testEntityManager;
+    @Autowired private SeatRepository seatRepository;
+    @Autowired private SeatGradeRepository seatGradeRepository;
+    @Autowired private ZoneRepository zoneRepository;
+    @Autowired private PerformanceRepository performanceRepository;
 
     private AdminSeatService adminSeatService;
 
@@ -47,26 +42,28 @@ class AdminSeatServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository, performanceRepository, zoneRepository);
+        adminSeatService =
+                new AdminSeatService(
+                        seatRepository, seatGradeRepository, performanceRepository, zoneRepository);
         setUpPerformance();
         setUpZone();
     }
 
     private void setUpPerformance() {
-        Performance performance = Performance.builder()
-                .performanceName("공연")
-                .performancePlace("장소")
-                .performanceShowtime(ZonedDateTime.of(2024, 8, 23, 14, 30, 0, 0, ZoneId.of("Asia/Seoul")))
-                .build();
+        Performance performance =
+                Performance.builder()
+                        .performanceName("공연")
+                        .performancePlace("장소")
+                        .performanceShowtime(
+                                ZonedDateTime.of(
+                                        2024, 8, 23, 14, 30, 0, 0, ZoneId.of("Asia/Seoul")))
+                        .build();
         testEntityManager.persistAndFlush(performance);
         this.performance = performance;
     }
 
     private void setUpZone() {
-        Zone zone = Zone.builder()
-                .zoneName("VIP")
-                .performance(performance)
-                .build();
+        Zone zone = Zone.builder().zoneName("VIP").performance(performance).build();
         testEntityManager.persistAndFlush(zone);
         this.zone = zone;
     }
@@ -82,7 +79,8 @@ class AdminSeatServiceTest {
             SeatGradeCreationRequest seatGradeCreationRequest = makeRequest();
 
             // When
-            adminSeatService.createSeatGrades(performance.getPerformanceId(), seatGradeCreationRequest);
+            adminSeatService.createSeatGrades(
+                    performance.getPerformanceId(), seatGradeCreationRequest);
 
             // Then
             List<SeatGrade> seatGrades = seatGradeRepository.findAll();
@@ -90,14 +88,15 @@ class AdminSeatServiceTest {
             SeatGrade seatGrade2 = seatGrades.get(1);
 
             assertThat(seatGrades).hasSize(2);
-            assertThat(seatGrade1.getPerformance().getPerformanceId()).isEqualTo(performance.getPerformanceId());
+            assertThat(seatGrade1.getPerformance().getPerformanceId())
+                    .isEqualTo(performance.getPerformanceId());
             assertThat(seatGrade1.getGradeName()).isEqualTo("Grade1");
             assertThat(seatGrade1.getPrice()).isEqualTo(10000L);
 
-            assertThat(seatGrade2.getPerformance().getPerformanceId()).isEqualTo(performance.getPerformanceId());
+            assertThat(seatGrade2.getPerformance().getPerformanceId())
+                    .isEqualTo(performance.getPerformanceId());
             assertThat(seatGrade2.getGradeName()).isEqualTo("Grade2");
             assertThat(seatGrade2.getPrice()).isEqualTo(20000L);
-
         }
 
         private SeatGradeCreationRequest makeRequest() {
@@ -127,16 +126,18 @@ class AdminSeatServiceTest {
         }
 
         private void setUpSeatGrades() {
-            SeatGrade seatGrade1 = SeatGrade.builder()
-                    .performance(performance)
-                    .price(10000L)
-                    .gradeName("Grade1")
-                    .build();
-            SeatGrade seatGrade2 = SeatGrade.builder()
-                    .performance(performance)
-                    .price(20000L)
-                    .gradeName("Grade2")
-                    .build();
+            SeatGrade seatGrade1 =
+                    SeatGrade.builder()
+                            .performance(performance)
+                            .price(10000L)
+                            .gradeName("Grade1")
+                            .build();
+            SeatGrade seatGrade2 =
+                    SeatGrade.builder()
+                            .performance(performance)
+                            .price(20000L)
+                            .gradeName("Grade2")
+                            .build();
             testEntityManager.persistAndFlush(seatGrade1);
             testEntityManager.persistAndFlush(seatGrade2);
 
@@ -151,7 +152,8 @@ class AdminSeatServiceTest {
             SeatCreationRequest seatCreationRequest = makeRequest();
 
             // When
-            adminSeatService.createSeats(performance.getPerformanceId(), zone.getZoneId(), seatCreationRequest);
+            adminSeatService.createSeats(
+                    performance.getPerformanceId(), zone.getZoneId(), seatCreationRequest);
 
             // Then
             List<Seat> seats = seatRepository.findAll();
@@ -161,11 +163,13 @@ class AdminSeatServiceTest {
             assertThat(seats).hasSize(2);
             assertThat(seat1.getSeatCode()).isEqualTo("A01");
             assertThat(seat1.getZone().getZoneId()).isEqualTo(zone.getZoneId());
-            assertThat(seat1.getSeatGrade().getSeatGradeId()).isEqualTo(seatGrade1.getSeatGradeId());
+            assertThat(seat1.getSeatGrade().getSeatGradeId())
+                    .isEqualTo(seatGrade1.getSeatGradeId());
 
             assertThat(seat2.getSeatCode()).isEqualTo("B01");
             assertThat(seat2.getZone().getZoneId()).isEqualTo(zone.getZoneId());
-            assertThat(seat2.getSeatGrade().getSeatGradeId()).isEqualTo(seatGrade2.getSeatGradeId());
+            assertThat(seat2.getSeatGrade().getSeatGradeId())
+                    .isEqualTo(seatGrade2.getSeatGradeId());
         }
 
         private SeatCreationRequest makeRequest() {
@@ -178,9 +182,7 @@ class AdminSeatServiceTest {
             seat2.setSeatCode("B01");
             seat2.setGradeId(seatGrade2.getSeatGradeId());
 
-            request.setSeats(
-                    List.of(seat1, seat2)
-            );
+            request.setSeats(List.of(seat1, seat2));
 
             return request;
         }

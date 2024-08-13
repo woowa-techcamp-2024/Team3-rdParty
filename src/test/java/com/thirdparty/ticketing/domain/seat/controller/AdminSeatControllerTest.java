@@ -1,13 +1,14 @@
 package com.thirdparty.ticketing.domain.seat.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
-import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
-import com.thirdparty.ticketing.support.BaseControllerTest;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +19,22 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.List;
-
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
+import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(AdminSeatController.class)
 @Import(AdminSeatController.class)
 public class AdminSeatControllerTest extends BaseControllerTest {
 
-    @MockBean
-    private AdminSeatService adminSeatService;
+    @MockBean private AdminSeatService adminSeatService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("관리자 좌석 생성 API")
@@ -46,24 +45,30 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         String content = createBodyContent();
 
         // when
-        ResultActions result = mockMvc.perform(
-                post("/api/performances/{performanceId}/zones/{zoneId}/seats", performanceId, zoneId)
-                .header(AUTHORIZATION_HEADER, adminBearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content));
+        ResultActions result =
+                mockMvc.perform(
+                        post(
+                                        "/api/performances/{performanceId}/zones/{zoneId}/seats",
+                                        performanceId,
+                                        zoneId)
+                                .header(AUTHORIZATION_HEADER, adminBearerToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content));
 
         // then
         result.andExpect(status().isCreated())
-                .andDo(restDocs.document(
-                        pathParameters(
-                                parameterWithName("performanceId").description("공연 ID"),
-                                parameterWithName("zoneId").description("존 ID")
-                        ),
-                        requestFields(
-                                fieldWithPath("seats[].seatCode").type(JsonFieldType.STRING).description("좌석 코드"),
-                                fieldWithPath("seats[].gradeId").type(JsonFieldType.NUMBER).description("좌석 등급 id")
-                        )
-                ));
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("performanceId").description("공연 ID"),
+                                        parameterWithName("zoneId").description("존 ID")),
+                                requestFields(
+                                        fieldWithPath("seats[].seatCode")
+                                                .type(JsonFieldType.STRING)
+                                                .description("좌석 코드"),
+                                        fieldWithPath("seats[].gradeId")
+                                                .type(JsonFieldType.NUMBER)
+                                                .description("좌석 등급 id"))));
     }
 
     private String createBodyContent() throws JsonProcessingException {
@@ -75,9 +80,7 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         seat2.setSeatCode("B01");
         seat2.setGradeId(2L);
 
-        seatCreationRequest.setSeats(List.of(
-                seat1, seat2
-        ));
+        seatCreationRequest.setSeats(List.of(seat1, seat2));
 
         return objectMapper.writeValueAsString(seatCreationRequest);
     }
@@ -90,23 +93,26 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         String content = makeRequest();
 
         // when
-        ResultActions result = mockMvc.perform(
-                post("/api/performances/{performanceId}/grades", performanceId)
-                        .header(AUTHORIZATION_HEADER, adminBearerToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content));
+        ResultActions result =
+                mockMvc.perform(
+                        post("/api/performances/{performanceId}/grades", performanceId)
+                                .header(AUTHORIZATION_HEADER, adminBearerToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content));
 
         // then
         result.andExpect(status().isCreated())
-                .andDo(restDocs.document(
-                        pathParameters(
-                                parameterWithName("performanceId").description("공연 ID")
-                        ),
-                        requestFields(
-                                fieldWithPath("seatGrades[].price").type(JsonFieldType.NUMBER).description("등급 가격"),
-                                fieldWithPath("seatGrades[].gradeName").type(JsonFieldType.STRING).description("좌석 등급명")
-                        )
-                ));
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("performanceId").description("공연 ID")),
+                                requestFields(
+                                        fieldWithPath("seatGrades[].price")
+                                                .type(JsonFieldType.NUMBER)
+                                                .description("등급 가격"),
+                                        fieldWithPath("seatGrades[].gradeName")
+                                                .type(JsonFieldType.STRING)
+                                                .description("좌석 등급명"))));
     }
 
     private String makeRequest() throws JsonProcessingException {
