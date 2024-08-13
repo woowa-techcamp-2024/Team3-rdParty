@@ -47,4 +47,8 @@ public class Seat extends BaseEntity {
         this.seatCode = seatCode;
         this.seatStatus = seatStatus;
     }
+
+    public boolean isSelectable() {
+        return seatStatus.isSelectable();
+    }
 }

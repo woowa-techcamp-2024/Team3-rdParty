@@ -11,7 +11,7 @@ public class SeatElement {
     private final boolean seatAvailable;
 
     public static SeatElement of(Seat seat) {
-        boolean isSeatAvailable = seat.getSeatStatus().isSelectable();
+        boolean isSeatAvailable = seat.isSelectable();
         return new SeatElement(seat.getSeatId(), seat.getSeatCode(), isSeatAvailable);
     }
 }
