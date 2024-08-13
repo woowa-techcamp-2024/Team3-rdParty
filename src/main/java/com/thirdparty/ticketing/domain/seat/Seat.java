@@ -41,7 +41,7 @@ public class Seat extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(length = 16, nullable = false)
-    private SeatStatus seatStatus = SeatStatus.AVAILABLE;
+    private SeatStatus seatStatus = SeatStatus.SELECTABLE;
 
     public Seat(String seatCode, SeatStatus seatStatus) {
         this.seatCode = seatCode;

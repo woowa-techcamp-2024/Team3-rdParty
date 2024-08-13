@@ -1,12 +1,12 @@
 package com.thirdparty.ticketing.domain.seat;
 
 public enum SeatStatus {
-    AVAILABLE,
+    SELECTABLE,
     SELECTED,
     PENDING_PAYMENT,
     PAID;
 
-    public boolean isAvailable() {
-        return this == AVAILABLE;
+    public boolean isSelectable() {
+        return this == SELECTABLE;
     }
 }
