@@ -4,5 +4,9 @@ public enum SeatStatus {
     AVAILABLE,
     SELECTED,
     PENDING_PAYMENT,
-    PAID
+    PAID;
+
+    public boolean isAvailable() {
+        return this == AVAILABLE;
+    }
 }
