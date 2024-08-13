@@ -1,6 +1,8 @@
 package com.thirdparty.ticketing.domain.seat.service;
 
 import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class AdminSeatService {
     private final SeatRepository seatRepository;
     private final SeatGradeRepository seatGradeRepository;
+    private final PerformanceRepository performanceRepository;
 
     @Transactional
     public void createSeats(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
@@ -32,13 +35,11 @@ public class AdminSeatService {
     private List<Seat> convertDtoToEntity(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
         Map<String, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
 
-        return seatCreationRequest.getSeats().stream().map(seat -> {
-                    return Seat.builder()
-                            .zone(Zone.builder().zoneId(zoneId).build())
-                            .seatGrade(seatGradeMap.get(seat.getGradeName()))
-                            .seatCode(seat.getSeatCode())
-                            .build();
-                }
+        return seatCreationRequest.getSeats().stream().map(seat -> Seat.builder()
+                .zone(Zone.builder().zoneId(zoneId).build())
+                .seatGrade(seatGradeMap.get(seat.getGradeName()))
+                .seatCode(seat.getSeatCode())
+                .build()
         ).toList();
     }
 
@@ -68,11 +69,22 @@ public class AdminSeatService {
 
     @Transactional
     public void createSeatGrades(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
-        List<SeatGrade> seatGrades = seatGradeCreationRequest.getSeatGrades()
-                .stream()
-                .map(seatGradeElement -> seatGradeElement.toEntity(performanceId))
-                .toList();
+        List<SeatGrade> seatGrades = convertDtoToEntity(performanceId, seatGradeCreationRequest);
 
         seatGradeRepository.saveAll(seatGrades);
+    }
+
+    private List<SeatGrade> convertDtoToEntity(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
+        Performance performance = performanceRepository.findById(performanceId)
+                .orElseThrow(() -> new TicketingException(""));
+
+        return seatGradeCreationRequest.getSeatGrades()
+                .stream()
+                .map(seatGrade -> SeatGrade.builder()
+                        .performance(performance)
+                        .price(seatGrade.getPrice())
+                        .gradeName(seatGrade.getGradeName())
+                        .build())
+                .toList();
     }
 }

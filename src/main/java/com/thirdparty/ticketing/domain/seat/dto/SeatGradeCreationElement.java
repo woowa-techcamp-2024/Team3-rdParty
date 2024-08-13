@@ -1,7 +1,5 @@
 package com.thirdparty.ticketing.domain.seat.dto;
 
-import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,12 +15,4 @@ public class SeatGradeCreationElement {
     @NotBlank(message = "좌석 등급 명은 공백일 수 없습니다.")
     @Size(max = 32, message = "좌석 등급 명은 32자 이하로만 설정할 수 있습니다.")
     private String gradeName;
-
-    public SeatGrade toEntity(long performanceId) {
-        return SeatGrade.builder()
-                .performance(Performance.builder().performanceId(performanceId).build())
-                .price(price)
-                .gradeName(gradeName)
-                .build();
-    }
 }

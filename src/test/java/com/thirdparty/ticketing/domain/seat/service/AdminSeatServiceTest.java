@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.domain.seat.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
@@ -33,6 +34,9 @@ class AdminSeatServiceTest {
     private SeatRepository seatRepository;
     @Autowired
     private SeatGradeRepository seatGradeRepository;
+    @Autowired
+    private PerformanceRepository performanceRepository;
+
     private AdminSeatService adminSeatService;
 
     private Performance performance;
@@ -40,7 +44,7 @@ class AdminSeatServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository);
+        adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository, performanceRepository);
         setUpPerformance();
         setUpZone();
     }
