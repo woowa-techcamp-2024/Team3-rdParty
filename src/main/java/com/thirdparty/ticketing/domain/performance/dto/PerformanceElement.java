@@ -9,19 +9,19 @@ import lombok.Data;
 @Data
 public class PerformanceElement {
 
-	private final Long performanceId;
+    private final Long performanceId;
 
-	private final String performanceName;
+    private final String performanceName;
 
-	private final String performancePlace;
+    private final String performancePlace;
 
-	private final ZonedDateTime performanceShowtime;
+    private final ZonedDateTime performanceShowtime;
 
-	public static PerformanceElement of(Performance perf) {
-		return new PerformanceElement(
-			perf.getPerformanceId(),
-			perf.getPerformanceName(),
-			perf.getPerformancePlace(),
-			perf.getPerformanceShowtime());
-	}
+    public static PerformanceElement of(Performance perf) {
+        return new PerformanceElement(
+                perf.getPerformanceId(),
+                perf.getPerformanceName(),
+                perf.getPerformancePlace(),
+                perf.getPerformanceShowtime());
+    }
 }

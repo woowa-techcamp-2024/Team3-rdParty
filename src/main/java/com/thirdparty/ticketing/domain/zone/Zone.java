@@ -1,8 +1,10 @@
 package com.thirdparty.ticketing.domain.zone;
 
+import jakarta.persistence.*;
+
 import com.thirdparty.ticketing.domain.BaseEntity;
 import com.thirdparty.ticketing.domain.performance.Performance;
-import jakarta.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

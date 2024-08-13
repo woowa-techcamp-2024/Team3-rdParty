@@ -1,10 +1,11 @@
 package com.thirdparty.ticketing.domain.zone.repository;
 
-import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.zone.Zone;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.zone.Zone;
 
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
 

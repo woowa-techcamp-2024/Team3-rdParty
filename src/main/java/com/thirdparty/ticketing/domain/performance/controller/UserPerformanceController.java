@@ -1,14 +1,15 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
-import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
-import com.thirdparty.ticketing.domain.performance.service.UserPerformanceService;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
+import com.thirdparty.ticketing.domain.performance.service.UserPerformanceService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor

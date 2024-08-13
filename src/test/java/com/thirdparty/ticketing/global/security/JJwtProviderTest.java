@@ -3,6 +3,15 @@ package com.thirdparty.ticketing.global.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
+import java.time.ZonedDateTime;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
@@ -10,13 +19,6 @@ import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
 import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
-import java.time.ZonedDateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 class JJwtProviderTest {
@@ -25,8 +27,7 @@ class JJwtProviderTest {
     private String secret;
     private JwtProvider jwtProvider;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
@@ -43,14 +44,15 @@ class JJwtProviderTest {
         @Test
         @DisplayName("새로운 액세스 토큰을 반환한다.")
         void createAccessToken() {
-            //given
-            Member member = new Member("test@test.com", "password", MemberRole.USER, ZonedDateTime.now());
+            // given
+            Member member =
+                    new Member("test@test.com", "password", MemberRole.USER, ZonedDateTime.now());
             memberRepository.save(member);
 
-            //when
+            // when
             String accessToken = jwtProvider.createAccessToken(member);
 
-            //then
+            // then
             assertThat(accessToken).isNotBlank();
         }
     }
@@ -73,12 +75,12 @@ class JJwtProviderTest {
         @Test
         @DisplayName("분석한 토큰 페이로드를 반환한다.")
         void parseAccessToken() {
-            //given
+            // given
 
-            //when
+            // when
             CustomClaims customClaims = jwtProvider.parseAccessToken(accessToken);
 
-            //then
+            // then
             assertThat(customClaims.getEmail()).isEqualTo(member.getEmail());
             assertThat(customClaims.getMemberRole()).isEqualTo(member.getMemberRole());
         }
@@ -86,30 +88,34 @@ class JJwtProviderTest {
         @Test
         @DisplayName("예외(invalidToken): 액세스 토큰이 유효하지 않으면")
         void invalidToken_WhenAccessTokenIsInvalid() {
-            //given
+            // given
             String notEqualSecret = secret + "asdf";
-            JJwtProvider invalidJJwtProvider = new JJwtProvider(issuer, expirySeconds, notEqualSecret);
+            JJwtProvider invalidJJwtProvider =
+                    new JJwtProvider(issuer, expirySeconds, notEqualSecret);
             String invalidAccessToken = invalidJJwtProvider.createAccessToken(member);
 
-            //when
-            Exception exception = catchException(() -> jwtProvider.parseAccessToken(invalidAccessToken));
+            // when
+            Exception exception =
+                    catchException(() -> jwtProvider.parseAccessToken(invalidAccessToken));
 
-            //then
+            // then
             assertThat(exception).isInstanceOf(InvalidTokenException.class);
         }
 
         @Test
         @DisplayName("예외(expiredToken): 액세스 토큰이 만료되었으면")
         void expiredToken_WhenAccessTokenIsExpired() {
-            //given
+            // given
             int alreadyExpiredSeconds = -1;
-            JJwtProvider expiredJJwtProvider = new JJwtProvider(issuer, alreadyExpiredSeconds, secret);
+            JJwtProvider expiredJJwtProvider =
+                    new JJwtProvider(issuer, alreadyExpiredSeconds, secret);
             String expiredAccessToken = expiredJJwtProvider.createAccessToken(member);
 
-            //when
-            Exception exception = catchException(() -> jwtProvider.parseAccessToken(expiredAccessToken));
+            // when
+            Exception exception =
+                    catchException(() -> jwtProvider.parseAccessToken(expiredAccessToken));
 
-            //then
+            // then
             assertThat(exception).isInstanceOf(ExpiredTokenException.class);
         }
     }

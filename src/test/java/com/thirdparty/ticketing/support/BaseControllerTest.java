@@ -6,12 +6,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.global.config.SecurityConfig;
-import com.thirdparty.ticketing.global.config.WebConfig;
-import com.thirdparty.ticketing.support.BaseControllerTest.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +21,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.global.config.SecurityConfig;
+import com.thirdparty.ticketing.global.config.WebConfig;
+import com.thirdparty.ticketing.support.BaseControllerTest.RestDocsConfig;
+
 @Import({RestDocsConfig.class, SecurityConfig.class, WebConfig.class})
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class BaseControllerTest {
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
 
-    @Autowired
-    protected JwtProvider jwtProvider;
+    @Autowired protected JwtProvider jwtProvider;
 
     protected String adminBearerToken;
 
@@ -42,8 +42,7 @@ public abstract class BaseControllerTest {
 
     protected MockMvc mockMvc;
 
-    @Autowired
-    protected RestDocumentationResultHandler restDocs;
+    @Autowired protected RestDocumentationResultHandler restDocs;
 
     @TestConfiguration
     public static class RestDocsConfig {
@@ -53,8 +52,7 @@ public abstract class BaseControllerTest {
             return MockMvcRestDocumentation.document(
                     "{class-name}/{method-name}",
                     preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())
-            );
+                    preprocessResponse(prettyPrint()));
         }
     }
 
@@ -62,14 +60,16 @@ public abstract class BaseControllerTest {
     void setUp(
             WebApplicationContext applicationContext,
             RestDocumentationContextProvider documentationContextProvider) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
-                .alwaysDo(print())
-                .alwaysDo(restDocs)
-                .apply(springSecurity())
-                .apply(
-                        MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-                .addFilter(new CharacterEncodingFilter("UTF-8", true))
-                .build();
+        this.mockMvc =
+                MockMvcBuilders.webAppContextSetup(applicationContext)
+                        .alwaysDo(print())
+                        .alwaysDo(restDocs)
+                        .apply(springSecurity())
+                        .apply(
+                                MockMvcRestDocumentation.documentationConfiguration(
+                                        documentationContextProvider))
+                        .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                        .build();
 
         Member admin = new Member("admin@admin.com", "password", MemberRole.ADMIN);
         this.adminBearerToken = "Bearer " + jwtProvider.createAccessToken(admin);

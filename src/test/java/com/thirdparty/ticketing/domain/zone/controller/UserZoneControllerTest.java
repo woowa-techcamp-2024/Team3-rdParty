@@ -25,33 +25,33 @@ import com.thirdparty.ticketing.support.BaseControllerTest;
 @Import(UserZoneController.class)
 class UserZoneControllerTest extends BaseControllerTest {
 
-	@MockBean
-	private UserZoneService userZoneService;
+    @MockBean private UserZoneService userZoneService;
 
-	@Test
-	@DisplayName("GET /api/performances/{performanceId}/zones")
-	void getZones() throws Exception {
-		// given
-		long performanceId = 1L;
-		ZoneElement zoneElement = new ZoneElement(1L, "테스트 구역");
+    @Test
+    @DisplayName("GET /api/performances/{performanceId}/zones")
+    void getZones() throws Exception {
+        // given
+        long performanceId = 1L;
+        ZoneElement zoneElement = new ZoneElement(1L, "테스트 구역");
 
-		given(userZoneService.getZones(performanceId)).willReturn(ItemResult.of(List.of(zoneElement)));
+        given(userZoneService.getZones(performanceId))
+                .willReturn(ItemResult.of(List.of(zoneElement)));
 
-		// when
-		ResultActions result = mockMvc.perform(get("/api/performances/{performanceId}/zones", performanceId)
-			.header(AUTHORIZATION_HEADER, userBearerToken));
+        // when
+        ResultActions result =
+                mockMvc.perform(
+                        get("/api/performances/{performanceId}/zones", performanceId)
+                                .header(AUTHORIZATION_HEADER, userBearerToken));
 
-		// then
-		result.andExpect(status().isOk())
-			.andDo(restDocs.document(
-				pathParameters(
-					parameterWithName("performanceId").description("공연 ID")
-				),
-				responseFields(
-					fieldWithPath("item").description("구역 목록"),
-					fieldWithPath("item[].zoneId").description("구역 ID"),
-					fieldWithPath("item[].zoneName").description("구역 이름")
-				)
-			));
-	}
+        // then
+        result.andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("performanceId").description("공연 ID")),
+                                responseFields(
+                                        fieldWithPath("item").description("구역 목록"),
+                                        fieldWithPath("item[].zoneId").description("구역 ID"),
+                                        fieldWithPath("item[].zoneName").description("구역 이름"))));
+    }
 }

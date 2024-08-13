@@ -3,10 +3,6 @@ package com.thirdparty.ticketing.global.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
 class AuthenticationFilterTest {
 
@@ -61,37 +62,49 @@ class AuthenticationFilterTest {
             @Test
             @DisplayName("인증 프로세스를 진행한다.")
             void runAuthenticationProcess_WhenContainsAuthorizationHeader() throws Exception {
-                //given
+                // given
                 String bearerAccessToken = "Bearer " + accessToken;
                 httpServletRequest.addHeader("Authorization", bearerAccessToken);
 
-                //when
-                authenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+                // when
+                authenticationFilter.doFilterInternal(
+                        httpServletRequest, httpServletResponse, filterChain);
 
-                //then
+                // then
                 CustomClaims customClaims = jwtProvider.parseAccessToken(accessToken);
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                assertThat(authentication).isNotNull().isInstanceOf(UsernamePasswordAuthenticationToken.class)
-                        .satisfies(auth -> {
-                            assertThat(auth.getPrincipal()).isEqualTo(customClaims.getEmail());
-                            assertThat(auth.getAuthorities()).map(GrantedAuthority::getAuthority)
-                                    .containsExactlyElementsOf(customClaims.getMemberRole().getAuthorities());
-                        });
+                Authentication authentication =
+                        SecurityContextHolder.getContext().getAuthentication();
+                assertThat(authentication)
+                        .isNotNull()
+                        .isInstanceOf(UsernamePasswordAuthenticationToken.class)
+                        .satisfies(
+                                auth -> {
+                                    assertThat(auth.getPrincipal())
+                                            .isEqualTo(customClaims.getEmail());
+                                    assertThat(auth.getAuthorities())
+                                            .map(GrantedAuthority::getAuthority)
+                                            .containsExactlyElementsOf(
+                                                    customClaims.getMemberRole().getAuthorities());
+                                });
             }
 
             @Test
             @DisplayName("예외(authentication): 액세스 토큰 형식이 Beaerer가 아니면")
             void authentication_WhenAccessTokenTypeIsNotBearer() {
-                //given
+                // given
                 String invalidAccessToken = "invalid" + accessToken;
                 httpServletRequest.addHeader("Authorization", invalidAccessToken);
 
-                //when
-                Exception exception = catchException(
-                        () -> authenticationFilter.doFilterInternal(httpServletRequest,
-                                httpServletResponse, filterChain));
+                // when
+                Exception exception =
+                        catchException(
+                                () ->
+                                        authenticationFilter.doFilterInternal(
+                                                httpServletRequest,
+                                                httpServletResponse,
+                                                filterChain));
 
-                //then
+                // then
                 assertThat(exception).isInstanceOf(AuthenticationException.class);
             }
         }
@@ -103,13 +116,15 @@ class AuthenticationFilterTest {
             @Test
             @DisplayName("무시한다.")
             void ignoreAuthenticationProcess_WhenNotContainsAuthorizationHeader() throws Exception {
-                //given
+                // given
 
-                //when
-                authenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+                // when
+                authenticationFilter.doFilterInternal(
+                        httpServletRequest, httpServletResponse, filterChain);
 
-                //then
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                // then
+                Authentication authentication =
+                        SecurityContextHolder.getContext().getAuthentication();
                 assertThat(authentication).isNull();
             }
         }

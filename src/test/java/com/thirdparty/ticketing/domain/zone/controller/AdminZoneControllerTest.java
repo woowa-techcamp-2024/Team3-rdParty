@@ -7,14 +7,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.zone.contoller.AdminZoneController;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
-import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +19,21 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.zone.contoller.AdminZoneController;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
+import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
+import com.thirdparty.ticketing.support.BaseControllerTest;
+
 @WebMvcTest(AdminZoneControllerTest.class)
 @Import(AdminZoneController.class)
 public class AdminZoneControllerTest extends BaseControllerTest {
 
-    @MockBean
-    private AdminZoneService adminZoneService;
+    @MockBean private AdminZoneService adminZoneService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("POST /api/performances/{performanceId}/zones")
@@ -42,22 +42,24 @@ public class AdminZoneControllerTest extends BaseControllerTest {
         long performanceId = 1L;
         String content = createBodyContent();
 
-        //when
-        ResultActions result = mockMvc.perform(post ("/api/performances/{performanceId}/zones", performanceId)
-                .header(AUTHORIZATION_HEADER, adminBearerToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content));
+        // when
+        ResultActions result =
+                mockMvc.perform(
+                        post("/api/performances/{performanceId}/zones", performanceId)
+                                .header(AUTHORIZATION_HEADER, adminBearerToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content));
 
-        //then
+        // then
         result.andExpect(status().isCreated())
-                .andDo(restDocs.document(
-                        pathParameters(
-                                parameterWithName("performanceId").description("공연 ID")
-                        ),
-                        requestFields(
-                                fieldWithPath("zones[].zoneName").type(JsonFieldType.STRING).description("존 이름")
-                        )
-                ));
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("performanceId").description("공연 ID")),
+                                requestFields(
+                                        fieldWithPath("zones[].zoneName")
+                                                .type(JsonFieldType.STRING)
+                                                .description("존 이름"))));
     }
 
     private String createBodyContent() throws JsonProcessingException {
@@ -67,9 +69,7 @@ public class AdminZoneControllerTest extends BaseControllerTest {
         ZoneCreationElement zone2 = new ZoneCreationElement();
         zone2.setZoneName("General");
 
-        zoneCreationRequest.setZones(List.of(
-                zone1, zone2
-        ));
+        zoneCreationRequest.setZones(List.of(zone1, zone2));
 
         return objectMapper.writeValueAsString(zoneCreationRequest);
     }

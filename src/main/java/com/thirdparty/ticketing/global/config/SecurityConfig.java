@@ -1,13 +1,7 @@
 package com.thirdparty.ticketing.global.config;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.PasswordEncoder;
-import com.thirdparty.ticketing.global.security.AuthenticationFilter;
-import com.thirdparty.ticketing.global.security.JJwtProvider;
 import java.util.List;
-import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,13 +17,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.domain.member.service.PasswordEncoder;
+import com.thirdparty.ticketing.global.security.AuthenticationFilter;
+import com.thirdparty.ticketing.global.security.BCryptPasswordEncoder;
+import com.thirdparty.ticketing.global.security.JJwtProvider;
+
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtProvider jwtProvider) throws Exception {
-        return http
-                .httpBasic(AbstractHttpConfigurer::disable)
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtProvider jwtProvider)
+            throws Exception {
+        return http.httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
@@ -37,20 +38,23 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST,
-                                "/api/performances",
-                                "/api/performances/*/zones",
-                                "/api/performances/*/zones/*/seats"
-                        ).hasAuthority(MemberRole.ADMIN.getValue())
-                        .requestMatchers(
-                                "/api/performances/**",
-                                "/api/tickets/**"
-                        ).authenticated()
-                        .anyRequest().permitAll()
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new AuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(
+                        request ->
+                                request.requestMatchers(
+                                                HttpMethod.POST,
+                                                "/api/performances",
+                                                "/api/performances/*/zones",
+                                                "/api/performances/*/zones/*/seats")
+                                        .hasAuthority(MemberRole.ADMIN.getValue())
+                                        .requestMatchers("/api/performances/**", "/api/tickets/**")
+                                        .authenticated()
+                                        .anyRequest()
+                                        .permitAll())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(
+                        new AuthenticationFilter(jwtProvider),
+                        UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
@@ -58,7 +62,8 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -66,20 +71,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new PasswordEncoder() {
-            @Override
-            public String encode(String rawPassword) {
-                return new StringBuilder(rawPassword).reverse().toString();
-            }
-
-            @Override
-            public void checkMatches(Member member, String rawPassword) {
-                if (encode(rawPassword).equals(member.getPassword())) {
-                    return;
-                }
-                throw new NoSuchElementException("아이디/패스워드가 일치하지 않습니다.");
-            }
-        };
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
