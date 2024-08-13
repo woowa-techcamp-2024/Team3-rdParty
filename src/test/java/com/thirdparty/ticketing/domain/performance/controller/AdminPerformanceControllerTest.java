@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.service.AdminPerformanceService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 

@@ -38,6 +38,8 @@ public abstract class BaseControllerTest {
 
     protected String adminBearerToken;
 
+    protected String userBearerToken;
+
     protected MockMvc mockMvc;
 
     @Autowired protected RestDocumentationResultHandler restDocs;
@@ -71,5 +73,8 @@ public abstract class BaseControllerTest {
 
         Member admin = new Member("admin@admin.com", "password", MemberRole.ADMIN);
         this.adminBearerToken = "Bearer " + jwtProvider.createAccessToken(admin);
+
+        Member user = new Member("user@user.com", "password", MemberRole.USER);
+        this.userBearerToken = "Bearer " + jwtProvider.createAccessToken(user);
     }
 }

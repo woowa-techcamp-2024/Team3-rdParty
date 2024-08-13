@@ -5,7 +5,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 
 import lombok.RequiredArgsConstructor;

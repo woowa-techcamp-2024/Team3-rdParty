@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.thirdparty.ticketing.domain.performance.Performance;
-import com.thirdparty.ticketing.domain.performance.controller.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 
 @DataJpaTest
