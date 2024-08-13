@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -30,15 +29,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.support.DocumentationTest.DocsController;
 
 @WebMvcTest(controllers = DocumentationTest.class)
 @Import(DocsController.class)
 @DisplayName("API 문서 테스트 코드 작성 시")
 public class DocumentationTest extends BaseControllerTest {
-
-    @Autowired ObjectMapper objectMapper;
 
     public record HelloRequest(String name) {}
 

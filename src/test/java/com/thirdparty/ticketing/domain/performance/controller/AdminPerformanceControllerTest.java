@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -18,7 +17,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
 import com.thirdparty.ticketing.domain.performance.service.AdminPerformanceService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
@@ -28,8 +26,6 @@ import com.thirdparty.ticketing.support.BaseControllerTest;
 class AdminPerformanceControllerTest extends BaseControllerTest {
 
     @MockBean private AdminPerformanceService adminPerformanceService;
-
-    @Autowired private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("POST /api/performances")

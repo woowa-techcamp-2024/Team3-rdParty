@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -20,7 +19,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.zone.contoller.AdminZoneController;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
 import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
@@ -32,8 +30,6 @@ import com.thirdparty.ticketing.support.BaseControllerTest;
 public class AdminZoneControllerTest extends BaseControllerTest {
 
     @MockBean private AdminZoneService adminZoneService;
-
-    @Autowired private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("POST /api/performances/{performanceId}/zones")
