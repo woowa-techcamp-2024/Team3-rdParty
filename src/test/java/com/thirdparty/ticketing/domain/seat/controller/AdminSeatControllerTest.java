@@ -11,30 +11,24 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationElement;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationElement;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(AdminSeatController.class)
-@Import(AdminSeatController.class)
 public class AdminSeatControllerTest extends BaseControllerTest {
 
     @MockBean private AdminSeatService adminSeatService;
-
-    @Autowired private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("관리자 좌석 생성 API")

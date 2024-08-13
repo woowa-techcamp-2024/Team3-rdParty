@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
-import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationRequest;
+import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 
 import lombok.RequiredArgsConstructor;
