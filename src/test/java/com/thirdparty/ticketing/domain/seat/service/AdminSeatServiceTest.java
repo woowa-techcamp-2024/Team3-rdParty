@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +36,8 @@ class AdminSeatServiceTest {
     @Autowired
     private SeatGradeRepository seatGradeRepository;
     @Autowired
+    private ZoneRepository zoneRepository;
+    @Autowired
     private PerformanceRepository performanceRepository;
 
     private AdminSeatService adminSeatService;
@@ -44,7 +47,7 @@ class AdminSeatServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository, performanceRepository);
+        adminSeatService = new AdminSeatService(seatRepository, seatGradeRepository, performanceRepository, zoneRepository);
         setUpPerformance();
         setUpZone();
     }

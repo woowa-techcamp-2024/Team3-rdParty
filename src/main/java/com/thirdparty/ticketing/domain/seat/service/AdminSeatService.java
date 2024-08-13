@@ -11,6 +11,7 @@ import com.thirdparty.ticketing.domain.seat.dto.SeatCreationRequest;
 import com.thirdparty.ticketing.domain.seat.dto.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
+import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,28 @@ public class AdminSeatService {
     private final SeatRepository seatRepository;
     private final SeatGradeRepository seatGradeRepository;
     private final PerformanceRepository performanceRepository;
+    private final ZoneRepository zoneRepository;
+
+    @Transactional
+    public void createSeatGrades(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
+        List<SeatGrade> seatGrades = convertDtoToEntity(performanceId, seatGradeCreationRequest);
+
+        seatGradeRepository.saveAll(seatGrades);
+    }
+
+    private List<SeatGrade> convertDtoToEntity(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
+        Performance performance = performanceRepository.findById(performanceId)
+                .orElseThrow(() -> new TicketingException(""));
+
+        return seatGradeCreationRequest.getSeatGrades()
+                .stream()
+                .map(seatGrade -> SeatGrade.builder()
+                        .performance(performance)
+                        .price(seatGrade.getPrice())
+                        .gradeName(seatGrade.getGradeName())
+                        .build())
+                .toList();
+    }
 
     @Transactional
     public void createSeats(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
@@ -35,8 +58,11 @@ public class AdminSeatService {
     private List<Seat> convertDtoToEntity(long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
         Map<String, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
 
+        Zone zone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new TicketingException(""));
+
         return seatCreationRequest.getSeats().stream().map(seat -> Seat.builder()
-                .zone(Zone.builder().zoneId(zoneId).build())
+                .zone(zone)
                 .seatGrade(seatGradeMap.get(seat.getGradeName()))
                 .seatCode(seat.getSeatCode())
                 .build()
@@ -65,26 +91,5 @@ public class AdminSeatService {
         });
 
         return seatGradeMap;
-    }
-
-    @Transactional
-    public void createSeatGrades(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
-        List<SeatGrade> seatGrades = convertDtoToEntity(performanceId, seatGradeCreationRequest);
-
-        seatGradeRepository.saveAll(seatGrades);
-    }
-
-    private List<SeatGrade> convertDtoToEntity(long performanceId, SeatGradeCreationRequest seatGradeCreationRequest) {
-        Performance performance = performanceRepository.findById(performanceId)
-                .orElseThrow(() -> new TicketingException(""));
-
-        return seatGradeCreationRequest.getSeatGrades()
-                .stream()
-                .map(seatGrade -> SeatGrade.builder()
-                        .performance(performance)
-                        .price(seatGrade.getPrice())
-                        .gradeName(seatGrade.getGradeName())
-                        .build())
-                .toList();
     }
 }
