@@ -18,6 +18,7 @@ bin/
 !**/src/test/**/bin/
 # src 아래 yml파일 잠금
 **/src/**/*.yml
+backend-config/*.yml
 
 ### IntelliJ IDEA ###
 .idea
