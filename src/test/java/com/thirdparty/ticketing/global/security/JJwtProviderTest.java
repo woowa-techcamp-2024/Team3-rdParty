@@ -14,11 +14,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
 import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 
 @DataJpaTest
 class JJwtProviderTest {

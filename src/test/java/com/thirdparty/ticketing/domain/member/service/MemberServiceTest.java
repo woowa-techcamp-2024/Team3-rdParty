@@ -13,8 +13,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
-import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.member.dto.response.CreateMemberResponse;
+import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 
 @DataJpaTest
 class MemberServiceTest {

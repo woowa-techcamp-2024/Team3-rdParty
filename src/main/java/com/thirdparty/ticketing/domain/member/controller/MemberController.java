@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
-import com.thirdparty.ticketing.domain.member.service.MemberService;
 import com.thirdparty.ticketing.domain.member.dto.response.CreateMemberResponse;
+import com.thirdparty.ticketing.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
