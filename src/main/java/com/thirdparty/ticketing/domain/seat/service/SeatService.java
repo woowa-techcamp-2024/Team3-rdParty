@@ -44,7 +44,7 @@ public class SeatService {
         Performance performance =
                 performanceRepository
                         .findById(performanceId)
-                        .orElseThrow(() -> new TicketingException(("")));
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_ZONE));
         List<SeatGradeElement> seatGrades =
                 seatGradeRepository.findAllByPerformance(performance).stream()
                         .map(SeatGradeElement::of)
