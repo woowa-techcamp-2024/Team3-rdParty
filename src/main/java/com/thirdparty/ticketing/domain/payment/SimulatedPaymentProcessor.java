@@ -21,9 +21,9 @@ public class SimulatedPaymentProcessor implements PaymentProcessor {
         simulateRandomDelay(random);
 
         // 5% 확률로 결제 실패 예외 발생
-        if (random.nextInt(100) < 5) {
-            throw new TicketingException(ErrorCode.PAYMENT_FAILED);
-        }
+//        if (random.nextInt(100) < 5) {
+//            throw new TicketingException(ErrorCode.PAYMENT_FAILED);
+//        }
     }
 
     private void simulateRandomDelay(Random random) {
