@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.domain.ticket.service;
 import java.util.List;
 
 import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
@@ -24,7 +25,7 @@ public abstract class TicketService {
         Member member =
                 memberRepository
                         .findByEmail(memberEmail)
-                        .orElseThrow(() -> new TicketingException("Member not found"));
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         List<TicketElement> tickets =
                 ticketRepository.findAllByMember(member).stream().map(TicketElement::of).toList();
