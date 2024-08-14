@@ -19,8 +19,8 @@ import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
 class AuthenticationFilterTest {
 

@@ -18,9 +18,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.dto.response.CreateMemberResponse;
 import com.thirdparty.ticketing.domain.member.service.MemberService;
-import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(controllers = MemberController.class)

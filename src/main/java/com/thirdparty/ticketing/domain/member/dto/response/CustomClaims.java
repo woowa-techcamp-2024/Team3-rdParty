@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.member.service.response;
+package com.thirdparty.ticketing.domain.member.dto.response;
 
 import com.thirdparty.ticketing.domain.member.MemberRole;
 

@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.member.controller.request;
+package com.thirdparty.ticketing.domain.member.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

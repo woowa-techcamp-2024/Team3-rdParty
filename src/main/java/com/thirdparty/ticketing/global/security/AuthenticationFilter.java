@@ -15,8 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
