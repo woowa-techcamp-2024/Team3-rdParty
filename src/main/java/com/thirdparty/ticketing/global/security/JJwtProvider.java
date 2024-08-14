@@ -5,10 +5,10 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
-import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
@@ -44,10 +44,10 @@ public class JJwtProvider implements JwtProvider {
             MemberRole memberRole = MemberRole.find(payload.get(ROLE, String.class));
             return new CustomClaims(email, memberRole);
         } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException("액세스 토큰이 만료되었습니다.");
+            throw new TicketingException(ErrorCode.EXPIRED_TOKEN);
         } catch (RuntimeException e) {
             log.debug("액세스 토큰이 유효하지 않습니다. token={}", accessToken);
-            throw new InvalidTokenException("액세스 토큰이 유효하지 않습니다.", e);
+            throw new TicketingException(ErrorCode.INVALID_TOKEN);
         }
     }
 

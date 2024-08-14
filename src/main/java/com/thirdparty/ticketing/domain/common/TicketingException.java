@@ -1,12 +1,14 @@
 package com.thirdparty.ticketing.domain.common;
 
 public class TicketingException extends RuntimeException {
+    private final ErrorCode errorCode;
 
-    public TicketingException(String message) {
-        super(message);
+    public TicketingException(ErrorCode errorCode) {
+        this.errorCode = errorCode;
     }
 
-    public TicketingException(String message, Throwable cause) {
-        super(message, cause);
+    public TicketingException(ErrorCode errorCode, Throwable cause) {
+        super(cause);
+        this.errorCode = errorCode;
     }
 }

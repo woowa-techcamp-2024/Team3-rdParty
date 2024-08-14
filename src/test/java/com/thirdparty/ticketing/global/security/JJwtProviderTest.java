@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
-import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
@@ -99,7 +99,10 @@ class JJwtProviderTest {
                     catchException(() -> jwtProvider.parseAccessToken(invalidAccessToken));
 
             // then
-            assertThat(exception).isInstanceOf(InvalidTokenException.class);
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(ErrorCode.INVALID_TOKEN);
         }
 
         @Test
@@ -116,7 +119,10 @@ class JJwtProviderTest {
                     catchException(() -> jwtProvider.parseAccessToken(expiredAccessToken));
 
             // then
-            assertThat(exception).isInstanceOf(ExpiredTokenException.class);
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(ErrorCode.EXPIRED_TOKEN);
         }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
@@ -22,7 +23,10 @@ public class SeatService {
 
     @Transactional(readOnly = true)
     public ItemResult<SeatElement> getSeats(Long zoneId) {
-        Zone zone = zoneRepository.findById(zoneId).orElseThrow(() -> new TicketingException(""));
+        Zone zone =
+                zoneRepository
+                        .findById(zoneId)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_ZONE));
         List<SeatElement> seats =
                 seatRepository.findByZone(zone).stream().map(SeatElement::of).toList();
 
