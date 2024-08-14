@@ -16,7 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
+import com.thirdparty.ticketing.domain.member.dto.response.LoginResponse;
 import com.thirdparty.ticketing.global.security.JJwtProvider;
 
 @DataJpaTest

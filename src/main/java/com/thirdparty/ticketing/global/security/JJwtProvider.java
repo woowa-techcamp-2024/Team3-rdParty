@@ -10,7 +10,7 @@ import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.ExpiredTokenException;
 import com.thirdparty.ticketing.domain.member.service.InvalidTokenException;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
+import com.thirdparty.ticketing.domain.member.dto.response.LoginResponse;
 
 import lombok.RequiredArgsConstructor;
 
