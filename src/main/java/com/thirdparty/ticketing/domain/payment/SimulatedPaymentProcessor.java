@@ -1,11 +1,12 @@
 package com.thirdparty.ticketing.domain.payment;
 
+import java.util.Random;
+
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SimulatedPaymentProcessor implements PaymentProcessor {
