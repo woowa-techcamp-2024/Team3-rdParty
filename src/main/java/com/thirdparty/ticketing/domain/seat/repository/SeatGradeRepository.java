@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 
 public interface SeatGradeRepository extends JpaRepository<SeatGrade, Integer> {
@@ -18,4 +19,6 @@ public interface SeatGradeRepository extends JpaRepository<SeatGrade, Integer> {
             """)
     List<SeatGrade> findByPerformanceIdAndGradeNames(
             @Param("performanceId") long performanceId, @Param("gradeIds") List<Long> gradeIds);
+
+    List<SeatGrade> findAllByPerformance(Performance performance);
 }

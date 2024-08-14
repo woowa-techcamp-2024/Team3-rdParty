@@ -18,9 +18,12 @@ import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.performance.Performance;
+import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
+import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
@@ -28,8 +31,10 @@ import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 @DataJpaTest
 public class SeatServiceTest {
     @Autowired private TestEntityManager testEntityManager;
-    @Autowired private SeatRepository seatRepository;
+    @Autowired private PerformanceRepository performanceRepository;
     @Autowired private ZoneRepository zoneRepository;
+    @Autowired private SeatGradeRepository seatGradeRepository;
+    @Autowired private SeatRepository seatRepository;
 
     private SeatService seatService;
 
@@ -41,7 +46,9 @@ public class SeatServiceTest {
 
     @BeforeEach
     void setUpBase() {
-        seatService = new SeatService(zoneRepository, seatRepository);
+        seatService =
+                new SeatService(
+                        performanceRepository, zoneRepository, seatGradeRepository, seatRepository);
         setUpMember();
         setUpPerformance();
         setUpZone();
@@ -100,7 +107,7 @@ public class SeatServiceTest {
     }
 
     @Nested
-    @DisplayName("getZones 메서드를 호출할 때")
+    @DisplayName("getSeats 메소드를 호출할 때")
     class GetZonesTest {
         private Seat seat1;
         private Seat seat2;
@@ -125,7 +132,7 @@ public class SeatServiceTest {
         }
 
         @Test
-        @DisplayName("좌석 등급이 성공적으로 생성된다.")
+        @DisplayName("좌석 목록이 성공적으로 생성된다.")
         void getZones_success() {
             // Given
             testEntityManager.persistAndFlush(seat1);
@@ -147,6 +154,38 @@ public class SeatServiceTest {
         private void assertSeatElement(SeatElement seatElement, Seat expectedSeat) {
             assertThat(seatElement.getSeatId()).isEqualTo(expectedSeat.getSeatId());
             assertThat(seatElement.getSeatCode()).isEqualTo(expectedSeat.getSeatCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("getSeatGrades 메소드를 호출할 때")
+    class GetSeatGradesTest {
+
+        @Test
+        @DisplayName("좌석 등급 목록이 성공적으로 반환된다.")
+        void getSeatGrades_success() {
+            // Given
+            Long performanceId = performance.getPerformanceId();
+
+            // When
+            ItemResult<SeatGradeElement> seatGradesResult =
+                    seatService.getSeatGrades(performanceId);
+
+            // Then
+            List<SeatGradeElement> seatGradeElements = seatGradesResult.getItems();
+            SeatGradeElement seatGradeElement1 = seatGradeElements.get(0);
+            SeatGradeElement seatGradeElement2 = seatGradeElements.get(1);
+
+            assertThat(seatGradeElements).hasSize(2);
+            assertSeatGradeElement(seatGradeElement1, seatGrade1);
+            assertSeatGradeElement(seatGradeElement2, seatGrade2);
+        }
+
+        private void assertSeatGradeElement(
+                SeatGradeElement seatGradeElement, SeatGrade expectedSeatGrade) {
+            assertThat(seatGradeElement.getGradeId()).isEqualTo(expectedSeatGrade.getSeatGradeId());
+            assertThat(seatGradeElement.getGradeName()).isEqualTo(expectedSeatGrade.getGradeName());
+            assertThat(seatGradeElement.getPrice()).isEqualTo(expectedSeatGrade.getPrice());
         }
     }
 }
