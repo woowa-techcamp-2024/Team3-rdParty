@@ -1,5 +1,8 @@
 package com.thirdparty.ticketing.domain.common;
 
+import lombok.Getter;
+
+@Getter
 public class TicketingException extends RuntimeException {
     private final ErrorCode errorCode;
 
