@@ -1,8 +1,12 @@
 package com.thirdparty.ticketing.domain.seat;
 
 public enum SeatStatus {
-    AVAILABLE,
+    SELECTABLE,
     SELECTED,
     PENDING_PAYMENT,
-    PAID
+    PAID;
+
+    public boolean isSelectable() {
+        return this == SELECTABLE;
+    }
 }

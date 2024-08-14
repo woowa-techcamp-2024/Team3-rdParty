@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.ItemResult;
@@ -21,8 +20,7 @@ import com.thirdparty.ticketing.domain.zone.dto.ZoneElement;
 import com.thirdparty.ticketing.domain.zone.service.UserZoneService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(UserZoneControllerTest.class)
-@Import(UserZoneController.class)
+@WebMvcTest(UserZoneController.class)
 class UserZoneControllerTest extends BaseControllerTest {
 
     @MockBean private UserZoneService userZoneService;
@@ -50,8 +48,8 @@ class UserZoneControllerTest extends BaseControllerTest {
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 responseFields(
-                                        fieldWithPath("item").description("구역 목록"),
-                                        fieldWithPath("item[].zoneId").description("구역 ID"),
-                                        fieldWithPath("item[].zoneName").description("구역 이름"))));
+                                        fieldWithPath("items").description("구역 목록"),
+                                        fieldWithPath("items[].zoneId").description("구역 ID"),
+                                        fieldWithPath("items[].zoneName").description("구역 이름"))));
     }
 }

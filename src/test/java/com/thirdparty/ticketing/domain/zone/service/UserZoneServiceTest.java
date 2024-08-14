@@ -66,7 +66,7 @@ class UserZoneServiceTest {
                     userZoneService.getZones(performance.getPerformanceId());
 
             // Then
-            assertThat(zoneElements.getItem())
+            assertThat(zoneElements.getItems())
                     .isNotEmpty()
                     .hasSize(2)
                     .satisfies(

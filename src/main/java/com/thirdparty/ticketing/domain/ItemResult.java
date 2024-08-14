@@ -9,9 +9,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class ItemResult<T> {
 
-    private List<T> item;
+    private List<T> items;
 
     public static <T> ItemResult<T> of(List<T> items) {
-        return new ItemResult<T>(items);
+        return new ItemResult<>(items);
     }
 }

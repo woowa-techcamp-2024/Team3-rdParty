@@ -1,4 +1,0 @@
-jwt:
-  issuer: test
-  expiry-seconds: 1800
-  secret: thisisjusttestaccesssecretsodontworry

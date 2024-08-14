@@ -56,10 +56,6 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 spotless {
     java {
         target 'src/**/*.java' // 대상 파일 지정
@@ -81,12 +77,42 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('spotlessJava') {
+    dependsOn 'copyYml'
+}
+
 tasks.register('copyDocument', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
 }
 
+tasks.register('copyYml') {
+    def dupStr = DuplicatesStrategy.INCLUDE
+    def src = "backend-config"
+    def fileExt = "**/*.yml"
+    copy {
+        duplicatesStrategy = dupStr
+        from(src) {
+            include(fileExt)
+        }
+        into("src/main/resources")
+    }
+
+    copy {
+        duplicatesStrategy = dupStr
+        from(src) {
+            include(fileExt)
+        }
+        into("src/test/resources")
+    }
+}
+
 build {
     dependsOn copyDocument
+    dependsOn copyYml
 }

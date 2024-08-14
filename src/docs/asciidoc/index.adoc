@@ -19,7 +19,47 @@ operation::member-controller-test/create-member[snippets='http-response,response
 
 = 공연(Performance)
 
-= 장소(Place)
+= 좌석(Seat)
+
+== 관리자 좌석 등급 생성 API
+
+=== request
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-request,path-parameters,request-fields']
+
+=== response
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-response']
+
+== 관리자 좌석 생성 API
+
+=== request
+
+operation::admin-seat-controller-test/create-seats[snippets='http-request,path-parameters,request-fields']
+
+=== response
+
+operation::admin-seat-controller-test/create-seat-grades[snippets='http-response']
+
+== 구역의 좌석 목록 조회
+
+=== request
+
+operation::seat-controller-test/get-seats[snippets='http-request,path-parameters']
+
+=== response
+
+operation::seat-controller-test/get-seats[snippets='http-response,response-fields']
+
+== 공연의 좌석 등급 목록 조회
+
+=== request
+
+operation::seat-controller-test/get-seat-grades[snippets='http-request,path-parameters']
+
+=== response
+
+operation::seat-controller-test/get-seat-grades[snippets='http-response,response-fields']
 
 = 티켓(Ticket)
 

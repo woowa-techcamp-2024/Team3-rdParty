@@ -1,17 +1,9 @@
 package com.thirdparty.ticketing.domain.seat;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.zone.Zone;
 
 import lombok.AccessLevel;
@@ -32,17 +24,31 @@ public class Seat extends BaseEntity {
     private Long seatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_id")
+    @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seat_Grade", nullable = false)
+    private SeatGrade seatGrade;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @Column(length = 32, nullable = false)
     private String seatCode;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private SeatStatus seatStatus = SeatStatus.AVAILABLE;
+    @Column(length = 16, nullable = false)
+    private SeatStatus seatStatus = SeatStatus.SELECTABLE;
 
     public Seat(String seatCode, SeatStatus seatStatus) {
         this.seatCode = seatCode;
         this.seatStatus = seatStatus;
+    }
+
+    public boolean isSelectable() {
+        return seatStatus.isSelectable();
     }
 }

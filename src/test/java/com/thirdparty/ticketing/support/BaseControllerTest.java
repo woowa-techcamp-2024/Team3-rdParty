@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
@@ -35,6 +36,8 @@ public abstract class BaseControllerTest {
     protected static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Autowired protected JwtProvider jwtProvider;
+
+    @Autowired protected ObjectMapper objectMapper;
 
     protected String adminBearerToken;
 
