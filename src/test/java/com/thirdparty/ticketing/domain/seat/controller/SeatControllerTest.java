@@ -30,7 +30,7 @@ public class SeatControllerTest extends BaseControllerTest {
 
     @Test
     @DisplayName("구역의 좌석 목록을 조회한다.")
-    void getZones() throws Exception {
+    void getSeats() throws Exception {
         // Given
         long performanceId = 1L;
         long zoneId = 2L;
