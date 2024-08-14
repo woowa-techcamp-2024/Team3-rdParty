@@ -9,6 +9,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 
 import lombok.RequiredArgsConstructor;
