@@ -1,0 +1,3 @@
+[submodule "backend-config"]
+	path = backend-config
+	url = git@github.com:woowa-techcamp-2024/team3-backend-config.git
