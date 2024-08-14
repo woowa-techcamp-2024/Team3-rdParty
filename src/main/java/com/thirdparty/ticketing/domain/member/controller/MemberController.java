@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.service.MemberService;
 import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 

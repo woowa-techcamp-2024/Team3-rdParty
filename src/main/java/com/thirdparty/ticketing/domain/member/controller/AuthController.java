@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thirdparty.ticketing.domain.member.controller.request.LoginRequest;
+import com.thirdparty.ticketing.domain.member.dto.request.LoginRequest;
 import com.thirdparty.ticketing.domain.member.service.AuthService;
 import com.thirdparty.ticketing.domain.member.service.response.LoginResponse;
 
