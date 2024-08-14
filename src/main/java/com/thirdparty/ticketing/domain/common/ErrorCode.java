@@ -41,7 +41,11 @@ public enum ErrorCode {
        Seat Grade Error
     */
     NOT_FOUND_SEAT_GRADE(HttpStatus.NOT_FOUND, "SG404-1", "존재하지 않는 구역입니다."),
-    ;
+
+    /*
+        Payment Error
+     */
+    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "P500-1", "결제에 실패했습니다.");
 
     ErrorCode(HttpStatus httpStatus, String code, String message) {
         this.httpStatus = httpStatus;
