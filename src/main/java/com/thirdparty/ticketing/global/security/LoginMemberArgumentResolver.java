@@ -8,6 +8,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.LoginMember;
+import com.thirdparty.ticketing.domain.common.TicketingException;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -35,6 +39,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         if (jwtAuthentication != null) {
             return;
         }
-        throw new AuthenticationException("인증되지 않은 사용자 요청입니다.");
+        throw new TicketingException(ErrorCode.UNAUTHORIZED);
     }
 }

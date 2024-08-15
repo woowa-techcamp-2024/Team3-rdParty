@@ -13,8 +13,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +60,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if (bearerAccessToken.contains(BEARER)) {
             return bearerAccessToken.replace(BEARER, "");
         }
-        throw new AuthenticationException("액세스 토큰 형식이 옮바르지 않습니다.");
+        throw new TicketingException(ErrorCode.INVALID_TOKEN_HEADER);
     }
 
     private JwtAuthentication authenticate(String accessToken) {

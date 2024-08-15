@@ -36,7 +36,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.17.6'
     //jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
@@ -60,10 +63,6 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 spotless {
     java {
         target 'src/**/*.java' // 대상 파일 지정
@@ -85,12 +84,42 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('spotlessJava') {
+    dependsOn 'copyYml'
+}
+
 tasks.register('copyDocument', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
 }
 
+tasks.register('copyYml') {
+    def dupStr = DuplicatesStrategy.INCLUDE
+    def src = "backend-config"
+    def fileExt = "**/*.yml"
+    copy {
+        duplicatesStrategy = dupStr
+        from(src) {
+            include(fileExt)
+        }
+        into("src/main/resources")
+    }
+
+    copy {
+        duplicatesStrategy = dupStr
+        from(src) {
+            include(fileExt)
+        }
+        into("src/test/resources")
+    }
+}
+
 build {
     dependsOn copyDocument
+    dependsOn copyYml
 }

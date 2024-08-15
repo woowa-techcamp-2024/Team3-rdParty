@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.controller.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
+import com.thirdparty.ticketing.domain.member.dto.response.CreateMemberResponse;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.member.service.response.CreateMemberResponse;
 
 @DataJpaTest
 class MemberServiceTest {
@@ -89,7 +91,10 @@ class MemberServiceTest {
             Exception exception = catchException(() -> memberService.createMember(request));
 
             // then
-            assertThat(exception).isInstanceOf(DuplicateResourceException.class);
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(ErrorCode.DUPLICATED_EMAIL);
         }
     }
 }

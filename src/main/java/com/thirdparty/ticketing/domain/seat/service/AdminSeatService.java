@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
@@ -43,7 +44,7 @@ public class AdminSeatService {
         Performance performance =
                 performanceRepository
                         .findById(performanceId)
-                        .orElseThrow(() -> new TicketingException(""));
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_PERFORMANCE));
 
         return seatGradeCreationRequest.getSeatGrades().stream()
                 .map(
@@ -67,7 +68,10 @@ public class AdminSeatService {
             long performanceId, long zoneId, SeatCreationRequest seatCreationRequest) {
         Map<Long, SeatGrade> seatGradeMap = findSeatGrades(performanceId, seatCreationRequest);
 
-        Zone zone = zoneRepository.findById(zoneId).orElseThrow(() -> new TicketingException(""));
+        Zone zone =
+                zoneRepository
+                        .findById(zoneId)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_ZONE));
 
         return seatCreationRequest.getSeats().stream()
                 .map(
@@ -97,14 +101,9 @@ public class AdminSeatService {
                                 Collectors.toMap(
                                         SeatGrade::getSeatGradeId, seatGrade -> seatGrade));
 
-        seatCreationRequest
-                .getSeats()
-                .forEach(
-                        seat -> {
-                            if (!seatGradeMap.containsKey(seat.getGradeId())) {
-                                throw new TicketingException("");
-                            }
-                        });
+        if (seatGradeMap.size() != gradeIds.size()) {
+            throw new TicketingException(ErrorCode.NOT_FOUND_SEAT_GRADE);
+        }
 
         return seatGradeMap;
     }

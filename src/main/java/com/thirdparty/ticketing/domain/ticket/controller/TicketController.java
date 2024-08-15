@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
-import com.thirdparty.ticketing.global.security.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 

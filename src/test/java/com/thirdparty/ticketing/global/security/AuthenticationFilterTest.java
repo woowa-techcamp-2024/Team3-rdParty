@@ -15,10 +15,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.dto.response.CustomClaims;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.member.service.response.CustomClaims;
 
 class AuthenticationFilterTest {
 
@@ -89,7 +91,7 @@ class AuthenticationFilterTest {
             }
 
             @Test
-            @DisplayName("예외(authentication): 액세스 토큰 형식이 Beaerer가 아니면")
+            @DisplayName("예외(authentication): 액세스 토큰 형식이 Bearer가 아니면")
             void authentication_WhenAccessTokenTypeIsNotBearer() {
                 // given
                 String invalidAccessToken = "invalid" + accessToken;
@@ -105,7 +107,10 @@ class AuthenticationFilterTest {
                                                 filterChain));
 
                 // then
-                assertThat(exception).isInstanceOf(AuthenticationException.class);
+                assertThat(exception)
+                        .isInstanceOf(TicketingException.class)
+                        .extracting("errorCode")
+                        .isEqualTo(ErrorCode.INVALID_TOKEN_HEADER);
             }
         }
 

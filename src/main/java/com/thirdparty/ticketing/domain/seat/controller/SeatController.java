@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
+import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
 import com.thirdparty.ticketing.domain.seat.service.SeatService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,12 @@ public class SeatController {
     public ResponseEntity<ItemResult<SeatElement>> getSeats(@PathVariable("zoneId") long zoneId) {
         ItemResult<SeatElement> seats = seatService.getSeats(zoneId);
         return ResponseEntity.ok().body(seats);
+    }
+
+    @GetMapping("/performances/{performanceId}/grades")
+    public ResponseEntity<ItemResult<SeatGradeElement>> getSeatGrades(
+            @PathVariable("performanceId") long performanceId) {
+        ItemResult<SeatGradeElement> seatGrades = seatService.getSeatGrades(performanceId);
+        return ResponseEntity.ok().body(seatGrades);
     }
 }
