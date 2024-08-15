@@ -10,8 +10,9 @@ import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 
 @Service
-public class PersistenceTicketService extends TicketService {
-    public PersistenceTicketService(
+public class RedissonCacheTicketService extends TicketService {
+
+    public RedissonCacheTicketService(
             MemberRepository memberRepository,
             TicketRepository ticketRepository,
             SeatRepository seatRepository,
@@ -20,7 +21,14 @@ public class PersistenceTicketService extends TicketService {
     }
 
     @Override
-    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {}
+    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        // TODO
+        //        try {
+        //
+        //        }catch (){
+        //
+        //        }
+    }
 
     @Override
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {}
