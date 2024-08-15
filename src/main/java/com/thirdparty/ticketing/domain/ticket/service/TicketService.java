@@ -1,7 +1,5 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import java.util.List;
-
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -13,8 +11,9 @@ import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
-
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public abstract class TicketService {
