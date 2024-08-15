@@ -29,7 +29,7 @@ public class DefaultWaitingRoom extends WaitingRoom {
     }
 
     @Override
-    public long enter(WaitingMember waitingMember) {
+    public synchronized long enter(WaitingMember waitingMember) {
         long performanceId = waitingMember.getPerformanceId();
         String email = waitingMember.getEmail();
         if (!map.containsKey(performanceId)) {
