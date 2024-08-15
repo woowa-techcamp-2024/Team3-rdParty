@@ -1,8 +1,10 @@
 package com.thirdparty.ticketing.global.waitingroom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingroom.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingLine;
+import com.thirdparty.ticketing.domain.waitingroom.WaitingRoom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,11 @@ public class TestRedisConfig {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Bean
+    public RedisWaitingManager waitingManager(RunningRoom runningRoom, WaitingRoom waitingRoom) {
+        return new RedisWaitingManager(runningRoom, waitingRoom, redisTemplate);
+    }
 
     @Bean
     public RedisWaitingRoom waitingRoom(WaitingLine waitingLine, WaitingCounter waitingCounter) {
