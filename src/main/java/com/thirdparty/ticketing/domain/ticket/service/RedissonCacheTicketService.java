@@ -36,7 +36,7 @@ public class RedissonCacheTicketService extends TicketService {
         RLock lock = redissonClient.getLock(seatSelectionRequest.getSeatId().toString());
 
         try {
-            boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(5, 300, TimeUnit.MICROSECONDS);
             if (!available) {
                 return;
             }

@@ -35,7 +35,7 @@ public class LettuceCacheTicketService extends TicketService {
             while (limit > 0
                     && !lettuceRepository.seatLock(seatSelectionRequest.getSeatId().toString())) {
                 limit -= 1;
-                Thread.sleep(1000);
+                Thread.sleep(300);
             }
 
             if (limit > 0) {
