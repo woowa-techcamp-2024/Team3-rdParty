@@ -1,6 +1,7 @@
-package com.thirdparty.ticketing.global.waiting;
+package com.thirdparty.ticketing.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
@@ -10,44 +11,40 @@ import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-@TestConfiguration
-public class TestRedisConfig {
-
-    @Qualifier("lettuceRedisTemplate")
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+@Configuration
+public class WaitingConfig {
 
     @Bean
-    public RedisWaitingManager waitingManager(RunningRoom runningRoom, WaitingRoom waitingRoom) {
+    public WaitingManager waitingManager(RunningRoom runningRoom, WaitingRoom waitingRoom,
+                                         @Qualifier("lettuceRedisTemplate") StringRedisTemplate redisTemplate) {
         return new RedisWaitingManager(runningRoom, waitingRoom, redisTemplate);
     }
 
     @Bean
-    public RedisWaitingRoom waitingRoom(WaitingLine waitingLine, WaitingCounter waitingCounter) {
+    public WaitingRoom waitingRoom(WaitingLine waitingLine, WaitingCounter waitingCounter,
+                                   @Qualifier("lettuceRedisTemplate") StringRedisTemplate redisTemplate,
+                                   ObjectMapper objectMapper) {
         return new RedisWaitingRoom(waitingLine, waitingCounter, redisTemplate, objectMapper);
     }
 
     @Bean
-    public RedisWaitingLine waitingLine() {
+    public WaitingLine waitingLine(ObjectMapper objectMapper,
+                                   @Qualifier("lettuceRedisTemplate") StringRedisTemplate redisTemplate) {
         return new RedisWaitingLine(objectMapper, redisTemplate);
     }
 
     @Bean
-    public RedisWaitingCounter waitingCounter() {
+    public WaitingCounter waitingCounter(@Qualifier("lettuceRedisTemplate") StringRedisTemplate redisTemplate) {
         return new RedisWaitingCounter(redisTemplate);
     }
 
     @Bean
-    public RedisRunningRoom runningRoom() {
+    public RunningRoom runningRoom(@Qualifier("lettuceRedisTemplate") StringRedisTemplate redisTemplate) {
         return new RedisRunningRoom(redisTemplate);
     }
 }

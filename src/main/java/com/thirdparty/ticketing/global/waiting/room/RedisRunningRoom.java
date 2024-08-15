@@ -1,12 +1,10 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
-import lombok.RequiredArgsConstructor;
+import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-@RequiredArgsConstructor
 public class RedisRunningRoom implements RunningRoom {
 
     private static final String RUNNING_ROOM_KEY = "running_room:";

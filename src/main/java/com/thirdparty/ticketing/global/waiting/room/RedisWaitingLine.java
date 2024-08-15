@@ -1,10 +1,10 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 public class RedisWaitingLine implements WaitingLine {
@@ -14,9 +14,9 @@ public class RedisWaitingLine implements WaitingLine {
     private final ObjectMapper objectMapper;
     private final ZSetOperations<String, String> waitingLine;
 
-    public RedisWaitingLine(ObjectMapper objectMapper, RedisTemplate<String, String> template) {
+    public RedisWaitingLine(ObjectMapper objectMapper, StringRedisTemplate redisTemplate) {
         this.objectMapper = objectMapper;
-        this.waitingLine = template.opsForZSet();
+        this.waitingLine = redisTemplate.opsForZSet();
     }
 
     @Override

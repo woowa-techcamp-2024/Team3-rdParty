@@ -1,9 +1,9 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingRoom;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 import java.time.ZonedDateTime;

@@ -1,10 +1,10 @@
 package com.thirdparty.ticketing.global.waiting.manager;
 
-import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingRoom;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 public class RedisWaitingManager extends WaitingManager {
@@ -14,7 +14,7 @@ public class RedisWaitingManager extends WaitingManager {
     private final ValueOperations<String, String> managedMemberCounter;
 
     public RedisWaitingManager(RunningRoom runningRoom, WaitingRoom waitingRoom,
-                               RedisTemplate<String, String> redisTemplate) {
+                               StringRedisTemplate redisTemplate) {
         super(runningRoom, waitingRoom);
         managedMemberCounter = redisTemplate.opsForValue();
     }

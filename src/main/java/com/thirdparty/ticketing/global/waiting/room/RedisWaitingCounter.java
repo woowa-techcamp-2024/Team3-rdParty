@@ -1,8 +1,9 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 public class RedisWaitingCounter implements WaitingCounter {
@@ -11,7 +12,7 @@ public class RedisWaitingCounter implements WaitingCounter {
 
     private final ValueOperations<String, String> counter;
 
-    public RedisWaitingCounter(RedisTemplate<String, String> redisTemplate) {
+    public RedisWaitingCounter(StringRedisTemplate redisTemplate) {
         this.counter = redisTemplate.opsForValue();
     }
 
