@@ -1,8 +1,6 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
-
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
-import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
