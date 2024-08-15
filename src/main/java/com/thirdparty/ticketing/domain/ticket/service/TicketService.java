@@ -18,10 +18,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public abstract class TicketService {
-    private final MemberRepository memberRepository;
-    private final TicketRepository ticketRepository;
-    private final SeatRepository seatRepository;
-    private final PaymentProcessor paymentProcessor;
+    protected final MemberRepository memberRepository;
+    protected final TicketRepository ticketRepository;
+    protected final SeatRepository seatRepository;
+    protected final PaymentProcessor paymentProcessor;
 
     public ItemResult<TicketElement> selectMyTicket(String memberEmail) {
         Member member =
@@ -35,7 +35,8 @@ public abstract class TicketService {
         return ItemResult.of(tickets);
     }
 
-    public abstract void selectSeat(SeatSelectionRequest seatSelectionRequest);
+    public abstract void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest);
 
-    public abstract void reservationTicket(TicketPaymentRequest ticketPaymentRequest);
+    public abstract void reservationTicket(
+            String memberEmail, TicketPaymentRequest ticketPaymentRequest);
 }

@@ -51,4 +51,12 @@ public class Seat extends BaseEntity {
     public boolean isSelectable() {
         return seatStatus.isSelectable();
     }
+
+    public void designateMember(Member member) {
+        this.member = member;
+    }
+
+    public void nullifyMember() {
+        this.member = null;
+    }
 }
