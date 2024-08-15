@@ -9,5 +9,5 @@ import lombok.Data;
 public class SeatSelectionRequest {
     @NotNull(message = "좌석 ID를 요청하지 않았습니다.")
     @Min(value = 1, message = "좌석 ID는 1 이상이어야 합니다.")
-    private Long seatId;
+    private final Long seatId;
 }
