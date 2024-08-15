@@ -1,8 +1,6 @@
 package com.thirdparty.ticketing.global.waitingroom;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
@@ -34,33 +32,19 @@ public class RedisWaitingRoom extends WaitingRoom {
             updateWaitingRoomMember(waitingMember);
         } else {
             String rawValue = waitingRoom.get(getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail());
-            try {
-                waitingMember = objectMapper.readValue(rawValue, WaitingMember.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            waitingMember = ObjectMapperUtils.readValue(objectMapper, rawValue, WaitingMember.class);
         }
         return waitingMember.getWaitingCount();
     }
 
     private Boolean enterWaitingRoomIfNotExists(WaitingMember waitingMember) {
         String performanceWaitingRoomKey = getPerformanceWaitingRoomKey(waitingMember);
-        String value;
-        try {
-            value = objectMapper.writeValueAsString(waitingMember);
-        } catch (JsonProcessingException e) {
-            throw new TicketingException("json 직렬화 에러");
-        }
+        String value = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
         return waitingRoom.putIfAbsent(performanceWaitingRoomKey, waitingMember.getEmail(), value);
     }
 
     private void updateWaitingRoomMember(WaitingMember waitingMember) {
-        String value;
-        try {
-            value = objectMapper.writeValueAsString(waitingMember);
-        } catch (JsonProcessingException e) {
-            throw new TicketingException("json 직렬화 에러");
-        }
+        String value = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
         waitingRoom.put(getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail(), value);
     }
 

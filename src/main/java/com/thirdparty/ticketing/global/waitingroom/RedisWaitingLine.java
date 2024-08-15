@@ -1,8 +1,6 @@
 package com.thirdparty.ticketing.global.waitingroom;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,12 +21,7 @@ public class RedisWaitingLine implements WaitingLine {
     @Override
     public void enter(WaitingMember waitingMember) {
         String performanceWaitingLineKey = WAITING_LINE_KEY + waitingMember.getPerformanceId();
-        String waitingMemberValue;
-        try {
-            waitingMemberValue = objectMapper.writeValueAsString(waitingMember);
-        } catch (JsonProcessingException e) {
-            throw new TicketingException("json 직렬화 예외 발생");
-        }
+        String waitingMemberValue = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
         waitingLine.add(performanceWaitingLineKey, waitingMemberValue, waitingMember.getWaitingCount());
     }
 

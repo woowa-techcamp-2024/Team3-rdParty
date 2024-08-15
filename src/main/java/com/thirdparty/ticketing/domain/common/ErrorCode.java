@@ -1,8 +1,7 @@
 package com.thirdparty.ticketing.domain.common;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
@@ -45,7 +44,13 @@ public enum ErrorCode {
     /*
        Payment Error
     */
-    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "P500-1", "결제에 실패했습니다.");
+    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "P500-1", "결제에 실패했습니다."),
+
+    /*
+        Waiting Error
+     */
+    WAITING_WRITE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-1", "대기열 쓰기에 실패했습니다."),
+    WAITING_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-2", "대기열 읽기에 실패했습니다.");
 
     ErrorCode(HttpStatus httpStatus, String code, String message) {
         this.httpStatus = httpStatus;
