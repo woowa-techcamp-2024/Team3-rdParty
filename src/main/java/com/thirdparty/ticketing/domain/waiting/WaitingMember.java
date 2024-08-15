@@ -1,9 +1,9 @@
 package com.thirdparty.ticketing.domain.waiting;
 
+import java.time.ZonedDateTime;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.time.ZonedDateTime;
 
 @Data
 @RequiredArgsConstructor
