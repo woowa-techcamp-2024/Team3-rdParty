@@ -54,8 +54,7 @@ public class CacheTicketService extends TicketService {
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
         long temp = 1L;
         Long seatId = ticketPaymentRequest.getSeatId();
-        Seat seat = seatRepository.findById(seatId)
-                .orElseThrow(NoSuchElementException::new);
+        Seat seat = seatRepository.findById(seatId).orElseThrow(NoSuchElementException::new);
 
         Member loginMember =
                 memberRepository
@@ -63,14 +62,14 @@ public class CacheTicketService extends TicketService {
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         if (!seat.getSeatStatus().equals(SeatStatus.SELECTED)) {
-            //TODO: 상태 변경
-            temp+=1;
+            // TODO: 상태 변경
+            temp += 1;
         }
         // paymentProcessor.processPayment();
         if (!seat.getSeatStatus().equals(SeatStatus.PAID)) {
-            //TODO: 상태 변경
+            // TODO: 상태 변경
             // seat.updateStatus(SeatStatus.PAID);
-            temp+=1;
+            temp += 1;
         }
 
         if (!seat.getMember().getMemberId().equals(loginMember.getMemberId())) {
