@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.waitingroom;
+package com.thirdparty.ticketing.domain.waiting.room;
 
 public interface WaitingCounter {
 
