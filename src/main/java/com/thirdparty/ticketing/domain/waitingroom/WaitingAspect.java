@@ -22,11 +22,11 @@ public class WaitingAspect {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
-        UserInfo userInfo = new UserInfo(email, performanceId);
-        if (waitingManager.isReadyToHandle(userInfo)) {
+        WaitingMember waitingMember = new WaitingMember(email, performanceId);
+        if (waitingManager.isReadyToHandle(waitingMember)) {
             return joinPoint.proceed();
         } else {
-            long waitingNumber = waitingManager.enterWaitingRoom(userInfo);
+            long waitingNumber = waitingManager.enterWaitingRoom(waitingMember);
             return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).body(waitingNumber);
         }
     }
