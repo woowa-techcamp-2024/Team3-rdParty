@@ -8,11 +8,11 @@ public class WaitingManager {
     private final RunningRoom runningRoom;
     private final WaitingRoom waitingRoom;
 
-    public boolean isReadyToHandle(UserInfo userInfo) {
-        return runningRoom.contains(userInfo);
+    public boolean isReadyToHandle(WaitingMember waitingMember) {
+        return runningRoom.contains(waitingMember);
     }
 
-    public long enterWaitingRoom(UserInfo userInfo) {
-        return waitingRoom.enter(userInfo);
+    public long enterWaitingRoom(WaitingMember waitingMember) {
+        return waitingRoom.enter(waitingMember);
     }
 }
