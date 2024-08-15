@@ -17,4 +17,8 @@ public class LettuceRepository {
     public Boolean seatLock(String key) {
         return redisTemplate.opsForValue().setIfAbsent(key, "lock", Duration.ofSeconds(60));
     }
+
+    public void unlock(String string) {
+        redisTemplate.delete(string);
+    }
 }
