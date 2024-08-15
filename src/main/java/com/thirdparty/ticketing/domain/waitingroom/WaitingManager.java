@@ -3,7 +3,7 @@ package com.thirdparty.ticketing.domain.waitingroom;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class WaitingManager {
+public abstract class WaitingManager {
 
     private final RunningRoom runningRoom;
     private final WaitingRoom waitingRoom;
@@ -12,7 +12,14 @@ public class WaitingManager {
         return runningRoom.contains(waitingMember);
     }
 
+    /**
+     * 사용자를 대기열에 추가하고 남은 순번을 반환한다.
+     * @param waitingMember
+     * @return 사용자 앞에 남은 순번
+     */
     public long enterWaitingRoom(WaitingMember waitingMember) {
-        return waitingRoom.enter(waitingMember);
+        return waitingRoom.enter(waitingMember) - countManagedMember(waitingMember);
     }
+
+    protected abstract long countManagedMember(WaitingMember waitingMember);
 }
