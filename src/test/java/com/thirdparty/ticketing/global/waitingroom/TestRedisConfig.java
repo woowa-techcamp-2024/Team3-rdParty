@@ -31,4 +31,9 @@ public class TestRedisConfig {
     public RedisWaitingCounter waitingCounter() {
         return new RedisWaitingCounter(redisTemplate);
     }
+
+    @Bean
+    public RedisRunningRoom runningRoom() {
+        return new RedisRunningRoom(redisTemplate);
+    }
 }
