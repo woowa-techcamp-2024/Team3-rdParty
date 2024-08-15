@@ -1,10 +1,15 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingroom.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingroom.WaitingCounter;
-import com.thirdparty.ticketing.domain.waitingroom.WaitingLine;
-import com.thirdparty.ticketing.domain.waitingroom.WaitingRoom;
+import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingRoom;
+import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
+import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
+import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;
+import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
+import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

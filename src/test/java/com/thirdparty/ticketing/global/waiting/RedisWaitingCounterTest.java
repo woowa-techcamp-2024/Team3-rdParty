@@ -1,8 +1,9 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

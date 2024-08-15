@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.waitingroom;
 
+import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.RunningRoom;
+import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -1,10 +1,11 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

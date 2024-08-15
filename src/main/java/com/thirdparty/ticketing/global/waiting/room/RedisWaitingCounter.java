@@ -1,6 +1,6 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingCounter;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;

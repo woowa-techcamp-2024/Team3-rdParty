@@ -1,8 +1,9 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting.room;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingroom.WaitingLine;
+import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 

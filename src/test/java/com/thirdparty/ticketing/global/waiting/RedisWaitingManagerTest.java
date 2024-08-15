@@ -1,8 +1,9 @@
-package com.thirdparty.ticketing.global.waitingroom;
+package com.thirdparty.ticketing.global.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
