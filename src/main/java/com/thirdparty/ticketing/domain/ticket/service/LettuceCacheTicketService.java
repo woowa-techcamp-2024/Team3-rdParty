@@ -29,7 +29,6 @@ public class LettuceCacheTicketService extends TicketService {
 
     @Override
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        // TODO spin lock으로 일정 횟수 만큼 lock을 얻어오기
         int limit = 5;
         try {
             while (limit > 0
@@ -49,5 +48,22 @@ public class LettuceCacheTicketService extends TicketService {
     }
 
     @Override
-    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {}
+    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
+        int limit = 5;
+        try {
+            while (limit > 0
+                    && !lettuceRepository.seatLock(ticketPaymentRequest.getSeatId().toString())) {
+                limit -= 1;
+                Thread.sleep(300);
+            }
+
+            if (limit > 0) {
+                cacheTicketService.reservationTicket(memberEmail, ticketPaymentRequest);
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lettuceRepository.unlock(ticketPaymentRequest.getSeatId().toString());
+        }
+    }
 }
