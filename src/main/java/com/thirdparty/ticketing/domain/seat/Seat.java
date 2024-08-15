@@ -3,6 +3,8 @@ package com.thirdparty.ticketing.domain.seat;
 import jakarta.persistence.*;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.zone.Zone;
 
@@ -43,6 +45,9 @@ public class Seat extends BaseEntity {
     @Column(length = 16, nullable = false)
     private SeatStatus seatStatus = SeatStatus.SELECTABLE;
 
+    @Version
+    private Long version;
+
     public Seat(String seatCode, SeatStatus seatStatus) {
         this.seatCode = seatCode;
         this.seatStatus = seatStatus;
@@ -50,5 +55,13 @@ public class Seat extends BaseEntity {
 
     public boolean isSelectable() {
         return seatStatus.isSelectable();
+    }
+
+    public void assignByMember(Member member) {
+        if (!isSelectable()) {
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+        }
+        this.member = member;
+        this.seatStatus = SeatStatus.SELECTED;
     }
 }
