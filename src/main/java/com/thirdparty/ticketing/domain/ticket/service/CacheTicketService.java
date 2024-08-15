@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -25,6 +27,7 @@ public class CacheTicketService extends TicketService {
     }
 
     @Override
+    @Transactional
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         Member member =
                 memberRepository
@@ -36,6 +39,10 @@ public class CacheTicketService extends TicketService {
                 seatRepository
                         .findById(seatSelectionRequest.getSeatId())
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+
+        if (!seat.empty()) {
+            throw new RuntimeException("자리에 주인이 있습니다.");
+        }
 
         seat.designateMember(member);
     }
