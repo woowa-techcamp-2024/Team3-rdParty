@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import java.util.NoSuchElementException;
+
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.Seat;
+import com.thirdparty.ticketing.domain.seat.SeatStatus;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
@@ -48,5 +51,31 @@ public class CacheTicketService extends TicketService {
     }
 
     @Override
-    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {}
+    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
+        long temp = 1L;
+        Long seatId = ticketPaymentRequest.getSeatId();
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(NoSuchElementException::new);
+
+        Member loginMember =
+                memberRepository
+                        .findByEmail(memberEmail)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+
+        if (!seat.getSeatStatus().equals(SeatStatus.SELECTED)) {
+            //TODO: 상태 변경
+            temp+=1;
+        }
+        // paymentProcessor.processPayment();
+        if (!seat.getSeatStatus().equals(SeatStatus.PAID)) {
+            //TODO: 상태 변경
+            // seat.updateStatus(SeatStatus.PAID);
+            temp+=1;
+        }
+
+        if (!seat.getMember().getMemberId().equals(loginMember.getMemberId())) {
+            // TODO: 에러 변경
+            throw new TicketingException(ErrorCode.NOT_FOUND_ZONE);
+        }
+    }
 }
