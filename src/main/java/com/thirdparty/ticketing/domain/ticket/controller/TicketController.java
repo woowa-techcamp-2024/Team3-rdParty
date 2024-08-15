@@ -16,10 +16,7 @@ import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController("/api")
-@RequiredArgsConstructor
 public class TicketController {
 
     private final TicketService ticketService;
