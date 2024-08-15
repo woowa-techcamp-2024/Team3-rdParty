@@ -28,7 +28,7 @@ public class Seat extends BaseEntity {
     private Zone zone;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_Grade", nullable = false)
+    @JoinColumn(name = "seat_grade_id", nullable = false)
     private SeatGrade seatGrade;
 
     @ManyToOne(fetch = FetchType.LAZY)

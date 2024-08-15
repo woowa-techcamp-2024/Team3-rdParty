@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.domain.seat;
 
 import jakarta.persistence.*;
 
+import com.thirdparty.ticketing.domain.BaseEntity;
 import com.thirdparty.ticketing.domain.performance.Performance;
 
 import lombok.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SeatGrade {
+public class SeatGrade extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatGradeId;
