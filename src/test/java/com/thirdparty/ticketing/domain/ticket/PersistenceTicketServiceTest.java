@@ -10,9 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import javax.sql.DataSource;
-
-import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,36 +25,25 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
-import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.SimulatedPaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.policy.OptimisticLockSeatStrategy;
-import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 import com.thirdparty.ticketing.domain.ticket.service.PersistenceTicketService;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 
 @DataJpaTest
 @Import({
-        PersistenceTicketService.class,
-        SimulatedPaymentProcessor.class,
-        OptimisticLockSeatStrategy.class
+    PersistenceTicketService.class,
+    SimulatedPaymentProcessor.class,
+    OptimisticLockSeatStrategy.class
 })
 public class PersistenceTicketServiceTest {
     private static final Logger log = LoggerFactory.getLogger(PersistenceTicketServiceTest.class);
-    @Autowired
-    private TestEntityManager entityManager;
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private SeatRepository seatRepository;
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private SeatRepository seatRepository;
 
-    @Autowired
-    private TicketService ticketService;
+    @Autowired private TicketService ticketService;
 
     private String memberEmail = "test@gmail.com";
     private Long seatId = 1L;
@@ -152,7 +137,9 @@ public class PersistenceTicketServiceTest {
 
     @Nested
     @DisplayName("티켓 예매 할 때 결제 시도 시")
-    @Sql(scripts = "/db/reservation-test.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(
+            scripts = "/db/reservation-test.sql",
+            config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     class reservationTicketTest {
 
         @Test
@@ -168,14 +155,21 @@ public class PersistenceTicketServiceTest {
 
             // When
             IntStream.range(0, numRequests)
-                    .forEach(i -> executor.submit(() -> {
-                        try {
-                            latch.await(); // 동기화된 시작
-                            reservationTicketTask(memberEmail, seatId, successfulReservations, failedReservations);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }));
+                    .forEach(
+                            i ->
+                                    executor.submit(
+                                            () -> {
+                                                try {
+                                                    latch.await(); // 동기화된 시작
+                                                    reservationTicketTask(
+                                                            memberEmail,
+                                                            seatId,
+                                                            successfulReservations,
+                                                            failedReservations);
+                                                } catch (InterruptedException e) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            }));
 
             latch.countDown(); // 모든 스레드가 동시에 실행되도록 설정
 
@@ -187,9 +181,11 @@ public class PersistenceTicketServiceTest {
             assertThat(failedReservations.get()).isEqualTo(numRequests - 1);
         }
 
-        private void reservationTicketTask(String memberEmail, Long seatId,
-                                           AtomicInteger successfulReservations,
-                                           AtomicInteger failedReservations) {
+        private void reservationTicketTask(
+                String memberEmail,
+                Long seatId,
+                AtomicInteger successfulReservations,
+                AtomicInteger failedReservations) {
             try {
                 ticketService.reservationTicket(memberEmail, new TicketPaymentRequest(seatId));
                 successfulReservations.incrementAndGet();
