@@ -29,7 +29,6 @@ public class CacheTicketService extends TicketService {
         super(memberRepository, ticketRepository, seatRepository, paymentProcessor);
     }
 
-    @Override
     @Transactional
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         Member member =
