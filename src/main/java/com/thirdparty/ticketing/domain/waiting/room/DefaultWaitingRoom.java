@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.domain.waiting.room;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,15 @@ public class DefaultWaitingRoom extends WaitingRoom {
         super(waitingLine, waitingCounter);
         this.waitingLine = waitingLine;
         this.waitingCounter = waitingCounter;
+    }
+
+    @Override
+    public List<WaitingMember> pollWaitingMembers(long performanceId, long count) {
+        List<WaitingMember> waitingMembers = waitingLine.pollWaitingMembers(performanceId, count);
+        for (WaitingMember waitingMember : waitingMembers) {
+            map.get(performanceId).remove(waitingMember.getEmail());
+        }
+        return waitingMembers;
     }
 
     @Override
