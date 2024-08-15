@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class UserInfo {
     private final String email;
+    private final String performanceId;
 }
