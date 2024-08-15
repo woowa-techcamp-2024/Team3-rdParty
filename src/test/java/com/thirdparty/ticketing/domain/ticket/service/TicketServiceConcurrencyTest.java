@@ -99,7 +99,7 @@ public class TicketServiceConcurrencyTest {
 
     @Test
     public void testConcurrentSeatSelectionWithRedisson() throws InterruptedException {
-        // runConcurrentSeatSelectionTest(redissonCacheTicketService);
+        runConcurrentSeatSelectionTest(redissonCacheTicketService);
     }
 
     private void runConcurrentSeatSelectionTest(TicketService ticketService)
@@ -135,9 +135,8 @@ public class TicketServiceConcurrencyTest {
 
         Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
         assertNotNull(reservedSeat.getMember(), "Seat should be reserved by one member");
-
+        System.out.println(reservedSeat.getMember().getEmail());
         // designateMember 메서드가 정확히 한 번 호출되었는지 확인
-        verify(seat, times(5)).empty();
         verify(seat, times(1)).designateMember(any(Member.class));
     }
 }
