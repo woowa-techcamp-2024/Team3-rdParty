@@ -17,8 +17,10 @@ public class CacheTicketService extends TicketService {
     }
 
     @Override
-    public void selectSeat(SeatSelectionRequest seatSelectionRequest) {}
+    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+    }
 
     @Override
-    public void reservationTicket(TicketPaymentRequest ticketPaymentRequest) {}
+    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
+    }
 }

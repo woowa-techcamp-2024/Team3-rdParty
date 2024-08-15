@@ -31,15 +31,17 @@ public class TicketController {
 
     @PostMapping("/seats/select")
     public ResponseEntity<Void> selectSeat(
+            @LoginMember String memberEmail,
             @RequestBody @Valid SeatSelectionRequest seatSelectionRequest) {
-        ticketService.selectSeat(seatSelectionRequest);
+        ticketService.selectSeat(memberEmail, seatSelectionRequest);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/tickets")
     public ResponseEntity<Void> payTicket(
+            @LoginMember String memberEmail,
             @RequestBody @Valid TicketPaymentRequest ticketPaymentRequest) {
-        ticketService.reservationTicket(ticketPaymentRequest);
+        ticketService.reservationTicket(memberEmail, ticketPaymentRequest);
         return ResponseEntity.ok().build();
     }
 }
