@@ -1,9 +1,10 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
-import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+
+import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
 
 public class RedisRunningRoom implements RunningRoom {
 
@@ -17,7 +18,8 @@ public class RedisRunningRoom implements RunningRoom {
 
     @Override
     public boolean contains(WaitingMember waitingMember) {
-        return runningRoom.isMember(getPerformanceRunningRoomKey(waitingMember), waitingMember.getEmail());
+        return runningRoom.isMember(
+                getPerformanceRunningRoomKey(waitingMember), waitingMember.getEmail());
     }
 
     private String getPerformanceRunningRoomKey(WaitingMember waitingMember) {

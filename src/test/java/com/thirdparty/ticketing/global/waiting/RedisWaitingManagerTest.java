@@ -2,8 +2,6 @@ package com.thirdparty.ticketing.global.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
-import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,11 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
+
 @SpringBootTest
 class RedisWaitingManagerTest {
 
-    @Autowired
-    private RedisWaitingManager waitingManager;
+    @Autowired private RedisWaitingManager waitingManager;
 
     @Qualifier("lettuceRedisTemplate")
     @Autowired
@@ -26,10 +26,7 @@ class RedisWaitingManagerTest {
 
     @BeforeEach
     void setUp() {
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     @Nested
@@ -50,47 +47,56 @@ class RedisWaitingManagerTest {
         @Test
         @DisplayName("사용자의 남은 순번을 반환한다.")
         void addMemberToWaitingLine() {
-            //given
+            // given
             String performanceId = "1";
             String key = getPerformanceManagedMemberCounterKey(performanceId);
-            for(int i=0; i<25; i++) {
-                WaitingMember waitingMember = new WaitingMember("email" + i + "@email.com", performanceId);
+            for (int i = 0; i < 25; i++) {
+                WaitingMember waitingMember =
+                        new WaitingMember("email" + i + "@email.com", performanceId);
                 waitingManager.enterWaitingRoom(waitingMember);
             }
             managedMemberCounter.set(key, "21");
 
-            //when
-            long remainingCount = waitingManager.enterWaitingRoom(new WaitingMember("email@email.com", performanceId));
+            // when
+            long remainingCount =
+                    waitingManager.enterWaitingRoom(
+                            new WaitingMember("email@email.com", performanceId));
 
-            //then
+            // then
             assertThat(remainingCount).isEqualTo(5);
         }
 
         @Test
         @DisplayName("서로 다른 공연은 공연 순번 상태를 공유하지 않는다.")
         void doesNoShared_BetweenPerformances() {
-            //given
+            // given
             String performanceIdA = "1";
-            for(int i=0; i<10; i++) {
-                WaitingMember waitingMember = new WaitingMember("email" + i + "@email.com", performanceIdA);
+            for (int i = 0; i < 10; i++) {
+                WaitingMember waitingMember =
+                        new WaitingMember("email" + i + "@email.com", performanceIdA);
                 waitingManager.enterWaitingRoom(waitingMember);
             }
             String keyA = getPerformanceManagedMemberCounterKey(performanceIdA);
             managedMemberCounter.set(keyA, "5");
 
             String performanceIdB = "2";
-            for(int i=0; i<5; i++) {
-                WaitingMember waitingMember = new WaitingMember("email" + i + "@email.com", performanceIdB);
+            for (int i = 0; i < 5; i++) {
+                WaitingMember waitingMember =
+                        new WaitingMember("email" + i + "@email.com", performanceIdB);
                 waitingManager.enterWaitingRoom(waitingMember);
             }
             String keyB = getPerformanceManagedMemberCounterKey(performanceIdB);
             managedMemberCounter.set(keyB, "2");
 
-            //when
-            long remainingCountA = waitingManager.enterWaitingRoom(new WaitingMember("email@email.com", performanceIdA));
-            long remainingCountB = waitingManager.enterWaitingRoom(new WaitingMember("email@email.com", performanceIdB));
+            // when
+            long remainingCountA =
+                    waitingManager.enterWaitingRoom(
+                            new WaitingMember("email@email.com", performanceIdA));
+            long remainingCountB =
+                    waitingManager.enterWaitingRoom(
+                            new WaitingMember("email@email.com", performanceIdB));
 
-            //then
+            // then
             assertThat(remainingCountA).isEqualTo(6);
             assertThat(remainingCountB).isEqualTo(4);
         }

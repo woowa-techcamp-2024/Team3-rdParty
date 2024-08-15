@@ -1,16 +1,18 @@
 package com.thirdparty.ticketing.domain.waitingroom;
 
-import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class WaitingAspect {
@@ -18,7 +20,9 @@ public class WaitingAspect {
     private final WaitingManager waitingManager;
 
     private Object waitingRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest();
         String performanceId = request.getParameter("performanceId");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

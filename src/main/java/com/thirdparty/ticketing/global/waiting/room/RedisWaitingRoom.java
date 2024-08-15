@@ -1,14 +1,16 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
+import java.time.ZonedDateTime;
+
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingRoom;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
-import java.time.ZonedDateTime;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 
 public class RedisWaitingRoom extends WaitingRoom {
 
@@ -17,9 +19,11 @@ public class RedisWaitingRoom extends WaitingRoom {
     private final HashOperations<String, String, String> waitingRoom;
     private final ObjectMapper objectMapper;
 
-    public RedisWaitingRoom(WaitingLine waitingLine,
-                            WaitingCounter waitingCounter,
-                            RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper) {
+    public RedisWaitingRoom(
+            WaitingLine waitingLine,
+            WaitingCounter waitingCounter,
+            RedisTemplate<String, String> redisTemplate,
+            ObjectMapper objectMapper) {
         super(waitingLine, waitingCounter);
         waitingRoom = redisTemplate.opsForHash();
         this.objectMapper = objectMapper;
@@ -27,13 +31,17 @@ public class RedisWaitingRoom extends WaitingRoom {
 
     @Override
     public long enter(WaitingMember waitingMember) {
-        if(enterWaitingRoomIfNotExists(waitingMember)) {
-            waitingMember.updateWaitingInfo(waitingCounter.getNextCount(waitingMember), ZonedDateTime.now());
+        if (enterWaitingRoomIfNotExists(waitingMember)) {
+            waitingMember.updateWaitingInfo(
+                    waitingCounter.getNextCount(waitingMember), ZonedDateTime.now());
             waitingLine.enter(waitingMember);
             updateWaitingRoomMember(waitingMember);
         } else {
-            String rawValue = waitingRoom.get(getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail());
-            waitingMember = ObjectMapperUtils.readValue(objectMapper, rawValue, WaitingMember.class);
+            String rawValue =
+                    waitingRoom.get(
+                            getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail());
+            waitingMember =
+                    ObjectMapperUtils.readValue(objectMapper, rawValue, WaitingMember.class);
         }
         return waitingMember.getWaitingCount();
     }
@@ -46,7 +54,8 @@ public class RedisWaitingRoom extends WaitingRoom {
 
     private void updateWaitingRoomMember(WaitingMember waitingMember) {
         String value = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
-        waitingRoom.put(getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail(), value);
+        waitingRoom.put(
+                getPerformanceWaitingRoomKey(waitingMember), waitingMember.getEmail(), value);
     }
 
     private String getPerformanceWaitingRoomKey(WaitingMember waitingMember) {

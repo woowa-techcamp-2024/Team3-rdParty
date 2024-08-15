@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.domain.waitingroom;
 
 import java.time.ZonedDateTime;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,11 +1,12 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
 import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 
 public class RedisWaitingLine implements WaitingLine {
 
@@ -22,8 +23,9 @@ public class RedisWaitingLine implements WaitingLine {
     @Override
     public void enter(WaitingMember waitingMember) {
         String performanceWaitingLineKey = WAITING_LINE_KEY + waitingMember.getPerformanceId();
-        String waitingMemberValue = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
-        waitingLine.add(performanceWaitingLineKey, waitingMemberValue, waitingMember.getWaitingCount());
+        String waitingMemberValue =
+                ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
+        waitingLine.add(
+                performanceWaitingLineKey, waitingMemberValue, waitingMember.getWaitingCount());
     }
-
 }
