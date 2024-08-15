@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,11 +60,12 @@ class RedisWaitingLineTest {
         void addWaitingLine() throws JsonProcessingException {
             //given
             String performanceId = "1";
-            WaitingMember waitingMember = new WaitingMember("email@email.com", performanceId);
             long waitingCounter = 1;
+            WaitingMember waitingMember = new WaitingMember("email@email.com", performanceId);
+            waitingMember.updateWaitingInfo(waitingCounter, ZonedDateTime.now());
 
             //when
-            waitingLine.enter(waitingMember, waitingCounter);
+            waitingLine.enter(waitingMember);
 
             //then
             String performanceWaitingLineKey = getPerformanceWaitingLineKey(performanceId);
@@ -86,7 +88,8 @@ class RedisWaitingLineTest {
             //when
             for (int i = 0; i < waitedMemberCount; i++) {
                 WaitingMember waitingMember = waitingMembers.get(i);
-                waitingLine.enter(waitingMember, i);
+                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
+                waitingLine.enter(waitingMember);
             }
 
             //then
@@ -114,11 +117,15 @@ class RedisWaitingLineTest {
 
             //when
             for (int i = 0; i < performanceAWaitedMemberCount; i++) {
-                waitingLine.enter(new WaitingMember("email" + i + "@email.com", performanceAId), i);
+                WaitingMember waitingMember = new WaitingMember("email" + i + "@email.com", performanceAId);
+                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
+                waitingLine.enter(waitingMember);
             }
 
             for (int i = 0; i < performanceBWaitedMemberCount; i++) {
-                waitingLine.enter(new WaitingMember("email" + i + "@email.com", performanceBId), i);
+                WaitingMember waitingMember = new WaitingMember("email" + i + "@email.com", performanceBId);
+                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
+                waitingLine.enter(waitingMember);
             }
 
             //then

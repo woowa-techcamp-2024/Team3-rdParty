@@ -21,7 +21,7 @@ public class RedisWaitingLine implements WaitingLine {
     }
 
     @Override
-    public void enter(WaitingMember waitingMember, long waitingCounter) {
+    public void enter(WaitingMember waitingMember) {
         String performanceWaitingLineKey = WAITING_LINE_KEY + waitingMember.getPerformanceId();
         String waitingMemberValue;
         try {
@@ -29,7 +29,7 @@ public class RedisWaitingLine implements WaitingLine {
         } catch (JsonProcessingException e) {
             throw new TicketingException("json 직렬화 예외 발생");
         }
-        waitingLine.add(performanceWaitingLineKey, waitingMemberValue, waitingCounter);
+        waitingLine.add(performanceWaitingLineKey, waitingMemberValue, waitingMember.getWaitingCount());
     }
 
 }

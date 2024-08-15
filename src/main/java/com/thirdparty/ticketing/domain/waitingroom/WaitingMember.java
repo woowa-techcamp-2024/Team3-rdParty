@@ -1,9 +1,24 @@
 package com.thirdparty.ticketing.domain.waitingroom;
 
+import java.time.ZonedDateTime;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class WaitingMember {
-    private final String email;
-    private final String performanceId;
+    private String email;
+    private String performanceId;
+    private long waitingCount;
+    private ZonedDateTime enteredAt;
+
+    public WaitingMember(String email, String performanceId) {
+        this.email = email;
+        this.performanceId = performanceId;
+    }
+
+    public void updateWaitingInfo(long waitingCount, ZonedDateTime enteredAt) {
+        this.waitingCount = waitingCount;
+        this.enteredAt = enteredAt;
+    }
 }
