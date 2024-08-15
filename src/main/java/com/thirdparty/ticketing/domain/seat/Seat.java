@@ -64,4 +64,8 @@ public class Seat extends BaseEntity {
         this.member = member;
         this.seatStatus = SeatStatus.SELECTED;
     }
+
+    public void updateStatus(SeatStatus seatStatus) {
+        this.seatStatus = seatStatus;
+    }
 }
