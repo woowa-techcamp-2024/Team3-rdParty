@@ -3,7 +3,7 @@ package com.thirdparty.ticketing.domain.waiting.room;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 
 public class DefaultWaitingLine implements WaitingLine {
 

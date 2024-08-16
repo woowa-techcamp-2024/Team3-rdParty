@@ -9,11 +9,11 @@ import java.util.concurrent.Executors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultRunningRoom;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingCounter;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingLine;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingRoom;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 
 class DefaultWaitingManagerTest {
 
