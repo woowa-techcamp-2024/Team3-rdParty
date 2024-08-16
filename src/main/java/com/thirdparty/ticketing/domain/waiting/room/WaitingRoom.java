@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class WaitingRoom {
 
-    private final WaitingLine waitingLine;
-    private final WaitingCounter waitingCounter;
+    protected final WaitingLine waitingLine;
+    protected final WaitingCounter waitingCounter;
 
     public abstract List<WaitingMember> pollWaitingMembers(long performanceId, long count);
 

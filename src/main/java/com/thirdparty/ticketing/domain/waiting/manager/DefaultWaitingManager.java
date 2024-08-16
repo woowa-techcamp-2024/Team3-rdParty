@@ -10,14 +10,10 @@ import com.thirdparty.ticketing.domain.waiting.room.WaitingRoom;
 
 public class DefaultWaitingManager extends WaitingManager {
 
-    private final RunningRoom runningRoom;
-    private final WaitingRoom waitingRoom;
     private final Map<Long, Long> map = new HashMap<>();
 
     public DefaultWaitingManager(RunningRoom runningRoom, WaitingRoom waitingRoom) {
         super(runningRoom, waitingRoom);
-        this.runningRoom = runningRoom;
-        this.waitingRoom = waitingRoom;
     }
 
     @Override

@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class WaitingManager {
 
-    private final RunningRoom runningRoom;
-    private final WaitingRoom waitingRoom;
+    protected final RunningRoom runningRoom;
+    protected final WaitingRoom waitingRoom;
 
     public boolean isReadyToHandle(WaitingMember waitingMember) {
         return runningRoom.contains(waitingMember);
