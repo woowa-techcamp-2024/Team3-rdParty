@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
