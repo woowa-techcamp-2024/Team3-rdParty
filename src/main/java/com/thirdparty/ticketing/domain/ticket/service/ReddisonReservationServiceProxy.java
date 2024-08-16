@@ -4,33 +4,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
-import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 
-@Service
-public class RedissonCacheTicketService extends TicketService {
+import lombok.RequiredArgsConstructor;
 
-    private final CacheTicketService cacheTicketService;
+@RequiredArgsConstructor
+public class ReddisonReservationServiceProxy implements ReservationServiceProxy {
     private final RedissonClient redissonClient;
-
-    public RedissonCacheTicketService(
-            MemberRepository memberRepository,
-            TicketRepository ticketRepository,
-            SeatRepository seatRepository,
-            CacheTicketService cacheTicketService,
-            RedissonClient redissonClient,
-            PaymentProcessor paymentProcessor) {
-        super(memberRepository, ticketRepository, seatRepository, paymentProcessor);
-        this.cacheTicketService = cacheTicketService;
-        this.redissonClient = redissonClient;
-    }
+    private final ReservationTransactionService reservationTransactionService;
 
     @Override
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
@@ -42,7 +26,7 @@ public class RedissonCacheTicketService extends TicketService {
                 return;
             }
 
-            cacheTicketService.selectSeat(memberEmail, seatSelectionRequest);
+            reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -61,7 +45,7 @@ public class RedissonCacheTicketService extends TicketService {
                 return;
             }
 
-            cacheTicketService.reservationTicket(memberEmail, ticketPaymentRequest);
+            reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
