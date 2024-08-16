@@ -59,7 +59,7 @@ class DefaultWaitingManagerTest {
 
             for (int i = 0; i < numMembersPerPerformance; i++) {
                 WaitingMember member = members.get(i);
-                assertThat(member.getWaitingCounter())
+                assertThat(member.getWaitingCount())
                         .as("공연 %d의 멤버는 정확한 대기 번호를 가져야 합니다", performanceId)
                         .isEqualTo(i + 1);
             }
