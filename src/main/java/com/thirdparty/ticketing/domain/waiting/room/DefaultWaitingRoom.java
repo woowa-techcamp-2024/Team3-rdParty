@@ -32,10 +32,10 @@ public class DefaultWaitingRoom extends WaitingRoom {
             map.put(performanceId, new ConcurrentHashMap<>());
         }
         if (map.get(performanceId).containsKey(email)) {
-            return waitingMember.getWaitingCounter();
+            return waitingMember.getWaitingCount();
         }
-        long counter = waitingCounter.getNextCount(performanceId);
-        waitingMember.setWaitingCounter(counter);
+        long counter = waitingCounter.getNextCount(waitingMember);
+        waitingMember.setWaitingCount(counter);
         map.get(performanceId).put(email, waitingMember);
         waitingLine.enter(waitingMember);
         return counter;

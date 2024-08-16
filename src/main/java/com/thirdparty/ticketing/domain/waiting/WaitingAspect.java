@@ -20,12 +20,14 @@ public class WaitingAspect {
     private final WaitingManager waitingManager;
 
     private Object waitingRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) authentication.getPrincipal();
         HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                         .getRequest();
         Long performanceId = Long.valueOf(request.getHeader("performanceId"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) authentication.getPrincipal();
+
         WaitingMember waitingMember = new WaitingMember(email, performanceId);
         if (waitingManager.isReadyToHandle(waitingMember)) {
             return joinPoint.proceed();

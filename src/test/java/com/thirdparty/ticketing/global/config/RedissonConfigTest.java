@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-@SpringBootTest(
-        properties = {
-            "spring.data.redis.redisson.host=localhost",
-            "spring.data.redis.redisson.port=6379"
-        })
-class RedissonConfigTest {
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
+@SpringBootTest
+class RedissonConfigTest extends TestContainerStarter {
 
     @Autowired private RedissonClient redissonClient;
 
