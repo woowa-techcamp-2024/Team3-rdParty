@@ -64,7 +64,21 @@ public class Seat extends BaseEntity {
         this.seatStatus = SeatStatus.SELECTED;
     }
 
-    public void updateStatus(SeatStatus seatStatus) {
-        this.seatStatus = seatStatus;
+    public void markAsPendingPayment() {
+        if (!seatStatus.isSelected()) {
+            throw new TicketingException(ErrorCode.INVALID_SEAT_STATUS);
+        }
+        this.seatStatus = SeatStatus.PENDING_PAYMENT;
+    }
+
+    public void markAsPaid() {
+        if (!seatStatus.isPendingPayment()) {
+            throw new TicketingException(ErrorCode.INVALID_SEAT_STATUS);
+        }
+        this.seatStatus = SeatStatus.PAID;
+    }
+
+    public boolean isAssignedByMember(Member loginMember) {
+        return loginMember.equals(member);
     }
 }
