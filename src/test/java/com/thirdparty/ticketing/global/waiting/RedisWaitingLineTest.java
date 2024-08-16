@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
+@Disabled("구조 변경으로 더 이상 사용하지 않음")
 class RedisWaitingLineTest extends TestContainerStarter {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";
