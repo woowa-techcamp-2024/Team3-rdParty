@@ -25,6 +25,11 @@ public class DefaultWaitingManager extends WaitingManager {
         return map.get(performanceId);
     }
 
+    @Override
+    public long getRemainingCount(String email, Long performanceId) {
+        return 0;
+    }
+
     public void moveWaitingMemberToRunningRoom(long performanceId, long count) {
         List<WaitingMember> waitingMembers = waitingRoom.pollWaitingMembers(performanceId, count);
         long maxCount = 0L;
