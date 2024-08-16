@@ -7,10 +7,10 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.domain.waiting.room.WaitingCounter;
 import com.thirdparty.ticketing.domain.waiting.room.WaitingLine;
 import com.thirdparty.ticketing.domain.waiting.room.WaitingRoom;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 
 public class RedisWaitingRoom extends WaitingRoom {

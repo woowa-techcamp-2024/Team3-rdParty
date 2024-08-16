@@ -6,8 +6,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.domain.waiting.room.WaitingLine;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 
 public class RedisWaitingLine implements WaitingLine {
