@@ -1,0 +1,120 @@
+package com.thirdparty.ticketing.global.waitingsystem;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.thirdparty.ticketing.support.TestContainerStarter;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+@SpringBootTest
+@Import(TestRedisConfig.class)
+class RedisWaitingRoomTest extends TestContainerStarter {
+
+    @Autowired
+    private RedisWaitingRoom waitingRoom;
+
+    @Qualifier("lettuceRedisTemplate")
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @BeforeEach
+    void setUp() {
+        redisTemplate.getConnectionFactory()
+                .getConnection()
+                .serverCommands()
+                .flushAll();
+    }
+
+    @Nested
+    @DisplayName("다음 대기 순번 조회 시")
+    class GetNextCountTest {
+
+        private String email;
+        private long performanceId;
+
+        @BeforeEach
+        void setUp() {
+            email = "email@email.com";
+            performanceId = 1;
+        }
+
+        @Test
+        @DisplayName("순번을 조회한다.")
+        void getCount() {
+            // given
+
+            // when
+            long nextCount = waitingRoom.getNextCount(email, performanceId);
+
+            // then
+            assertThat(nextCount).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("동시 요청 상황에서 순번을 순차적으로 조회한다.")
+        void getCountIncrement() throws InterruptedException {
+            // given
+            long performanceId = 1;
+
+            int poolSize = 50;
+            CountDownLatch latch = new CountDownLatch(poolSize);
+            ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
+
+            // when
+            for (int i = 0; i < poolSize; i++) {
+                int finalI = i;
+                executorService.execute(
+                        () -> {
+                            try {
+                                String email = "email" + finalI + "@email.com";
+                                waitingRoom.getNextCount(email, performanceId);
+                            } finally {
+                                latch.countDown();
+                            }
+                        });
+            }
+            latch.await();
+
+            // then
+            assertThat(waitingRoom.getNextCount(email, performanceId)).isEqualTo(poolSize + 1);
+        }
+
+        @Test
+        @DisplayName("각 공연은 대기 순번을 공유하지 않는다.")
+        void noSharedWaitingCounter() {
+            // given
+            long performanceAId = 1;
+            int performanceAWaitedMemberCount = 5;
+            for (int i = 0; i < performanceAWaitedMemberCount; i++) {
+                waitingRoom.getNextCount("email" + i + "@email.com", performanceAId);
+            }
+
+            long performanceBId = 2;
+            int performanceBWaitedMemberCount = 10;
+            for (int i = 0; i < performanceBWaitedMemberCount; i++) {
+                waitingRoom.getNextCount("email" + i + "@email.com", performanceBId);
+            }
+
+            // when
+            long performanceANextCount =
+                    waitingRoom.getNextCount("email@email.com", performanceAId);
+            long performanceBNextCount =
+                    waitingRoom.getNextCount("email@email.com", performanceBId);
+
+            // then
+            assertThat(performanceANextCount).isNotEqualTo(performanceBNextCount);
+            assertThat(performanceANextCount).isEqualTo(performanceAWaitedMemberCount + 1);
+            assertThat(performanceBNextCount).isEqualTo(performanceBWaitedMemberCount + 1);
+        }
+    }
+}
