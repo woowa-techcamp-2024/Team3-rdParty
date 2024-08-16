@@ -11,7 +11,6 @@ import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.Seat;
-import com.thirdparty.ticketing.domain.seat.SeatStatus;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.policy.LockSeatStrategy;
@@ -62,15 +61,11 @@ public class ReservationTransactionService implements ReservationService {
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-        if (!seat.getSeatStatus().equals(SeatStatus.SELECTED)) {
-            seat.updateStatus(SeatStatus.PENDING_PAYMENT);
-        }
+        seat.markAsPendingPayment();
         paymentProcessor.processPayment(new PaymentRequest());
-        if (!seat.getSeatStatus().equals(SeatStatus.PAID)) {
-            seat.updateStatus(SeatStatus.PAID);
-        }
+        seat.markAsPaid();
 
-        if (!seat.getMember().getMemberId().equals(loginMember.getMemberId())) {
+        if (seat.isAssignedByMember(loginMember)) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }
