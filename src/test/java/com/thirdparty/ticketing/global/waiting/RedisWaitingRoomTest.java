@@ -26,6 +26,7 @@ import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
+@Disabled("구조 변경으로 더 이상 사용하지 않음")
 class RedisWaitingRoomTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingRoom waitingRoom;
