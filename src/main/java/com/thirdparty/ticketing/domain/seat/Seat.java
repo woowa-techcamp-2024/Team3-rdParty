@@ -67,18 +67,4 @@ public class Seat extends BaseEntity {
     public void updateStatus(SeatStatus seatStatus) {
         this.seatStatus = seatStatus;
     }
-
-    public void designateMember(Member member) {
-        this.seatStatus = SeatStatus.PENDING_PAYMENT;
-        this.member = member;
-    }
-
-    public void nullifyMember() {
-        this.member = null;
-        this.seatStatus = SeatStatus.SELECTABLE;
-    }
-
-    public boolean empty() {
-        return this.member == null;
-    }
 }
