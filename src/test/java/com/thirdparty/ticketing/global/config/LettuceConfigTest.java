@@ -7,12 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-@SpringBootTest(
-        properties = {
-            "spring.data.redis.lettuce.host=localhost",
-            "spring.data.redis.lettuce.port=6379"
-        })
-class LettuceConfigTest {
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
+@SpringBootTest
+class LettuceConfigTest extends TestContainerStarter {
 
     @Autowired private StringRedisTemplate lettuceRedisTemplate;
 

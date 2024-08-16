@@ -23,9 +23,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-class RedisWaitingRoomTest {
+class RedisWaitingRoomTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingRoom waitingRoom;
 

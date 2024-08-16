@@ -21,9 +21,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-class RedisWaitingLineTest {
+class RedisWaitingLineTest extends TestContainerStarter {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";
 

@@ -14,9 +14,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-class RedisRunningRoomTest {
+class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
 

@@ -14,9 +14,10 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-class RedisWaitingManagerTest {
+class RedisWaitingManagerTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingManager waitingManager;
 
