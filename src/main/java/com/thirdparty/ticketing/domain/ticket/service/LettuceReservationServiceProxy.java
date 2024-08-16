@@ -1,6 +1,8 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 
@@ -26,7 +28,7 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
             }
 
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         } finally {
             lettuceRepository.unlock(seatSelectionRequest.getSeatId().toString());
         }
