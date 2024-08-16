@@ -27,4 +27,13 @@ public abstract class WaitingManager {
     }
 
     protected abstract long countManagedMember(WaitingMember waitingMember);
+
+    /**
+     * 사용자의 남은 순번을 조회한다. 남은 순번이 1이하인 경우 이벤트를 발행한다.
+     *
+     * @param email 사용자의 이메일
+     * @param performanceId 공연 대기 정보 조회를 위한 공연 ID
+     * @return 사용자의 남은 순번
+     */
+    public abstract long getRemainingCount(String email, Long performanceId);
 }

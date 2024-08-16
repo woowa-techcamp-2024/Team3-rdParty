@@ -27,6 +27,11 @@ public class RedisWaitingManager extends WaitingManager {
         return Long.parseLong(managedMemberCounter.get(key));
     }
 
+    @Override
+    public long getRemainingCount(String email, Long performanceId) {
+        return 0;
+    }
+
     private String getPerformanceManagedMemberCounterKey(WaitingMember waitingMember) {
         return MANAGED_MEMBER_COUNTER_KEY + waitingMember.getPerformanceId();
     }
