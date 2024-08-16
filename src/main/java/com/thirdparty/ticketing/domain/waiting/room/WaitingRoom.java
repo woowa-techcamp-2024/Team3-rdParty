@@ -1,6 +1,6 @@
-package com.thirdparty.ticketing.domain.waitingroom.room;
+package com.thirdparty.ticketing.domain.waiting.room;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 

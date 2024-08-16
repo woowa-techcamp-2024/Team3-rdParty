@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.waitingroom;
+package com.thirdparty.ticketing.domain.waiting;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
+import com.thirdparty.ticketing.domain.waiting.manager.WaitingManager;
 
 import lombok.RequiredArgsConstructor;
 

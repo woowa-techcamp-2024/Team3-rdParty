@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingroom.manager.WaitingManager;
-import com.thirdparty.ticketing.domain.waitingroom.room.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingLine;
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingRoom;
+import com.thirdparty.ticketing.domain.waiting.manager.WaitingManager;
+import com.thirdparty.ticketing.domain.waiting.room.RunningRoom;
+import com.thirdparty.ticketing.domain.waiting.room.WaitingCounter;
+import com.thirdparty.ticketing.domain.waiting.room.WaitingLine;
+import com.thirdparty.ticketing.domain.waiting.room.WaitingRoom;
 import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
 import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;

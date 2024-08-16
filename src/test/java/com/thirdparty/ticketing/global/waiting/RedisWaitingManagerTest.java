@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
+import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
 
 @SpringBootTest

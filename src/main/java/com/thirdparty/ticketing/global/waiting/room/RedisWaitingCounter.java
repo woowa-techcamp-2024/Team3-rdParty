@@ -3,8 +3,8 @@ package com.thirdparty.ticketing.global.waiting.room;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import com.thirdparty.ticketing.domain.waitingroom.WaitingMember;
-import com.thirdparty.ticketing.domain.waitingroom.room.WaitingCounter;
+import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waiting.room.WaitingCounter;
 
 public class RedisWaitingCounter implements WaitingCounter {
 
