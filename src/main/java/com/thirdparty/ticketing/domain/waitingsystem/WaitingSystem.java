@@ -19,4 +19,11 @@ public class WaitingSystem {
 	public void enterWaitingRoom(String email, long performanceId) {
 		waitingManager.enterWaitingRoom(email, performanceId);
 	}
+
+	public long getRemainingCount(String email, long performanceId) {
+		WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
+		long runningCount = runningManager.getRunningCount(performanceId);
+		eventPublisher.publish(new PollingEvent(performanceId));
+		return waitingMember.getWaitingCount() - runningCount;
+	}
 }
