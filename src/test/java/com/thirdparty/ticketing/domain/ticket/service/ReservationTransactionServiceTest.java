@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.ticket;
+package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,25 +25,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
-import com.thirdparty.ticketing.domain.payment.SimulatedPaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.policy.OptimisticLockSeatStrategy;
-import com.thirdparty.ticketing.domain.ticket.service.PersistenceTicketService;
-import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 
-@DataJpaTest
-@Import({
-    PersistenceTicketService.class,
-    SimulatedPaymentProcessor.class,
-    OptimisticLockSeatStrategy.class
-})
-public class PersistenceTicketServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(PersistenceTicketServiceTest.class);
+@SpringBootTest
+public class ReservationTransactionServiceTest {
+    private static final Logger log =
+            LoggerFactory.getLogger(ReservationTransactionServiceTest.class);
     @Autowired private SeatRepository seatRepository;
 
-    @Autowired private TicketService ticketService;
+    @Autowired
+    @Qualifier("persistenceOptimisticReservationService")
+    private ReservationTransactionService reservationTransactionService;
 
     private String memberEmail = "test@gmail.com";
     private Long seatId = 1L;
@@ -114,7 +108,8 @@ public class PersistenceTicketServiceTest {
             try {
                 latch.await();
                 try {
-                    ticketService.selectSeat(memberEmail, new SeatSelectionRequest(seatId));
+                    reservationTransactionService.selectSeat(
+                            memberEmail, new SeatSelectionRequest(seatId));
                     successfulSelections.incrementAndGet();
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
@@ -187,7 +182,8 @@ public class PersistenceTicketServiceTest {
                 AtomicInteger successfulReservations,
                 AtomicInteger failedReservations) {
             try {
-                ticketService.reservationTicket(memberEmail, new TicketPaymentRequest(seatId));
+                reservationTransactionService.reservationTicket(
+                        memberEmail, new TicketPaymentRequest(seatId));
                 successfulReservations.incrementAndGet();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

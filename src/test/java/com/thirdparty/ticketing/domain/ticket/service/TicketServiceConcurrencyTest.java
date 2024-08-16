@@ -1,11 +1,7 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,7 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
@@ -49,9 +49,13 @@ public class TicketServiceConcurrencyTest {
 
     @Autowired private RedissonClient redissonClient;
 
-    @Autowired private LettuceCacheTicketService lettuceCacheTicketService;
+    @Autowired
+    @Qualifier("lettuceReservationServiceProxy")
+    private ReservationServiceProxy lettuceCacheTicketService;
 
-    @Autowired private RedissonCacheTicketService redissonCacheTicketService;
+    @Autowired
+    @Qualifier("reddisonReservationServiceProxy")
+    private ReservationServiceProxy reddisonReservationServiceProxy;
 
     private List<Member> members;
     private Seat seat;
@@ -81,7 +85,15 @@ public class TicketServiceConcurrencyTest {
         seatGrade = new SeatGrade(1L, performance, 20000L, "Regular");
         zone = new Zone(1L, performance, "R");
 
-        seat = spy(new Seat(1L, zone, seatGrade, null, "R", SeatStatus.SELECTABLE));
+        seat =
+                spy(
+                        Seat.builder()
+                                .seatId(1L)
+                                .zone(zone)
+                                .seatGrade(seatGrade)
+                                .seatCode("R")
+                                .seatStatus(SeatStatus.SELECTABLE)
+                                .build());
 
         // Repository 모킹
         when(seatRepository.findById(seat.getSeatId())).thenReturn(Optional.of(seat));
@@ -99,14 +111,17 @@ public class TicketServiceConcurrencyTest {
 
     @Test
     public void testConcurrentSeatSelectionWithRedisson() throws InterruptedException {
-        runConcurrentSeatSelectionTest(redissonCacheTicketService);
+        runConcurrentSeatSelectionTest(reddisonReservationServiceProxy);
     }
 
-    private void runConcurrentSeatSelectionTest(TicketService ticketService)
+    private void runConcurrentSeatSelectionTest(ReservationServiceProxy reservationServiceProxy)
             throws InterruptedException {
+
         int threadCount = members.size();
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
+
+        AtomicInteger successfulSelections = new AtomicInteger(0);
 
         for (Member member : members) {
             // 각 멤버에 대해 작업을 스레드 풀에 제출
@@ -116,14 +131,14 @@ public class TicketServiceConcurrencyTest {
                             // 스레드 풀에서 병렬로 실행되는 작업
                             SeatSelectionRequest seatSelectionRequest =
                                     new SeatSelectionRequest(seat.getSeatId());
-                            ticketService.selectSeat(member.getEmail(), seatSelectionRequest);
-                        } catch (RuntimeException e) {
+                            reservationServiceProxy.selectSeat(
+                                    member.getEmail(), seatSelectionRequest);
+                            successfulSelections.incrementAndGet();
+                        } catch (TicketingException e) {
                             // 예외 발생 시 오류 로그 출력
-                            System.err.println(
-                                    "Exception occurred for member: "
-                                            + member.getEmail()
-                                            + " - "
-                                            + e.getMessage());
+                            System.out.println("Error: " + e.getMessage());
+                        } catch (Exception e) {
+                            System.out.println("NOT DEFINED ERROR" + e.getMessage());
                         } finally {
                             // latch 카운트 감소, 스레드 완료 시 호출
                             latch.countDown();
@@ -134,9 +149,10 @@ public class TicketServiceConcurrencyTest {
         latch.await();
 
         Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
-        assertNotNull(reservedSeat.getMember(), "Seat should be reserved by one member");
+        assertThat(reservedSeat.getMember()).isNotNull();
         System.out.println(reservedSeat.getMember().getEmail());
         // designateMember 메서드가 정확히 한 번 호출되었는지 확인
-        verify(seat, times(1)).designateMember(any(Member.class));
+        verify(seat, times(5)).assignByMember(any(Member.class));
+        Assertions.assertThat(successfulSelections.get()).isEqualTo(1);
     }
 }
