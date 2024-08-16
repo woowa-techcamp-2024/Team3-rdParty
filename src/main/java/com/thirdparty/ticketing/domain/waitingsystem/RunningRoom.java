@@ -1,4 +1,3 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
-public interface RunningRoom {
-}
+public interface RunningRoom {}
