@@ -1,8 +1,9 @@
 package com.thirdparty.ticketing.domain.ticket.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,21 +15,15 @@ import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 
 @RestController("/api")
 public class TicketController {
 
-    private final TicketService ticketService;
-
-    public TicketController(@Qualifier("lettuceCacheTicketService") TicketService ticketService) {
-        this.ticketService = ticketService;
-    }
-
     @GetMapping("/members/tickets")
     public ResponseEntity<ItemResult<TicketElement>> selectMyTickets(
             @LoginMember String memberEmail) {
-        ItemResult<TicketElement> tickets = ticketService.selectMyTicket(memberEmail);
+        ItemResult<TicketElement> tickets = ItemResult.of(List.of());
+        // ticketService.selectMyTicket(memberEmail);
         return ResponseEntity.ok().body(tickets);
     }
 
@@ -36,7 +31,6 @@ public class TicketController {
     public ResponseEntity<Void> selectSeat(
             @LoginMember String memberEmail,
             @RequestBody @Valid SeatSelectionRequest seatSelectionRequest) {
-        ticketService.selectSeat(memberEmail, seatSelectionRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -44,7 +38,6 @@ public class TicketController {
     public ResponseEntity<Void> payTicket(
             @LoginMember String memberEmail,
             @RequestBody @Valid TicketPaymentRequest ticketPaymentRequest) {
-        ticketService.reservationTicket(memberEmail, ticketPaymentRequest);
         return ResponseEntity.ok().build();
     }
 }

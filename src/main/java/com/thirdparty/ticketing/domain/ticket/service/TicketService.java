@@ -9,15 +9,13 @@ import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
-import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class TicketService {
+public class TicketService {
     protected final MemberRepository memberRepository;
     protected final TicketRepository ticketRepository;
     protected final SeatRepository seatRepository;
@@ -34,9 +32,4 @@ public abstract class TicketService {
 
         return ItemResult.of(tickets);
     }
-
-    public abstract void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest);
-
-    public abstract void reservationTicket(
-            String memberEmail, TicketPaymentRequest ticketPaymentRequest);
 }

@@ -1,31 +1,15 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import org.springframework.stereotype.Service;
-
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
-import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
-import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 
-@Service
-public class LettuceCacheTicketService extends TicketService {
-    private final CacheTicketService cacheTicketService;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class LettuceReservationServiceProxy implements ReservationServiceProxy {
     private final LettuceRepository lettuceRepository;
-
-    public LettuceCacheTicketService(
-            MemberRepository memberRepository,
-            TicketRepository ticketRepository,
-            SeatRepository seatRepository,
-            PaymentProcessor paymentProcessor,
-            CacheTicketService cacheTicketService,
-            LettuceRepository lettuceRepository) {
-        super(memberRepository, ticketRepository, seatRepository, paymentProcessor);
-        this.cacheTicketService = cacheTicketService;
-        this.lettuceRepository = lettuceRepository;
-    }
+    private final ReservationTransactionService reservationTransactionService;
 
     @Override
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
@@ -38,8 +22,9 @@ public class LettuceCacheTicketService extends TicketService {
             }
 
             if (limit > 0) {
-                cacheTicketService.selectSeat(memberEmail, seatSelectionRequest);
+                reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
             }
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -58,7 +43,7 @@ public class LettuceCacheTicketService extends TicketService {
             }
 
             if (limit > 0) {
-                cacheTicketService.reservationTicket(memberEmail, ticketPaymentRequest);
+                reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
