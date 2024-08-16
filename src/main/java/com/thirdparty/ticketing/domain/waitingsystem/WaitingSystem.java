@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
+import java.util.Set;
+
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 
@@ -25,5 +27,11 @@ public class WaitingSystem {
 		long runningCount = runningManager.getRunningCount(performanceId);
 		eventPublisher.publish(new PollingEvent(performanceId));
 		return waitingMember.getWaitingCount() - runningCount;
+	}
+
+	public void moveUserToRunning(long performanceId) {
+		long availableToRunning = runningManager.getAvailableToRunning(performanceId);
+		Set<WaitingMember> waitingMembers = waitingManager.pullOutMembers(performanceId, availableToRunning);
+		runningManager.enterRunningRoom(performanceId, waitingMembers);
 	}
 }
