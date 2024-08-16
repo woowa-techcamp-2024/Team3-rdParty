@@ -3,7 +3,6 @@ package com.thirdparty.ticketing.domain.waitingsystem;
 import java.util.Set;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 

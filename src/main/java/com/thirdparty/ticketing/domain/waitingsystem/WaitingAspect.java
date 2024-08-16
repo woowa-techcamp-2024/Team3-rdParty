@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.waiting;
+package com.thirdparty.ticketing.domain.waitingsystem;
 
 import jakarta.servlet.http.HttpServletRequest;
 

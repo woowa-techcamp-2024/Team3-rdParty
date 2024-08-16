@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.domain.waiting.room.RunningRoom;
 import com.thirdparty.ticketing.domain.waiting.room.WaitingRoom;
 

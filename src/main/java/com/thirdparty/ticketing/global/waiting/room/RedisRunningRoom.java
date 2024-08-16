@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 import com.thirdparty.ticketing.domain.waiting.room.RunningRoom;
 
 public class RedisRunningRoom implements RunningRoom {

@@ -1,6 +1,6 @@
 package com.thirdparty.ticketing.domain.waiting.room;
 
-import com.thirdparty.ticketing.domain.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
 
 public interface WaitingCounter {
 
