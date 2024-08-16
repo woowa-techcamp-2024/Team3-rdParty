@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.waiting.room;
 
+import java.util.List;
+
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 
 public interface WaitingLine {
@@ -10,4 +12,6 @@ public interface WaitingLine {
      * @param waitingMember 사용자의 정보
      */
     void enter(WaitingMember waitingMember);
+
+    List<WaitingMember> pollWaitingMembers(long performanceId, long count);
 }

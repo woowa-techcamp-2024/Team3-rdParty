@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
+import java.util.List;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
@@ -27,5 +29,10 @@ public class RedisWaitingLine implements WaitingLine {
                 ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
         waitingLine.add(
                 performanceWaitingLineKey, waitingMemberValue, waitingMember.getWaitingCount());
+    }
+
+    @Override
+    public List<WaitingMember> pollWaitingMembers(long performanceId, long count) {
+        return List.of();
     }
 }

@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.waiting.room;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,6 +28,11 @@ public class RedisWaitingRoom extends WaitingRoom {
         super(waitingLine, waitingCounter);
         waitingRoom = redisTemplate.opsForHash();
         this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public List<WaitingMember> pollWaitingMembers(long performanceId, long count) {
+        return List.of();
     }
 
     @Override

@@ -9,11 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WaitingMember {
     private String email;
-    private String performanceId;
+    private long performanceId;
     private long waitingCount;
     private ZonedDateTime enteredAt;
 
     public WaitingMember(String email, String performanceId) {
+        this.email = email;
+        this.performanceId = Long.parseLong(performanceId);
+    }
+
+    public WaitingMember(String email, Long performanceId) {
         this.email = email;
         this.performanceId = performanceId;
     }

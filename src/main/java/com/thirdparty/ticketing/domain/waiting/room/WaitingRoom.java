@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.waiting.room;
 
+import java.util.List;
+
 import com.thirdparty.ticketing.domain.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,8 @@ public abstract class WaitingRoom {
 
     protected final WaitingLine waitingLine;
     protected final WaitingCounter waitingCounter;
+
+    public abstract List<WaitingMember> pollWaitingMembers(long performanceId, long count);
 
     /**
      * 사용자를 대기열에 넣고, 대기공간에 보관한다.

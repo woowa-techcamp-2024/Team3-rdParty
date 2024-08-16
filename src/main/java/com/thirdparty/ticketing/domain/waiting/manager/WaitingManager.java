@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class WaitingManager {
 
-    private final RunningRoom runningRoom;
-    private final WaitingRoom waitingRoom;
+    protected final RunningRoom runningRoom;
+    protected final WaitingRoom waitingRoom;
 
     public boolean isReadyToHandle(WaitingMember waitingMember) {
         return runningRoom.contains(waitingMember);
@@ -19,7 +19,7 @@ public abstract class WaitingManager {
     /**
      * 사용자를 대기열에 추가하고 남은 순번을 반환한다.
      *
-     * @param waitingMember
+     * @param waitingMember 대기하는 사용자
      * @return 사용자 앞에 남은 순번
      */
     public long enterWaitingRoom(WaitingMember waitingMember) {

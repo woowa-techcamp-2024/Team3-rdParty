@@ -23,10 +23,11 @@ public class WaitingAspect {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                         .getRequest();
-        String performanceId = request.getParameter("performanceId");
+        Long performanceId = Long.valueOf(request.getHeader("performanceId"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
+
         WaitingMember waitingMember = new WaitingMember(email, performanceId);
         if (waitingManager.isReadyToHandle(waitingMember)) {
             return joinPoint.proceed();
