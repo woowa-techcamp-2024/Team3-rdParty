@@ -17,8 +17,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
