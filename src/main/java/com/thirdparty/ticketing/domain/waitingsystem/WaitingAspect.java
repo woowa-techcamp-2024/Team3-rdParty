@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.thirdparty.ticketing.domain.waiting.manager.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 

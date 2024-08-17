@@ -13,7 +13,7 @@ import com.thirdparty.ticketing.domain.waiting.room.DefaultRunningRoom;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingCounter;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingLine;
 import com.thirdparty.ticketing.domain.waiting.room.DefaultWaitingRoom;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 class DefaultWaitingManagerTest {
 
