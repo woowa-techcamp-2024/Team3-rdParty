@@ -8,11 +8,14 @@ import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
-import com.thirdparty.ticketing.domain.ticket.policy.LockSeatStrategy;
-import com.thirdparty.ticketing.domain.ticket.policy.NaiveSeatStrategy;
-import com.thirdparty.ticketing.domain.ticket.policy.OptimisticLockSeatStrategy;
-import com.thirdparty.ticketing.domain.ticket.policy.PessimisticLockSeatStrategy;
 import com.thirdparty.ticketing.domain.ticket.service.*;
+import com.thirdparty.ticketing.domain.ticket.service.proxy.LettuceReservationServiceProxy;
+import com.thirdparty.ticketing.domain.ticket.service.proxy.RedissonReservationServiceProxy;
+import com.thirdparty.ticketing.domain.ticket.service.proxy.ReservationServiceProxy;
+import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
+import com.thirdparty.ticketing.domain.ticket.service.strategy.NaiveSeatStrategy;
+import com.thirdparty.ticketing.domain.ticket.service.strategy.OptimisticLockSeatStrategy;
+import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSeatStrategy;
 
 @Configuration
 public class ReservationServiceContainer {

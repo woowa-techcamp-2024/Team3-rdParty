@@ -13,7 +13,7 @@ import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.policy.LockSeatStrategy;
+import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

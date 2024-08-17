@@ -13,8 +13,8 @@ import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.service.ReservationServiceProxy;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
+import com.thirdparty.ticketing.domain.ticket.service.proxy.ReservationServiceProxy;
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +24,7 @@ public class TicketController {
 
     public TicketController(
             TicketService ticketService,
-            @Qualifier("reddisonReservationServiceProxy")
+            @Qualifier("redissonReservationServiceProxy")
                     ReservationServiceProxy reservationServiceProxy) {
         this.ticketService = ticketService;
         this.reservationServiceProxy = reservationServiceProxy;

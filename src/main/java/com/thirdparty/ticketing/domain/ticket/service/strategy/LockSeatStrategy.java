@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.ticket.policy;
+package com.thirdparty.ticketing.domain.ticket.service.strategy;
 
 import java.util.Optional;
 
