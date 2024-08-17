@@ -1,9 +1,9 @@
-package com.thirdparty.ticketing.global.waitingsystem;
+package com.thirdparty.ticketing.global.waitingsystem.running;
 
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.domain.waitingsystem.RunningRoom;
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
 
 public class RedisRunningRoom implements RunningRoom {
 

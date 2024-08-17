@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waitingsystem;
+package com.thirdparty.ticketing.global.waitingsystem.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import com.thirdparty.ticketing.global.waitingsystem.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
