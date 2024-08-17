@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class RedisRunningManager implements RunningManager {
 
     private final RedisRunningRoom runningRoom;
+    private final RedisRunningCounter runningCounter;
 
     @Override
     public boolean isReadyToHandle(String email, long performanceId) {
@@ -19,7 +20,7 @@ public class RedisRunningManager implements RunningManager {
 
     @Override
     public long getRunningCount(long performanceId) {
-        return 0;
+        return runningCounter.getRunningCount(performanceId);
     }
 
     @Override
