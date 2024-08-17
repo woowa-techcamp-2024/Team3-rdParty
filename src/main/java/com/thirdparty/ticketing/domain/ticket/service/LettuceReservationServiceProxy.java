@@ -20,7 +20,7 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
             while (limit > 0
                     && !lettuceRepository.seatLock(seatSelectionRequest.getSeatId().toString())) {
                 limit -= 1;
-                Thread.sleep(300);
+                Thread.sleep(200);
             }
 
             if (limit > 0) {

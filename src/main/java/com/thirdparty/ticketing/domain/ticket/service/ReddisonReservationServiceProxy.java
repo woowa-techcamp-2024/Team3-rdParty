@@ -25,11 +25,9 @@ public class ReddisonReservationServiceProxy implements ReservationServiceProxy 
         RLock lock = redissonClient.getLock(seatSelectionRequest.getSeatId().toString());
 
         try {
-            boolean available = lock.tryLock(5, 300, TimeUnit.MICROSECONDS);
-            if (!available) {
+            if (!lock.tryLock(1, 60, TimeUnit.SECONDS)) {
                 return;
             }
-
             reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
         } catch (InterruptedException e) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
@@ -39,6 +37,7 @@ public class ReddisonReservationServiceProxy implements ReservationServiceProxy 
             } catch (IllegalMonitorStateException e) {
                 log.info("Redisson Lock Already UnLock");
             }
+            log.info("finished lock on {}", seatSelectionRequest.getSeatId().toString());
         }
     }
 
