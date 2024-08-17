@@ -28,16 +28,16 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-public class ReservationTransactionServiceTest {
-    private static final Logger log =
-            LoggerFactory.getLogger(ReservationTransactionServiceTest.class);
+public class PersistenceReservationTest extends TestContainerStarter {
+    private static final Logger log = LoggerFactory.getLogger(PersistenceReservationTest.class);
     @Autowired private SeatRepository seatRepository;
 
     @Autowired
-    @Qualifier("persistenceOptimisticReservationService")
-    private ReservationTransactionService reservationTransactionService;
+    @Qualifier("optimisticReservationServiceProxy")
+    private ReservationService optimisticReservationService;
 
     private String memberEmail = "test@gmail.com";
     private Long seatId = 1L;
@@ -108,7 +108,7 @@ public class ReservationTransactionServiceTest {
             try {
                 latch.await();
                 try {
-                    reservationTransactionService.selectSeat(
+                    optimisticReservationService.selectSeat(
                             memberEmail, new SeatSelectionRequest(seatId));
                     successfulSelections.incrementAndGet();
                 } catch (Exception e) {
@@ -182,7 +182,7 @@ public class ReservationTransactionServiceTest {
                 AtomicInteger successfulReservations,
                 AtomicInteger failedReservations) {
             try {
-                reservationTransactionService.reservationTicket(
+                optimisticReservationService.reservationTicket(
                         memberEmail, new TicketPaymentRequest(seatId));
                 successfulReservations.incrementAndGet();
             } catch (Exception e) {

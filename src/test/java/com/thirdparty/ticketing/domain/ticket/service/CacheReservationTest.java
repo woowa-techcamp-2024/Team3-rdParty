@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -33,13 +33,12 @@ import com.thirdparty.ticketing.domain.seat.SeatStatus;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.service.proxy.ReservationServiceProxy;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class TicketServiceConcurrencyTest {
+public class CacheReservationTest extends TestContainerStarter {
 
     @Autowired private SeatRepository seatRepository;
 
@@ -57,11 +56,11 @@ public class TicketServiceConcurrencyTest {
 
     @Autowired
     @Qualifier("lettuceReservationServiceProxy")
-    private ReservationServiceProxy lettuceCacheTicketService;
+    private ReservationService lettuceCacheTicketService;
 
     @Autowired
     @Qualifier("redissonReservationServiceProxy")
-    private ReservationServiceProxy redissonReservationServiceProxy;
+    private ReservationService redissonReservationServiceProxy;
 
     private List<Member> members;
     private Seat seat;
@@ -123,7 +122,7 @@ public class TicketServiceConcurrencyTest {
         runConcurrentSeatSelectionTest(redissonReservationServiceProxy);
     }
 
-    private void runConcurrentSeatSelectionTest(ReservationServiceProxy reservationServiceProxy)
+    private void runConcurrentSeatSelectionTest(ReservationService reservationServiceProxy)
             throws InterruptedException {
 
         int threadCount = members.size();
@@ -156,8 +155,5 @@ public class TicketServiceConcurrencyTest {
 
         Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
         assertThat(reservedSeat.getMember()).isNotNull();
-        // designateMember 메서드가 정확히 호출되었는지 확인
-        // verify(seat, times(5)).assignByMember(any(Member.class));
-        // Assertions.assertThat(successfulSelections.get()).isEqualTo(1);
     }
 }
