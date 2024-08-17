@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "seat")
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +62,7 @@ public class Seat extends BaseEntity {
         if (!isSelectable()) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
+        log.info("seat occupied by {}", member.getEmail());
         this.member = member;
         this.seatStatus = SeatStatus.SELECTED;
     }
