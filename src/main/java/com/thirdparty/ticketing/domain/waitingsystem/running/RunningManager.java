@@ -1,7 +1,8 @@
 package com.thirdparty.ticketing.domain.waitingsystem.running;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.util.Set;
+
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 public interface RunningManager {
     boolean isReadyToHandle(String email, long performanceId);

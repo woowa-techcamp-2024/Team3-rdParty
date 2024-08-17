@@ -1,4 +1,3 @@
 package com.thirdparty.ticketing.domain.waitingsystem.running;
 
-public interface RunningCounter {
-}
+public interface RunningCounter {}
