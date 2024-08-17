@@ -1,7 +1,8 @@
-package com.thirdparty.ticketing.global.waitingsystem;
+package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -18,10 +19,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
-class RedisWaitingRoomTest extends TestContainerStarter {
+class RedisWaitingCounterTest extends TestContainerStarter {
 
     @Autowired
-    private RedisWaitingRoom waitingRoom;
+    private RedisWaitingCounter waitingCounter;
 
     @Qualifier("lettuceRedisTemplate")
     @Autowired
@@ -54,7 +55,7 @@ class RedisWaitingRoomTest extends TestContainerStarter {
             // given
 
             // when
-            long nextCount = waitingRoom.getNextCount(email, performanceId);
+            long nextCount = waitingCounter.getNextCount(performanceId);
 
             // then
             assertThat(nextCount).isEqualTo(1);
@@ -77,7 +78,7 @@ class RedisWaitingRoomTest extends TestContainerStarter {
                         () -> {
                             try {
                                 String email = "email" + finalI + "@email.com";
-                                waitingRoom.getNextCount(email, performanceId);
+                                waitingCounter.getNextCount(performanceId);
                             } finally {
                                 latch.countDown();
                             }
@@ -86,7 +87,7 @@ class RedisWaitingRoomTest extends TestContainerStarter {
             latch.await();
 
             // then
-            assertThat(waitingRoom.getNextCount(email, performanceId)).isEqualTo(poolSize + 1);
+            assertThat(waitingCounter.getNextCount(performanceId)).isEqualTo(poolSize + 1);
         }
 
         @Test
@@ -96,20 +97,20 @@ class RedisWaitingRoomTest extends TestContainerStarter {
             long performanceAId = 1;
             int performanceAWaitedMemberCount = 5;
             for (int i = 0; i < performanceAWaitedMemberCount; i++) {
-                waitingRoom.getNextCount("email" + i + "@email.com", performanceAId);
+                waitingCounter.getNextCount(performanceAId);
             }
 
             long performanceBId = 2;
             int performanceBWaitedMemberCount = 10;
             for (int i = 0; i < performanceBWaitedMemberCount; i++) {
-                waitingRoom.getNextCount("email" + i + "@email.com", performanceBId);
+                waitingCounter.getNextCount(performanceBId);
             }
 
             // when
             long performanceANextCount =
-                    waitingRoom.getNextCount("email@email.com", performanceAId);
+                    waitingCounter.getNextCount(performanceAId);
             long performanceBNextCount =
-                    waitingRoom.getNextCount("email@email.com", performanceBId);
+                    waitingCounter.getNextCount(performanceBId);
 
             // then
             assertThat(performanceANextCount).isNotEqualTo(performanceBNextCount);
