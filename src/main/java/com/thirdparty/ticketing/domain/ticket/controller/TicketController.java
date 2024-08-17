@@ -4,7 +4,6 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,22 +12,17 @@ import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
-import com.thirdparty.ticketing.domain.ticket.service.proxy.ReservationServiceProxy;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class TicketController {
     private final TicketService ticketService;
-    private final ReservationServiceProxy reservationServiceProxy;
-
-    public TicketController(
-            TicketService ticketService,
-            @Qualifier("redissonReservationServiceProxy")
-                    ReservationServiceProxy reservationServiceProxy) {
-        this.ticketService = ticketService;
-        this.reservationServiceProxy = reservationServiceProxy;
-    }
+    private final ReservationService reservationService;
 
     @GetMapping("/members/tickets")
     public ResponseEntity<ItemResult<TicketElement>> selectMyTickets(
@@ -42,7 +36,7 @@ public class TicketController {
     public ResponseEntity<Void> selectSeat(
             @LoginMember String memberEmail,
             @RequestBody @Valid SeatSelectionRequest seatSelectionRequest) {
-        reservationServiceProxy.selectSeat(memberEmail, seatSelectionRequest);
+        reservationService.selectSeat(memberEmail, seatSelectionRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -50,7 +44,7 @@ public class TicketController {
     public ResponseEntity<Void> reservationTicket(
             @LoginMember String memberEmail,
             @RequestBody @Valid TicketPaymentRequest ticketPaymentRequest) {
-        reservationServiceProxy.reservationTicket(memberEmail, ticketPaymentRequest);
+        reservationService.reservationTicket(memberEmail, ticketPaymentRequest);
         return ResponseEntity.ok().build();
     }
 }

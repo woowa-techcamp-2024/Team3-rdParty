@@ -3,15 +3,14 @@ package com.thirdparty.ticketing.global.config;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.service.*;
-import com.thirdparty.ticketing.domain.ticket.service.proxy.LettuceReservationServiceProxy;
-import com.thirdparty.ticketing.domain.ticket.service.proxy.RedissonReservationServiceProxy;
-import com.thirdparty.ticketing.domain.ticket.service.proxy.ReservationServiceProxy;
+import com.thirdparty.ticketing.domain.ticket.service.proxy.*;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.NaiveSeatStrategy;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.OptimisticLockSeatStrategy;
@@ -20,7 +19,7 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 @Configuration
 public class ReservationServiceContainer {
     @Bean
-    public ReservationServiceProxy redissonReservationServiceProxy(
+    public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient,
             ReservationTransactionService cacheReservationTransactionService) {
         return new RedissonReservationServiceProxy(
@@ -28,11 +27,25 @@ public class ReservationServiceContainer {
     }
 
     @Bean
-    public ReservationServiceProxy lettuceReservationServiceProxy(
+    public ReservationService lettuceReservationServiceProxy(
             LettuceRepository lettuceRepository,
             ReservationTransactionService cacheReservationTransactionService) {
         return new LettuceReservationServiceProxy(
                 lettuceRepository, cacheReservationTransactionService);
+    }
+
+    @Primary
+    @Bean
+    ReservationService optimisticReservationServiceProxy(
+            ReservationTransactionService persistenceOptimisticReservationService) {
+        return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
+    }
+
+    @Primary
+    @Bean
+    ReservationService pessimisticReservationServiceProxy(
+            ReservationTransactionService persistencePessimisticReservationService) {
+        return new PessimisticReservationServiceProxy(persistencePessimisticReservationService);
     }
 
     @Bean

@@ -1,7 +1,5 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import jakarta.persistence.OptimisticLockException;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -28,23 +26,19 @@ public class ReservationTransactionService implements ReservationService {
     @Override
     @Transactional
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        try {
-            Long seatId = seatSelectionRequest.getSeatId();
+        Long seatId = seatSelectionRequest.getSeatId();
 
-            Seat seat =
-                    lockSeatStrategy
-                            .getSeatWithLock(seatId)
-                            .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
+        Seat seat =
+                lockSeatStrategy
+                        .getSeatWithLock(seatId)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
 
-            Member member =
-                    memberRepository
-                            .findByEmail(memberEmail)
-                            .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+        Member member =
+                memberRepository
+                        .findByEmail(memberEmail)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-            seat.assignByMember(member);
-        } catch (OptimisticLockException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
-        }
+        seat.assignByMember(member);
     }
 
     @Override
