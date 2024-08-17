@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
-import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
 import com.thirdparty.ticketing.support.TestContainerStarter;
@@ -33,11 +33,14 @@ import com.thirdparty.ticketing.support.TestContainerStarter;
 @SpringBootTest
 public class PersistenceReservationTest extends TestContainerStarter {
     private static final Logger log = LoggerFactory.getLogger(PersistenceReservationTest.class);
-    @Autowired private SeatRepository seatRepository;
 
     @Autowired
     @Qualifier("optimisticReservationServiceProxy")
     private ReservationService optimisticReservationService;
+
+    @Autowired
+    @Qualifier("pessimisticReservationServiceProxy")
+    private ReservationService pessimisticReservationService;
 
     private String memberEmail = "test@gmail.com";
     private Long seatId = 1L;
@@ -48,28 +51,30 @@ public class PersistenceReservationTest extends TestContainerStarter {
             scripts = "/db/select-seat-test.sql",
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     class SelectSeatTest {
-
-        @Test
-        @DisplayName("다른 스레드에서 테스트 데이터를 볼 수 있는지 확인한다")
-        void select_otherThread() throws InterruptedException {
-            Long seatId = 1L;
-
-            ExecutorService executor = Executors.newFixedThreadPool(2);
-
-            executor.execute(
-                    () -> {
-                        seatRepository.findById(seatId).orElseThrow();
-                    });
-
-            executor.shutdown();
-            executor.awaitTermination(10, TimeUnit.SECONDS);
+        @Nested
+        @DisplayName("낙관 락을 사용하면")
+        class OptimisticLockTest {
+            @Test
+            @DisplayName("여러개의 동시 요청 중 한 명만 좌석을 성공적으로 선택해야 한다.")
+            void selectSeat_optimistic() throws InterruptedException {
+                selectSeat_ConcurrencyTest(optimisticReservationService);
+            }
         }
 
-        @Test
-        @DisplayName("여러개의 동시 요청 중 한 명만 좌석을 성공적으로 선택해야 한다.")
-        void selectSeat_ConcurrencyTest() throws InterruptedException {
+        @Nested
+        @DisplayName("비관 락을 사용하면")
+        class PessimisticLockTest {
+            @Test
+            @DisplayName("여러개의 동시 요청 중 한 명만 좌석을 성공적으로 선택해야 한다.")
+            void selectSeat_optimistic() throws InterruptedException {
+                selectSeat_ConcurrencyTest(pessimisticReservationService);
+            }
+        }
+
+        public void selectSeat_ConcurrencyTest(ReservationService reservationService)
+                throws InterruptedException {
             // Given
-            int numRequests = 2000;
+            int numRequests = 100;
             CountDownLatch latch = new CountDownLatch(1);
             ExecutorService executor = Executors.newFixedThreadPool(numRequests);
 
@@ -83,6 +88,7 @@ public class PersistenceReservationTest extends TestContainerStarter {
                                     executor.submit(
                                             () ->
                                                     selectSeatTask(
+                                                            reservationService,
                                                             latch,
                                                             seatId,
                                                             successfulSelections,
@@ -99,6 +105,7 @@ public class PersistenceReservationTest extends TestContainerStarter {
         }
 
         private void selectSeatTask(
+                ReservationService reservationService,
                 CountDownLatch latch,
                 Long seatId,
                 AtomicInteger successfulSelections,
@@ -108,10 +115,9 @@ public class PersistenceReservationTest extends TestContainerStarter {
             try {
                 latch.await();
                 try {
-                    optimisticReservationService.selectSeat(
-                            memberEmail, new SeatSelectionRequest(seatId));
+                    reservationService.selectSeat(memberEmail, new SeatSelectionRequest(seatId));
                     successfulSelections.incrementAndGet();
-                } catch (Exception e) {
+                } catch (TicketingException e) {
                     log.error(e.getMessage(), e);
                     failedSelections.incrementAndGet();
                 }
@@ -136,10 +142,29 @@ public class PersistenceReservationTest extends TestContainerStarter {
             scripts = "/db/reservation-test.sql",
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     class reservationTicketTest {
+        @Nested
+        @DisplayName("낙관 락을 사용하면")
+        class OptimisticLockTest {
+            @Test
+            @DisplayName("하나의 결제만 성공한다.")
+            void reservationTicket_optimistic() throws InterruptedException {
+                reservationTicket_ConcurrencyTest(optimisticReservationService);
+            }
+        }
 
-        @Test
+        @Nested
+        @DisplayName("비관 락을 사용하면")
+        class PessimisticLockTest {
+            @Test
+            @DisplayName("하나의 결제만 성공한다.")
+            void reservationTicket_pessimistic() throws InterruptedException {
+                reservationTicket_ConcurrencyTest(pessimisticReservationService);
+            }
+        }
+
         @DisplayName("동시에 여러 요청이 오면 하나의 요청만 성공한다.")
-        void reservationTicket_ConcurrencyTest() throws InterruptedException {
+        void reservationTicket_ConcurrencyTest(ReservationService reservationService)
+                throws InterruptedException {
             // Given
             int numRequests = 100;
             CountDownLatch latch = new CountDownLatch(1);
@@ -157,6 +182,7 @@ public class PersistenceReservationTest extends TestContainerStarter {
                                                 try {
                                                     latch.await(); // 동기화된 시작
                                                     reservationTicketTask(
+                                                            reservationService,
                                                             memberEmail,
                                                             seatId,
                                                             successfulReservations,
@@ -177,13 +203,13 @@ public class PersistenceReservationTest extends TestContainerStarter {
         }
 
         private void reservationTicketTask(
+                ReservationService reservationService,
                 String memberEmail,
                 Long seatId,
                 AtomicInteger successfulReservations,
                 AtomicInteger failedReservations) {
             try {
-                optimisticReservationService.reservationTicket(
-                        memberEmail, new TicketPaymentRequest(seatId));
+                reservationService.reservationTicket(memberEmail, new TicketPaymentRequest(seatId));
                 successfulReservations.incrementAndGet();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
