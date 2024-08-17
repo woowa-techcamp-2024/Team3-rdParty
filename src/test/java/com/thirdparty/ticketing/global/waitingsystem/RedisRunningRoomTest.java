@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,12 +13,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
 @SpringBootTest
 @Import(TestRedisConfig.class)
 class RedisRunningRoomTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisRunningRoom runningRoom;
+    @Autowired private RedisRunningRoom runningRoom;
 
     @Qualifier("lettuceRedisTemplate")
     @Autowired
@@ -27,10 +27,7 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
     @BeforeEach
     void setUp() {
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     private String getRunningRoomKey(long performanceId) {
@@ -84,8 +81,7 @@ class RedisRunningRoomTest extends TestContainerStarter {
             long performanceIdA = 1;
             long performanceIdB = 2;
             String email = "email@email.com";
-            rawRunningRoom.add(
-                    getRunningRoomKey(performanceIdA), email);
+            rawRunningRoom.add(getRunningRoomKey(performanceIdA), email);
 
             // when
             boolean contains = runningRoom.contains(email, performanceIdB);
