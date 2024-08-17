@@ -59,7 +59,7 @@ public enum ErrorCode {
     */
     WAITING_WRITE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-1", "대기열 쓰기에 실패했습니다."),
     WAITING_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-2", "대기열 읽기에 실패했습니다."),
-    ;
+    NOT_FOUND_WAITING_MEMBER(HttpStatus.NOT_FOUND, "W404-1", "대기열에 회원이 존재하지 않습니다.");
 
     ErrorCode(HttpStatus httpStatus, String code, String message) {
         this.httpStatus = httpStatus;
