@@ -3,6 +3,8 @@ package com.thirdparty.ticketing.domain.seat;
 import jakarta.persistence.*;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.zone.Zone;
 
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "seat")
@@ -18,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +47,8 @@ public class Seat extends BaseEntity {
     @Column(length = 16, nullable = false)
     private SeatStatus seatStatus = SeatStatus.SELECTABLE;
 
+    @Version private Long version;
+
     public Seat(String seatCode, SeatStatus seatStatus) {
         this.seatCode = seatCode;
         this.seatStatus = seatStatus;
@@ -50,5 +56,32 @@ public class Seat extends BaseEntity {
 
     public boolean isSelectable() {
         return seatStatus.isSelectable();
+    }
+
+    public void assignByMember(Member member) {
+        if (!isSelectable()) {
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+        }
+        log.info("seat occupied by {}", member.getEmail());
+        this.member = member;
+        this.seatStatus = SeatStatus.SELECTED;
+    }
+
+    public void markAsPendingPayment() {
+        if (!seatStatus.isSelected()) {
+            throw new TicketingException(ErrorCode.INVALID_SEAT_STATUS);
+        }
+        this.seatStatus = SeatStatus.PENDING_PAYMENT;
+    }
+
+    public void markAsPaid() {
+        if (!seatStatus.isPendingPayment()) {
+            throw new TicketingException(ErrorCode.INVALID_SEAT_STATUS);
+        }
+        this.seatStatus = SeatStatus.PAID;
+    }
+
+    public boolean isAssignedByMember(Member loginMember) {
+        return loginMember.equals(member);
     }
 }

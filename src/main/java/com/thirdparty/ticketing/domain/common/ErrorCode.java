@@ -43,6 +43,13 @@ public enum ErrorCode {
     NOT_FOUND_SEAT_GRADE(HttpStatus.NOT_FOUND, "SG404-1", "존재하지 않는 구역입니다."),
 
     /*
+       Seat Error
+    */
+    NOT_FOUND_SEAT(HttpStatus.NOT_FOUND, "S404-1", "존재하지 않는 좌석입니다."),
+    NOT_SELECTABLE_SEAT(HttpStatus.FORBIDDEN, "S403-1", "이미 선택된 좌석입니다."),
+    INVALID_SEAT_STATUS(HttpStatus.FORBIDDEN, "S403-2", "해당 좌석에는 접근할 수 없습니다."),
+
+    /*
        Payment Error
     */
     PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "P500-1", "결제에 실패했습니다."),
@@ -51,7 +58,8 @@ public enum ErrorCode {
        Waiting Error
     */
     WAITING_WRITE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-1", "대기열 쓰기에 실패했습니다."),
-    WAITING_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-2", "대기열 읽기에 실패했습니다.");
+    WAITING_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "W500-2", "대기열 읽기에 실패했습니다."),
+    ;
 
     ErrorCode(HttpStatus httpStatus, String code, String message) {
         this.httpStatus = httpStatus;
