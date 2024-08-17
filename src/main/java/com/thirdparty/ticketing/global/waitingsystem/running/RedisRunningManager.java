@@ -1,9 +1,9 @@
-package com.thirdparty.ticketing.global.waitingsystem;
+package com.thirdparty.ticketing.global.waitingsystem.running;
 
 import java.util.Set;
 
-import com.thirdparty.ticketing.domain.waitingsystem.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 
