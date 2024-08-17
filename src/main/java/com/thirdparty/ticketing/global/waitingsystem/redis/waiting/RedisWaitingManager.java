@@ -1,9 +1,11 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.time.ZonedDateTime;
 import java.util.Set;
+
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +21,8 @@ public class RedisWaitingManager implements WaitingManager {
     public void enterWaitingRoom(String email, long performanceId) {
         if (waitingRoom.enter(email, performanceId)) {
             long waitingCount = waitingCounter.getNextCount(performanceId);
-            WaitingMember waitingMember = new WaitingMember(email, performanceId, waitingCount, ZonedDateTime.now());
+            WaitingMember waitingMember =
+                    new WaitingMember(email, performanceId, waitingCount, ZonedDateTime.now());
             waitingRoom.updateMemberInfo(waitingMember);
             waitingLine.enter(waitingMember);
         }

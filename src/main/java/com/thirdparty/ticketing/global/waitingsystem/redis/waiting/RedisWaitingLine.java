@@ -1,11 +1,12 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingLine;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 
 public class RedisWaitingLine implements WaitingLine {
 
@@ -24,8 +25,7 @@ public class RedisWaitingLine implements WaitingLine {
         waitingLine.add(
                 getWaitingLineKey(waitingMember.getPerformanceId()),
                 value,
-                waitingMember.getWaitingCount()
-        );
+                waitingMember.getWaitingCount());
     }
 
     private String getWaitingLineKey(long performanceId) {

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
@@ -22,8 +21,7 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {

@@ -2,37 +2,33 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
 class RedisWaitingCounterTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisWaitingCounter waitingCounter;
+    @Autowired private RedisWaitingCounter waitingCounter;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     @Nested
@@ -106,10 +102,8 @@ class RedisWaitingCounterTest extends TestContainerStarter {
             }
 
             // when
-            long performanceANextCount =
-                    waitingCounter.getNextCount(performanceAId);
-            long performanceBNextCount =
-                    waitingCounter.getNextCount(performanceBId);
+            long performanceANextCount = waitingCounter.getNextCount(performanceAId);
+            long performanceBNextCount = waitingCounter.getNextCount(performanceBId);
 
             // then
             assertThat(performanceANextCount).isNotEqualTo(performanceBNextCount);

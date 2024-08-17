@@ -21,7 +21,8 @@ public class WaitingMember {
         this(email, performanceId, 0, ZonedDateTime.now());
     }
 
-    public WaitingMember(String email, long performanceId, long waitingCount, ZonedDateTime enteredAt) {
+    public WaitingMember(
+            String email, long performanceId, long waitingCount, ZonedDateTime enteredAt) {
         this.email = email;
         this.performanceId = performanceId;
         this.waitingCount = waitingCount;

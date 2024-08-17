@@ -2,41 +2,39 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
 @SpringBootTest
 @Import(TestRedisConfig.class)
 class RedisWaitingManagerTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisWaitingManager waitingManager;
+    @Autowired private RedisWaitingManager waitingManager;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -80,10 +78,11 @@ class RedisWaitingManagerTest extends TestContainerStarter {
                     .isNotEmpty()
                     .map(v -> ObjectMapperUtils.readValue(objectMapper, v, WaitingMember.class))
                     .get()
-                    .satisfies(member -> {
-                        assertThat(member.getPerformanceId()).isEqualTo(performanceId);
-                        assertThat(member.getEmail()).isEqualTo(email);
-                    });
+                    .satisfies(
+                            member -> {
+                                assertThat(member.getPerformanceId()).isEqualTo(performanceId);
+                                assertThat(member.getEmail()).isEqualTo(email);
+                            });
         }
 
         @Test
@@ -98,8 +97,8 @@ class RedisWaitingManagerTest extends TestContainerStarter {
             waitingManager.enterWaitingRoom(email, performanceId);
 
             // then
-            Set<String> values = rawWaitingLine.range(
-                    getWaitingLineKey(performanceId), 0, Integer.MAX_VALUE);
+            Set<String> values =
+                    rawWaitingLine.range(getWaitingLineKey(performanceId), 0, Integer.MAX_VALUE);
             assertThat(values)
                     .hasSize(1)
                     .map(value -> objectMapper.readValue(value, WaitingMember.class))

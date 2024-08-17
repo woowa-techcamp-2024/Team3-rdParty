@@ -1,8 +1,9 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingCounter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingCounter;
 
 public class RedisWaitingCounter implements WaitingCounter {
 

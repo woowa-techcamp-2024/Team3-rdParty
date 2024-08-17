@@ -1,25 +1,23 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingCounter;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingRoom;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 @TestConfiguration
 public class TestRedisConfig {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @Bean
     public RedisWaitingManager waitingManager(

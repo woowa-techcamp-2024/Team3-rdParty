@@ -2,25 +2,26 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
@@ -28,14 +29,11 @@ class RedisWaitingLineTest extends TestContainerStarter {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";
 
-    @Autowired
-    private RedisWaitingLine waitingLine;
+    @Autowired private RedisWaitingLine waitingLine;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {
@@ -139,11 +137,9 @@ class RedisWaitingLineTest extends TestContainerStarter {
 
             // then
             Set<String> performanceAWaitedMembers =
-                    rawWaitingLine.range(
-                            getWaitingLineKey(performanceAId), 0, Integer.MAX_VALUE);
+                    rawWaitingLine.range(getWaitingLineKey(performanceAId), 0, Integer.MAX_VALUE);
             Set<String> performanceBWaitedMembers =
-                    rawWaitingLine.range(
-                            getWaitingLineKey(performanceBId), 0, Integer.MAX_VALUE);
+                    rawWaitingLine.range(getWaitingLineKey(performanceBId), 0, Integer.MAX_VALUE);
 
             assertThat(performanceAWaitedMembers)
                     .doesNotContainAnyElementsOf(performanceBWaitedMembers);

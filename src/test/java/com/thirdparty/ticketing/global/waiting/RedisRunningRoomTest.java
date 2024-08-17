@@ -2,9 +2,6 @@ package com.thirdparty.ticketing.global.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -15,14 +12,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
 @SpringBootTest
 @Disabled("구조 변경으로 더 이상 사용하지 않음")
 class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {
