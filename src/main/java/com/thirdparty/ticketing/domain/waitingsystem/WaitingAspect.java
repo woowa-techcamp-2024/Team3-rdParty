@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.aspectj.lang.ProceedingJoinPoint;

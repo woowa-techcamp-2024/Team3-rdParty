@@ -20,7 +20,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
