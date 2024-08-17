@@ -15,7 +15,7 @@ import com.thirdparty.ticketing.domain.ticket.policy.PessimisticLockSeatStrategy
 import com.thirdparty.ticketing.domain.ticket.service.*;
 
 @Configuration
-public class BeanConfig {
+public class ReservationServiceContainer {
     @Bean
     public ReservationServiceProxy redissonReservationServiceProxy(
             RedissonClient redissonClient,
