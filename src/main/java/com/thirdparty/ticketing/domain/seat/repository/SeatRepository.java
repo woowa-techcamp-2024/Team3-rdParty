@@ -13,15 +13,21 @@ import org.springframework.stereotype.Repository;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.zone.Zone;
 
+import io.lettuce.core.dynamic.annotation.Param;
+
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findByZone(Zone zone);
 
     @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
+    @Lock(LockModeType.NONE)
+    Optional<Seat> findById(@Param("seatId") Long seatId);
+
+    @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
     @Lock(LockModeType.OPTIMISTIC)
-    Optional<Seat> findByIdWithOptimistic(Long seatId);
+    Optional<Seat> findByIdWithOptimistic(@Param("seatId") Long seatId);
 
     @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Seat> findByIdWithPessimistic(Long seatId);
+    Optional<Seat> findByIdWithPessimistic(@Param("seatId") Long seatId);
 }
