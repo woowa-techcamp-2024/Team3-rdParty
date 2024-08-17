@@ -1,8 +1,10 @@
 package com.thirdparty.ticketing.global.waitingsystem;
 
+import java.util.Set;
+
 import com.thirdparty.ticketing.domain.waitingsystem.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
-import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,7 +28,5 @@ public class RedisRunningManager implements RunningManager {
     }
 
     @Override
-    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
-
-    }
+    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {}
 }
