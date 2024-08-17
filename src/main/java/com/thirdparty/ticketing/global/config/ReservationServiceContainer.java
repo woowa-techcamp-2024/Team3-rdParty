@@ -41,7 +41,6 @@ public class ReservationServiceContainer {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
-    @Primary
     @Bean
     ReservationService pessimisticReservationServiceProxy(
             ReservationTransactionService persistencePessimisticReservationService) {
