@@ -1,16 +1,17 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory.running;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 class MemoryRunningRoomTest {
 
