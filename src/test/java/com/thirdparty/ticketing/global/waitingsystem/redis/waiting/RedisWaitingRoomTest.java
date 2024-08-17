@@ -27,7 +27,6 @@ class RedisWaitingRoomTest extends TestContainerStarter {
     @Autowired
     private RedisWaitingRoom waitingRoom;
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

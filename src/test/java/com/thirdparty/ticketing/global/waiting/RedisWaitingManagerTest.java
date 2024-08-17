@@ -23,7 +23,6 @@ class RedisWaitingManagerTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingManager waitingManager;
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

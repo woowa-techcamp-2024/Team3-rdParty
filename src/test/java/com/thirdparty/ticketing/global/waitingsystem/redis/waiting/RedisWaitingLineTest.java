@@ -34,7 +34,6 @@ class RedisWaitingLineTest extends TestContainerStarter {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

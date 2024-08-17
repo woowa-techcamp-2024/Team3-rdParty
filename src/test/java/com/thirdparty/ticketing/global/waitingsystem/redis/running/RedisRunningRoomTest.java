@@ -22,7 +22,6 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

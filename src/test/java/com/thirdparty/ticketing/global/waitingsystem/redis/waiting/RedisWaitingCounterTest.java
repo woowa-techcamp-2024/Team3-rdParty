@@ -24,7 +24,6 @@ class RedisWaitingCounterTest extends TestContainerStarter {
     @Autowired
     private RedisWaitingCounter waitingCounter;
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

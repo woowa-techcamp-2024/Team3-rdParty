@@ -20,7 +20,6 @@ import com.thirdparty.ticketing.global.waiting.room.RedisWaitingRoom;
 @TestConfiguration
 public class TestRedisConfig {
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 

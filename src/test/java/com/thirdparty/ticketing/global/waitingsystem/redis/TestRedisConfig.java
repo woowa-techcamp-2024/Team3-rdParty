@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @TestConfiguration
 public class TestRedisConfig {
 
-    @Qualifier("lettuceRedisTemplate")
     @Autowired
     private StringRedisTemplate redisTemplate;
 
