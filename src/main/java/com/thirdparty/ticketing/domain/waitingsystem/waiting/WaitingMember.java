@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.waitingsystem;
+package com.thirdparty.ticketing.domain.waitingsystem.waiting;
 
 import java.time.ZonedDateTime;
 

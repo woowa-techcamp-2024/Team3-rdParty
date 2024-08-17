@@ -4,7 +4,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import com.thirdparty.ticketing.domain.waiting.room.WaitingCounter;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingMember;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 public class RedisWaitingCounter implements WaitingCounter {
 

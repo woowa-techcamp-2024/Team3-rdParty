@@ -1,5 +1,6 @@
-package com.thirdparty.ticketing.domain.waitingsystem;
+package com.thirdparty.ticketing.domain.waitingsystem.running;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.util.Set;
 
 public interface RunningManager {
