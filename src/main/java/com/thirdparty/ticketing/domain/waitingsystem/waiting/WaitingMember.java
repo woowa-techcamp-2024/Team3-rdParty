@@ -14,13 +14,18 @@ public class WaitingMember {
     private ZonedDateTime enteredAt;
 
     public WaitingMember(String email, String performanceId) {
-        this.email = email;
-        this.performanceId = Long.parseLong(performanceId);
+        this(email, Long.parseLong(performanceId), 0, ZonedDateTime.now());
     }
 
     public WaitingMember(String email, Long performanceId) {
+        this(email, performanceId, 0, ZonedDateTime.now());
+    }
+
+    public WaitingMember(String email, long performanceId, long waitingCount, ZonedDateTime enteredAt) {
         this.email = email;
         this.performanceId = performanceId;
+        this.waitingCount = waitingCount;
+        this.enteredAt = enteredAt;
     }
 
     public void updateWaitingInfo(long waitingCount, ZonedDateTime enteredAt) {
