@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waiting;
+package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,28 +8,28 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waiting.room.RedisWaitingLine;
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Disabled("구조 변경으로 더 이상 사용하지 않음")
+@Import(TestRedisConfig.class)
 class RedisWaitingLineTest extends TestContainerStarter {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";
 
-    private RedisWaitingLine waitingLine;
+    @Autowired private RedisWaitingLine waitingLine;
 
     @Autowired private ObjectMapper objectMapper;
 
@@ -38,10 +38,9 @@ class RedisWaitingLineTest extends TestContainerStarter {
     @BeforeEach
     void setUp() {
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
-        waitingLine = new RedisWaitingLine(objectMapper, redisTemplate);
     }
 
-    private String getPerformanceWaitingLineKey(String performanceId) {
+    private String getWaitingLineKey(String performanceId) {
         return WAITING_LINE_KEY + performanceId;
     }
 
@@ -69,7 +68,7 @@ class RedisWaitingLineTest extends TestContainerStarter {
             waitingLine.enter(waitingMember);
 
             // then
-            String performanceWaitingLineKey = getPerformanceWaitingLineKey(performanceId);
+            String performanceWaitingLineKey = getWaitingLineKey(performanceId);
             assertThat(rawWaitingLine.size(performanceWaitingLineKey)).isEqualTo(1);
             assertThat(rawWaitingLine.popMax(performanceWaitingLineKey).getValue())
                     .isEqualTo(objectMapper.writeValueAsString(waitingMember));
@@ -105,7 +104,7 @@ class RedisWaitingLineTest extends TestContainerStarter {
                                         }
                                     })
                             .toList();
-            String performanceWaitingLineKey = getPerformanceWaitingLineKey(performanceId);
+            String performanceWaitingLineKey = getWaitingLineKey(performanceId);
             Set<String> values =
                     rawWaitingLine.range(performanceWaitingLineKey, 0, Integer.MAX_VALUE);
 
@@ -138,11 +137,9 @@ class RedisWaitingLineTest extends TestContainerStarter {
 
             // then
             Set<String> performanceAWaitedMembers =
-                    rawWaitingLine.range(
-                            getPerformanceWaitingLineKey(performanceAId), 0, Integer.MAX_VALUE);
+                    rawWaitingLine.range(getWaitingLineKey(performanceAId), 0, Integer.MAX_VALUE);
             Set<String> performanceBWaitedMembers =
-                    rawWaitingLine.range(
-                            getPerformanceWaitingLineKey(performanceBId), 0, Integer.MAX_VALUE);
+                    rawWaitingLine.range(getWaitingLineKey(performanceBId), 0, Integer.MAX_VALUE);
 
             assertThat(performanceAWaitedMembers)
                     .doesNotContainAnyElementsOf(performanceBWaitedMembers);

@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waitingsystem.running;
+package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,13 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.global.waitingsystem.TestRedisConfig;
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
@@ -22,9 +21,7 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
 
-    @Qualifier("lettuceRedisTemplate")
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {

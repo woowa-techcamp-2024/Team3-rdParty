@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waitingsystem.running;
+package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
