@@ -1,6 +1,5 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.thirdparty.ticketing.domain.waiting.manager.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 
