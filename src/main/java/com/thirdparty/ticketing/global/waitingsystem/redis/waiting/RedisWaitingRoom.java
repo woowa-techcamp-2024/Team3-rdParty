@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import java.util.Optional;
+
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -39,6 +40,9 @@ public class RedisWaitingRoom implements WaitingRoom {
 
     public Optional<WaitingMember> findWaitingMember(String email, long performanceId) {
         return Optional.ofNullable(waitingRoom.get(getWaitingRoomKey(performanceId), email))
-                .map(waitingMember -> ObjectMapperUtils.readValue(objectMapper, waitingMember, WaitingMember.class));
+                .map(
+                        waitingMember ->
+                                ObjectMapperUtils.readValue(
+                                        objectMapper, waitingMember, WaitingMember.class));
     }
 }

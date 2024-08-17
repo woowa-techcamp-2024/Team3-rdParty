@@ -1,8 +1,9 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningCounter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningCounter;
 
 public class RedisRunningCounter implements RunningCounter {
 

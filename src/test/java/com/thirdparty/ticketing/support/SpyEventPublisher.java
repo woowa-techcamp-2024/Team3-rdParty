@@ -1,8 +1,9 @@
 package com.thirdparty.ticketing.support;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.thirdparty.ticketing.domain.common.Event;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpyEventPublisher implements EventPublisher {
 

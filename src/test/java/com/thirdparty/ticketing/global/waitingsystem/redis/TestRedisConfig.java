@@ -1,13 +1,13 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis;
 
-import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningCounter;
-import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningCounter;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingCounter;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
@@ -17,11 +17,9 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingR
 @TestConfiguration
 public class TestRedisConfig {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @Bean
     public RedisWaitingManager waitingManager(
@@ -48,8 +46,7 @@ public class TestRedisConfig {
 
     @Bean
     public RedisRunningManager runningManager(
-            RedisRunningRoom runningRoom,
-            RedisRunningCounter runningCounter) {
+            RedisRunningRoom runningRoom, RedisRunningCounter runningCounter) {
         return new RedisRunningManager(runningRoom, runningCounter);
     }
 

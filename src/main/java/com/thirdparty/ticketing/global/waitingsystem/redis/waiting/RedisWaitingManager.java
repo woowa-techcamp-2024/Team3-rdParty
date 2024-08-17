@@ -1,10 +1,10 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
-import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
@@ -32,7 +32,8 @@ public class RedisWaitingManager implements WaitingManager {
 
     @Override
     public WaitingMember findWaitingMember(String email, long performanceId) {
-        return waitingRoom.findWaitingMember(email, performanceId)
+        return waitingRoom
+                .findWaitingMember(email, performanceId)
                 .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_WAITING_MEMBER));
     }
 

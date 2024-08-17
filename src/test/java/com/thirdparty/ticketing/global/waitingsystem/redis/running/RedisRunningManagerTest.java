@@ -2,8 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,25 +12,23 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
 @SpringBootTest
 @Import(TestRedisConfig.class)
 class RedisRunningManagerTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisRunningManager runningManager;
+    @Autowired private RedisRunningManager runningManager;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     private ValueOperations<String, String> rawRunningCounter;
 
     @BeforeEach
     void setUp() {
         rawRunningCounter = redisTemplate.opsForValue();
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     private String getRunningCounterKey(long performanceId) {
@@ -46,27 +42,27 @@ class RedisRunningManagerTest extends TestContainerStarter {
         @Test
         @DisplayName("작업 가능 공간으로 진입한 인원 수를 반환한다.")
         void getRunningCount() {
-            //given
+            // given
             long performanceId = 1;
             rawRunningCounter.setIfAbsent(getRunningCounterKey(performanceId), "23");
 
-            //when
+            // when
             long runningCount = runningManager.getRunningCount(performanceId);
 
-            //then
+            // then
             assertThat(runningCount).isEqualTo(23);
         }
 
         @Test
         @DisplayName("카운트가 존재하지 않으면 0부터 시작한다.")
         void startCounterWithZeroValue() {
-            //given
+            // given
             long performanceId = 1;
 
-            //when
+            // when
             long runningCount = runningManager.getRunningCount(performanceId);
 
-            //then
+            // then
             assertThat(runningCount).isEqualTo(0);
         }
     }

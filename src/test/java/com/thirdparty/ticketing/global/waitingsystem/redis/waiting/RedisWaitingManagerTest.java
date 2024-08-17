@@ -3,8 +3,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +22,8 @@ import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
@@ -33,14 +33,11 @@ import com.thirdparty.ticketing.support.TestContainerStarter;
 @Import(TestRedisConfig.class)
 class RedisWaitingManagerTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisWaitingManager waitingManager;
+    @Autowired private RedisWaitingManager waitingManager;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -168,15 +165,15 @@ class RedisWaitingManagerTest extends TestContainerStarter {
         @Test
         @DisplayName("사용자가 존재하면 반환한다.")
         void returnWaitingMember() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             waitingManager.enterWaitingRoom(email, performanceId);
 
-            //when
+            // when
             WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
 
-            //then
+            // then
             assertThat(waitingMember.getEmail()).isEqualTo(email);
             assertThat(waitingMember.getPerformanceId()).isEqualTo(performanceId);
         }
@@ -184,20 +181,22 @@ class RedisWaitingManagerTest extends TestContainerStarter {
         @Test
         @DisplayName("예외(NOT_FOUND_WAITING_MEMBER): 사용자가 존재하지 않으면")
         void notFoundWaitingMember() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
 
-            //when
-            Exception exception = catchException(
-                    () -> waitingManager.findWaitingMember(email, performanceId));
+            // when
+            Exception exception =
+                    catchException(() -> waitingManager.findWaitingMember(email, performanceId));
 
-            //then
-            assertThat(exception).isInstanceOf(TicketingException.class)
+            // then
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
                     .extracting(e -> ((TicketingException) e).getErrorCode())
-                    .satisfies(errorCode -> {
-                        assertThat(errorCode).isEqualTo(ErrorCode.NOT_FOUND_WAITING_MEMBER);
-                    });
+                    .satisfies(
+                            errorCode -> {
+                                assertThat(errorCode).isEqualTo(ErrorCode.NOT_FOUND_WAITING_MEMBER);
+                            });
         }
     }
 }

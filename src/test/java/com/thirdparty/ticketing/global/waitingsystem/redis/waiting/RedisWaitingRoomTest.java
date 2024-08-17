@@ -121,35 +121,41 @@ class RedisWaitingRoomTest extends TestContainerStarter {
         @Test
         @DisplayName("사용자가 존재하면 반환한다.")
         void returnWaitingMember() {
-            //given
+            // given
             String email = "email@email.com";
             long performanceId = 1;
             waitingRoom.enter(email, performanceId);
-            waitingRoom.updateMemberInfo(new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
+            waitingRoom.updateMemberInfo(
+                    new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
 
-            //when
-            Optional<WaitingMember> optionalWaitingMember = waitingRoom.findWaitingMember(email, performanceId);
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
 
-            //then
-            assertThat(optionalWaitingMember).isNotEmpty()
+            // then
+            assertThat(optionalWaitingMember)
+                    .isNotEmpty()
                     .get()
-                    .satisfies(waitingMember -> {
-                        assertThat(waitingMember.getEmail()).isEqualTo(email);
-                        assertThat(waitingMember.getPerformanceId()).isEqualTo(performanceId);
-                    });
+                    .satisfies(
+                            waitingMember -> {
+                                assertThat(waitingMember.getEmail()).isEqualTo(email);
+                                assertThat(waitingMember.getPerformanceId())
+                                        .isEqualTo(performanceId);
+                            });
         }
 
         @Test
         @DisplayName("사용자가 존재하지 않으면 빈 값을 반환한다.")
         void returnEmpty() {
-            //given
+            // given
             String email = "email@email.com";
             long performanceId = 1;
 
-            //when
-            Optional<WaitingMember> optionalWaitingMember = waitingRoom.findWaitingMember(email, performanceId);
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
 
-            //then
+            // then
             assertThat(optionalWaitingMember).isEmpty();
         }
     }
