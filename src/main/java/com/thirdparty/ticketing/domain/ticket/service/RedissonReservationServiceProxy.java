@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public class ReddisonReservationServiceProxy implements ReservationServiceProxy {
+public class RedissonReservationServiceProxy implements ReservationServiceProxy {
     private final RedissonClient redissonClient;
     private final ReservationTransactionService reservationTransactionService;
 

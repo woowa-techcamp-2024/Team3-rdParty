@@ -1,7 +1,6 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -60,8 +59,8 @@ public class TicketServiceConcurrencyTest {
     private ReservationServiceProxy lettuceCacheTicketService;
 
     @Autowired
-    @Qualifier("reddisonReservationServiceProxy")
-    private ReservationServiceProxy reddisonReservationServiceProxy;
+    @Qualifier("redissonReservationServiceProxy")
+    private ReservationServiceProxy redissonReservationServiceProxy;
 
     private List<Member> members;
     private Seat seat;
@@ -120,7 +119,7 @@ public class TicketServiceConcurrencyTest {
 
     @Test
     public void testConcurrentSeatSelectionWithRedisson() throws InterruptedException {
-        runConcurrentSeatSelectionTest(reddisonReservationServiceProxy);
+        runConcurrentSeatSelectionTest(redissonReservationServiceProxy);
     }
 
     private void runConcurrentSeatSelectionTest(ReservationServiceProxy reservationServiceProxy)

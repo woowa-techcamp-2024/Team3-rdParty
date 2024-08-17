@@ -17,10 +17,10 @@ import com.thirdparty.ticketing.domain.ticket.service.*;
 @Configuration
 public class BeanConfig {
     @Bean
-    public ReservationServiceProxy reddisonReservationServiceProxy(
+    public ReservationServiceProxy redissonReservationServiceProxy(
             RedissonClient redissonClient,
             ReservationTransactionService cacheReservationTransactionService) {
-        return new ReddisonReservationServiceProxy(
+        return new RedissonReservationServiceProxy(
                 redissonClient, cacheReservationTransactionService);
     }
 
