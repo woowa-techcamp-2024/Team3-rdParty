@@ -1,8 +1,7 @@
 package com.thirdparty.ticketing.domain.ticket.service.proxy;
 
-import jakarta.persistence.OptimisticLockException;
-
 import org.hibernate.StaleObjectStateException;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -22,7 +21,7 @@ public class OptimisticReservationServiceProxy implements ReservationServiceProx
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         try {
             reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
-        } catch (OptimisticLockException | StaleObjectStateException e) {
+        } catch (OptimisticLockingFailureException | StaleObjectStateException e) {
             log.error(e.getMessage(), e);
             throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -32,7 +31,7 @@ public class OptimisticReservationServiceProxy implements ReservationServiceProx
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
         try {
             reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
-        } catch (OptimisticLockException | StaleObjectStateException e) {
+        } catch (OptimisticLockingFailureException | StaleObjectStateException e) {
             log.error(e.getMessage(), e);
             throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
