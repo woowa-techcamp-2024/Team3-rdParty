@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.global.waiting;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import com.thirdparty.ticketing.global.waiting.manager.RedisWaitingManager;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
+@Disabled("구조 변경으로 더 이상 사용하지 않음")
 class RedisWaitingManagerTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingManager waitingManager;

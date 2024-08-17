@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import com.thirdparty.ticketing.global.waiting.room.RedisWaitingCounter;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
+@Disabled("구조 변경으로 더 이상 사용하지 않음")
 class RedisWaitingCounterTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingCounter waitingCounter;

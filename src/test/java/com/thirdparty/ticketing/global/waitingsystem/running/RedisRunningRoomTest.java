@@ -1,24 +1,23 @@
-package com.thirdparty.ticketing.global.waiting;
+package com.thirdparty.ticketing.global.waitingsystem.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waiting.room.RedisRunningRoom;
+import com.thirdparty.ticketing.global.waitingsystem.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Disabled("구조 변경으로 더 이상 사용하지 않음")
+@Import(TestRedisConfig.class)
 class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
@@ -32,7 +31,7 @@ class RedisRunningRoomTest extends TestContainerStarter {
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
-    private String getPerformanceRunningRoomKey(String performanceId) {
+    private String getRunningRoomKey(long performanceId) {
         return "running_room:" + performanceId;
     }
 
@@ -51,13 +50,12 @@ class RedisRunningRoomTest extends TestContainerStarter {
         @DisplayName("사용자가 포함되어 있다면 true를 반환한다.")
         void true_WhenMemberContains() {
             // given
-            String performanceId = "1";
-            WaitingMember waitingMember = new WaitingMember("email@email.com", performanceId);
-            rawRunningRoom.add(
-                    getPerformanceRunningRoomKey(performanceId), waitingMember.getEmail());
+            long performanceId = 1;
+            String email = "email@email.com";
+            rawRunningRoom.add(getRunningRoomKey(performanceId), email);
 
             // when
-            boolean contains = runningRoom.contains(waitingMember);
+            boolean contains = runningRoom.contains(email, performanceId);
 
             // then
             assertThat(contains).isTrue();
@@ -67,11 +65,11 @@ class RedisRunningRoomTest extends TestContainerStarter {
         @DisplayName("사용자가 포함되어 있지 않다면 false를 반환한다.")
         void false_WhenMemberDoesNotContain() {
             // given
-            String performanceId = "1";
-            WaitingMember waitingMember = new WaitingMember("email@email.com", performanceId);
+            long performanceId = 1;
+            String email = "email@email.com";
 
             // when
-            boolean contains = runningRoom.contains(waitingMember);
+            boolean contains = runningRoom.contains(email, performanceId);
 
             // then
             assertThat(contains).isFalse();
@@ -81,17 +79,13 @@ class RedisRunningRoomTest extends TestContainerStarter {
         @DisplayName("서로 다른 공연은 러닝룸을 공유하지 않는다.")
         void doesNotShareRunningRoom_BetweenPerformances() {
             // given
-            String performanceIdA = "1";
-            String performanceIdB = "2";
+            long performanceIdA = 1;
+            long performanceIdB = 2;
             String email = "email@email.com";
-            WaitingMember waitingMemberA = new WaitingMember(email, performanceIdA);
-            rawRunningRoom.add(
-                    getPerformanceRunningRoomKey(performanceIdA), waitingMemberA.getEmail());
-
-            WaitingMember waitingMemberB = new WaitingMember(email, performanceIdB);
+            rawRunningRoom.add(getRunningRoomKey(performanceIdA), email);
 
             // when
-            boolean contains = runningRoom.contains(waitingMemberB);
+            boolean contains = runningRoom.contains(email, performanceIdB);
 
             // then
             assertThat(contains).isFalse();
