@@ -9,24 +9,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 class MemoryRunningRoomTest {
 
     private MemoryRunningRoom runningRoom;
+    private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
+
+    @BeforeEach
+    void setUp() {
+        room = new ConcurrentHashMap<>();
+        runningRoom = new MemoryRunningRoom(room);
+    }
 
     @Nested
     @DisplayName("러닝 룸에 사용자가 있는지 확인했을 때")
     class ContainTest {
-
-        private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
-
-        @BeforeEach
-        void setUp() {
-            room = new ConcurrentHashMap<>();
-            runningRoom = new MemoryRunningRoom(room);
-        }
 
         @Test
         @DisplayName("사용자가 포함되어 있다면 true 를 반환한다.")
@@ -73,6 +74,30 @@ class MemoryRunningRoomTest {
 
             // then
             assertThat(contains).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 가능 공간에 빈 자리가 있는지 조회 시")
+    class GetAvailableToRunningTest {
+
+        @ParameterizedTest
+        @CsvSource({"0, 100", "50, 50", "100, 0"})
+        @DisplayName("남아 있는 자리를 반환한다.")
+        void getAvailableToRunning(int membersCount, int expectAvailableToRunning) {
+            // given
+            long performanceId = 1;
+            room.putIfAbsent(performanceId, new ConcurrentHashMap<>());
+            for (int i = 0; i < membersCount; i++) {
+                room.get(performanceId)
+                        .putIfAbsent("email" + i + "@email.com", new WaitingMember());
+            }
+
+            // when
+            long availableToRunning = runningRoom.getAvailableToRunning(performanceId);
+
+            // then
+            assertThat(availableToRunning).isEqualTo(expectAvailableToRunning);
         }
     }
 }
