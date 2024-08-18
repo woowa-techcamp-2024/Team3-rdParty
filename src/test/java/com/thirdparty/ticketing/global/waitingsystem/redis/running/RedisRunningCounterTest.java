@@ -91,4 +91,24 @@ class RedisRunningCounterTest extends TestContainerStarter {
             assertThat(runningCount).isEqualTo(10);
         }
     }
+
+    @Nested
+    @DisplayName("카운터 증가 호출 시")
+    class IncrementTest {
+
+        @Test
+        @DisplayName("주어진 값만큼 값을 증가시킨다.")
+        void increment() {
+            // given
+            long performanceId = 1;
+            int number = 10;
+
+            // when
+            runningCounter.increment(performanceId, number);
+
+            // then
+            long runningCount = runningCounter.getRunningCount(performanceId);
+            assertThat(runningCount).isEqualTo(number);
+        }
+    }
 }

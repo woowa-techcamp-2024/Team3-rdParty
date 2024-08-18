@@ -25,9 +25,13 @@ public class RedisRunningManager implements RunningManager {
 
     @Override
     public long getAvailableToRunning(long performanceId) {
-        return 0;
+        long availableToRunning = runningRoom.getAvailableToRunning(performanceId);
+        return availableToRunning < 0 ? 0 : availableToRunning;
     }
 
     @Override
-    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {}
+    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
+        runningCounter.increment(performanceId, waitingMembers.size());
+        runningRoom.enter(performanceId, waitingMembers);
+    }
 }
