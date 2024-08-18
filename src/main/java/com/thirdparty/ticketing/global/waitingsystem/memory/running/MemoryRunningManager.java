@@ -29,5 +29,8 @@ public class MemoryRunningManager implements RunningManager {
     }
 
     @Override
-    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {}
+    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
+        runningCounter.increment(performanceId, waitingMembers.size());
+        runningRoom.enter(performanceId, waitingMembers);
+    }
 }
