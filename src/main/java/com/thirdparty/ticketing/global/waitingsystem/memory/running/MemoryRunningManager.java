@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class MemoryRunningManager implements RunningManager {
 
     private final MemoryRunningRoom runningRoom;
+    private final MemoryRunningCounter runningCounter;
 
     @Override
     public boolean isReadyToHandle(String email, long performanceId) {
@@ -19,7 +20,7 @@ public class MemoryRunningManager implements RunningManager {
 
     @Override
     public long getRunningCount(long performanceId) {
-        return 0;
+        return runningCounter.getRunningCounter(performanceId);
     }
 
     @Override
