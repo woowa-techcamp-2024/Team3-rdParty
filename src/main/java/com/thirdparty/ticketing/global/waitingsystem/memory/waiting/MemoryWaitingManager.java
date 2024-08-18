@@ -37,6 +37,6 @@ public class MemoryWaitingManager implements WaitingManager {
 
     @Override
     public Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning) {
-        return Set.of();
+        return waitingLine.pullOutMembers(performanceId, availableToRunning);
     }
 }
