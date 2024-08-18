@@ -2,9 +2,8 @@ package com.thirdparty.ticketing.global.waitingsystem.memory.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +20,12 @@ class MemoryRunningRoomTest {
     @DisplayName("러닝 룸에 사용자가 있는지 확인했을 때")
     class ContainTest {
 
-        private Map<Long, Map<String, WaitingMember>> map;
+        private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
 
         @BeforeEach
         void setUp() {
-            map = new HashMap<>();
-            runningRoom = new MemoryRunningRoom(map);
+            room = new ConcurrentHashMap<>();
+            runningRoom = new MemoryRunningRoom(room);
         }
 
         @Test
@@ -35,8 +34,8 @@ class MemoryRunningRoomTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            map.putIfAbsent(performanceId, new ConcurrentHashMap<>());
-            map.get(performanceId).putIfAbsent(email, new WaitingMember());
+            room.putIfAbsent(performanceId, new ConcurrentHashMap<>());
+            room.get(performanceId).putIfAbsent(email, new WaitingMember());
 
             // when
             boolean contains = runningRoom.contains(email, performanceId);
@@ -66,8 +65,8 @@ class MemoryRunningRoomTest {
             long performanceIdA = 1;
             long performanceIdB = 2;
             String email = "email@email.com";
-            map.putIfAbsent(performanceIdA, new ConcurrentHashMap<>());
-            map.get(performanceIdA).putIfAbsent(email, new WaitingMember());
+            room.putIfAbsent(performanceIdA, new ConcurrentHashMap<>());
+            room.get(performanceIdA).putIfAbsent(email, new WaitingMember());
 
             // when
             boolean contains = runningRoom.contains(email, performanceIdB);
