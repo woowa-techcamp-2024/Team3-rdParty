@@ -2,8 +2,12 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -109,6 +113,37 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
             //then
             assertThat(availableToRunning).isEqualTo(expectedAvailableToRunning);
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 가능 공간 입장 호출 시")
+    class EnterTest {
+
+        @Test
+        @DisplayName("사용자의 이메일 정보를 작업 가능 공간에 넣는다.")
+        void putEmailInfo() {
+            //given
+            long performanceId = 1;
+            Set<WaitingMember> waitingMembers = new HashSet<>();
+            for(int i=0; i<10; i++) {
+                waitingMembers.add(new WaitingMember(
+                        "email" + i + "@email.com",
+                        performanceId,
+                        i,
+                        ZonedDateTime.now()
+                ));
+            }
+
+            //when
+            runningRoom.enter(performanceId, waitingMembers);
+
+            //then
+            String[] emails = waitingMembers.stream()
+                    .map(WaitingMember::getEmail)
+                    .toArray(String[]::new);
+            assertThat(rawRunningRoom.isMember(getRunningRoomKey(performanceId), emails))
+                    .allSatisfy((key, value) -> assertThat(value).isTrue());
         }
     }
 }
