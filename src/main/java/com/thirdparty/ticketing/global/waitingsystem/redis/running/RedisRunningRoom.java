@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import java.util.Set;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -22,6 +24,13 @@ public class RedisRunningRoom implements RunningRoom {
 
     public long getAvailableToRunning(long performanceId) {
         return MAX_RUNNING_ROOM_SIZE - runningRoom.size(getRunningRoomKey(performanceId));
+    }
+
+    public void enter(long performanceId, Set<WaitingMember> waitingMembers) {
+        String[] emails = waitingMembers.stream()
+                .map(WaitingMember::getEmail)
+                .toArray(String[]::new);
+        runningRoom.add(getRunningRoomKey(performanceId), emails);
     }
 
     private String getRunningRoomKey(long performanceId) {

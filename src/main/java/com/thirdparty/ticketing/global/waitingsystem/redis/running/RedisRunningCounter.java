@@ -7,12 +7,16 @@ import com.thirdparty.ticketing.domain.waitingsystem.running.RunningCounter;
 
 public class RedisRunningCounter implements RunningCounter {
 
-    private static final String RUNNING_COUNTER = "running_counter:";
+    private static final String RUNNING_COUNTER_KEY = "running_counter:";
 
     private final ValueOperations<String, String> runningCounter;
 
     public RedisRunningCounter(StringRedisTemplate redisTemplate) {
         this.runningCounter = redisTemplate.opsForValue();
+    }
+
+    public void increment(long performanceId, int number) {
+        runningCounter.increment(getRunningCounterKey(performanceId), number);
     }
 
     public long getRunningCount(long performanceId) {
@@ -23,6 +27,6 @@ public class RedisRunningCounter implements RunningCounter {
     }
 
     private String getRunningCounterKey(long performanceId) {
-        return RUNNING_COUNTER + performanceId;
+        return RUNNING_COUNTER_KEY + performanceId;
     }
 }
