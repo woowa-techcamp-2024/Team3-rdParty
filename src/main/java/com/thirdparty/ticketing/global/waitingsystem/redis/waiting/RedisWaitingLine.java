@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
@@ -36,10 +37,18 @@ public class RedisWaitingLine implements WaitingLine {
     }
 
     public Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning) {
-        return Optional.ofNullable(waitingLine.popMin(getWaitingLineKey(performanceId), availableToRunning))
-                .map(set -> set.stream()
-                        .map(value -> ObjectMapperUtils.readValue(objectMapper, value.getValue(), WaitingMember.class))
-                        .collect(Collectors.toSet()))
+        return Optional.ofNullable(
+                        waitingLine.popMin(getWaitingLineKey(performanceId), availableToRunning))
+                .map(
+                        set ->
+                                set.stream()
+                                        .map(
+                                                value ->
+                                                        ObjectMapperUtils.readValue(
+                                                                objectMapper,
+                                                                value.getValue(),
+                                                                WaitingMember.class))
+                                        .collect(Collectors.toSet()))
                 .orElseGet(Set::of);
     }
 }

@@ -2,12 +2,10 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
 @Import(TestRedisConfig.class)
@@ -95,23 +97,19 @@ class RedisRunningRoomTest extends TestContainerStarter {
     class GetAvailableToRunningTest {
 
         @ParameterizedTest
-        @CsvSource({
-                "0, 100",
-                "50, 50",
-                "100, 0"
-        })
+        @CsvSource({"0, 100", "50, 50", "100, 0"})
         @DisplayName("남아있는 자리를 반환한다.")
         void getAvailableToRunning(int runningMembers, int expectedAvailableToRunning) {
-            //given
+            // given
             long performanceId = 1;
-            for(int i=0; i<runningMembers; i++) {
+            for (int i = 0; i < runningMembers; i++) {
                 rawRunningRoom.add(getRunningRoomKey(performanceId), "email" + i + "@email.com");
             }
 
-            //when
+            // when
             long availableToRunning = runningRoom.getAvailableToRunning(performanceId);
 
-            //then
+            // then
             assertThat(availableToRunning).isEqualTo(expectedAvailableToRunning);
         }
     }
@@ -123,25 +121,21 @@ class RedisRunningRoomTest extends TestContainerStarter {
         @Test
         @DisplayName("사용자의 이메일 정보를 작업 가능 공간에 넣는다.")
         void putEmailInfo() {
-            //given
+            // given
             long performanceId = 1;
             Set<WaitingMember> waitingMembers = new HashSet<>();
-            for(int i=0; i<10; i++) {
-                waitingMembers.add(new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                ));
+            for (int i = 0; i < 10; i++) {
+                waitingMembers.add(
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
             }
 
-            //when
+            // when
             runningRoom.enter(performanceId, waitingMembers);
 
-            //then
-            String[] emails = waitingMembers.stream()
-                    .map(WaitingMember::getEmail)
-                    .toArray(String[]::new);
+            // then
+            String[] emails =
+                    waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
             assertThat(rawRunningRoom.isMember(getRunningRoomKey(performanceId), emails))
                     .allSatisfy((key, value) -> assertThat(value).isTrue());
         }

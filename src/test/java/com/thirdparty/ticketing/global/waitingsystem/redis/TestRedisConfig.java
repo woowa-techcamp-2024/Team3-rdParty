@@ -46,8 +46,7 @@ public class TestRedisConfig {
 
     @Bean
     public RedisRunningManager runningManager(
-            RedisRunningCounter runningCounter,
-            RedisRunningRoom runningRoom) {
+            RedisRunningCounter runningCounter, RedisRunningRoom runningRoom) {
         return new RedisRunningManager(runningRoom, runningCounter);
     }
 

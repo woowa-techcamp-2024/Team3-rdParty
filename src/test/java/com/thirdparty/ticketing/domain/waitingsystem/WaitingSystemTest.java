@@ -95,50 +95,41 @@ class WaitingSystemTest extends TestContainerStarter {
         @Test
         @DisplayName("작업 가능 공간의 수용 가능한 인원이 감소한다.")
         void decrementAvailableCount() {
-            //given
+            // given
             long performanceId = 1;
             int memberCount = 25;
-            for(int i = 0; i< memberCount; i++) {
-                waitingManager.enterWaitingRoom(
-                        "email" + i + "@email.com",
-                        performanceId
-                );
+            for (int i = 0; i < memberCount; i++) {
+                waitingManager.enterWaitingRoom("email" + i + "@email.com", performanceId);
             }
 
-            //when
+            // when
             waitingSystem.moveUserToRunning(performanceId);
 
-            //then
+            // then
             assertThat(runningManager.getRunningCount(performanceId)).isEqualTo(memberCount);
-            assertThat(runningManager.getAvailableToRunning(performanceId)).isEqualTo(100 - memberCount);
+            assertThat(runningManager.getAvailableToRunning(performanceId))
+                    .isEqualTo(100 - memberCount);
         }
-
 
         @Test
         @DisplayName("더 이상 인원을 수용할 수 없으면 작업 가능 공간에 사용자를 추가하지 않는다.")
         void doNotMoveUserToRunning_WhenNoMoreAvailableSpace() {
-            //given
+            // given
             long performanceId = 1;
-            for (int i=0; i<100; i++) {
-                waitingSystem.enterWaitingRoom(
-                        "email" + i + "@email.com",
-                        performanceId
-                );
+            for (int i = 0; i < 100; i++) {
+                waitingSystem.enterWaitingRoom("email" + i + "@email.com", performanceId);
             }
             waitingSystem.moveUserToRunning(performanceId);
 
             int memberCount = 25;
-            for(int i = 0; i< memberCount; i++) {
-                waitingManager.enterWaitingRoom(
-                        "email" + i + "@email.com",
-                        performanceId
-                );
+            for (int i = 0; i < memberCount; i++) {
+                waitingManager.enterWaitingRoom("email" + i + "@email.com", performanceId);
             }
 
-            //when
+            // when
             waitingSystem.moveUserToRunning(performanceId);
 
-            //then
+            // then
             assertThat(runningManager.getRunningCount(performanceId)).isEqualTo(100);
             assertThat(runningManager.getAvailableToRunning(performanceId)).isEqualTo(0);
         }

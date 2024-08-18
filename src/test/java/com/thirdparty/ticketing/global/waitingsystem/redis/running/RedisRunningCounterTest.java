@@ -99,14 +99,14 @@ class RedisRunningCounterTest extends TestContainerStarter {
         @Test
         @DisplayName("주어진 값만큼 값을 증가시킨다.")
         void increment() {
-            //given
+            // given
             long performanceId = 1;
             int number = 10;
 
-            //when
+            // when
             runningCounter.increment(performanceId, number);
 
-            //then
+            // then
             long runningCount = runningCounter.getRunningCount(performanceId);
             assertThat(runningCount).isEqualTo(number);
         }

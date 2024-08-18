@@ -155,23 +155,20 @@ class RedisWaitingLineTest extends TestContainerStarter {
         @Test
         @DisplayName("대기 번호가 낮은 순으로 꺼내온다.")
         void pullOutMembers_LowestWaitingCount() {
-            //given
+            // given
             long performanceId = 1;
             int memberCount = 20;
-            for(int i=1; i <= memberCount; i++) {
-                WaitingMember waitingMember = new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                );
+            for (int i = 1; i <= memberCount; i++) {
+                WaitingMember waitingMember =
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now());
                 waitingLine.enter(waitingMember);
             }
 
-            //when
+            // when
             Set<WaitingMember> waitingMembers = waitingLine.pullOutMembers(performanceId, 5);
 
-            //then
+            // then
             assertThat(waitingMembers)
                     .map(WaitingMember::getWaitingCount)
                     .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
@@ -180,23 +177,21 @@ class RedisWaitingLineTest extends TestContainerStarter {
         @Test
         @DisplayName("꺼내올 인원이 대기열의 인원보다 많은 경우 모든 인원을 꺼내온다.")
         void whenAvailableToRunningIsGraterThanRunningLineSize() {
-            //given
+            // given
             long performanceId = 1;
             int memberCount = 5;
-            for(int i=1; i <= memberCount; i++) {
-                WaitingMember waitingMember = new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                );
+            for (int i = 1; i <= memberCount; i++) {
+                WaitingMember waitingMember =
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now());
                 waitingLine.enter(waitingMember);
             }
 
-            //when
-            Set<WaitingMember> waitingMembers = waitingLine.pullOutMembers(performanceId, memberCount + 20);
+            // when
+            Set<WaitingMember> waitingMembers =
+                    waitingLine.pullOutMembers(performanceId, memberCount + 20);
 
-            //then
+            // then
             assertThat(waitingMembers)
                     .map(WaitingMember::getWaitingCount)
                     .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
@@ -205,13 +200,13 @@ class RedisWaitingLineTest extends TestContainerStarter {
         @Test
         @DisplayName("대기열에서 꺼낼 인원이 없으면 빈 set을 반환한다.")
         void whenEmpty() {
-            //given
+            // given
             long performanceId = 1;
 
-            //when
+            // when
             Set<WaitingMember> waitingMembers = waitingLine.pullOutMembers(performanceId, 20);
 
-            //then
+            // then
             assertThat(waitingMembers).isEmpty();
         }
     }

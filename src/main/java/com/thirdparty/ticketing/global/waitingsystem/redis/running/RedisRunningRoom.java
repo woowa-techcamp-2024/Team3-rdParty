@@ -1,11 +1,12 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.util.Set;
+
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 public class RedisRunningRoom implements RunningRoom {
 
@@ -30,9 +31,8 @@ public class RedisRunningRoom implements RunningRoom {
         if (waitingMembers.isEmpty()) {
             return;
         }
-        String[] emails = waitingMembers.stream()
-                .map(WaitingMember::getEmail)
-                .toArray(String[]::new);
+        String[] emails =
+                waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
         runningRoom.add(getRunningRoomKey(performanceId), emails);
     }
 

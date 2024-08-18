@@ -2,10 +2,10 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
@@ -24,11 +25,9 @@ import com.thirdparty.ticketing.support.TestContainerStarter;
 @Import(TestRedisConfig.class)
 class RedisRunningManagerTest extends TestContainerStarter {
 
-    @Autowired
-    private RedisRunningManager runningManager;
+    @Autowired private RedisRunningManager runningManager;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     private ValueOperations<String, String> rawRunningCounter;
     private SetOperations<String, String> rawRunningRoom;
@@ -87,46 +86,40 @@ class RedisRunningManagerTest extends TestContainerStarter {
         @Test
         @DisplayName("0보다 작으면 0을 반환한다.")
         void returnZero_WhenLessThanZero() {
-            //given
+            // given
             long performanceId = 1;
             Set<WaitingMember> waitingMembers = new HashSet<>();
             for (int i = 0; i < 150; i++) {
-                waitingMembers.add(new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                ));
+                waitingMembers.add(
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
-            //when
+            // when
             long availableToRunning = runningManager.getAvailableToRunning(performanceId);
 
-            //then
+            // then
             assertThat(availableToRunning).isEqualTo(0);
         }
 
         @Test
         @DisplayName("0보다 크면 그대로 반환한다.")
         void returnAvailable_WhenGreaterThanZero() {
-            //given
+            // given
             long performanceId = 1;
             Set<WaitingMember> waitingMembers = new HashSet<>();
             for (int i = 0; i < 20; i++) {
-                waitingMembers.add(new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                ));
+                waitingMembers.add(
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
-            //when
+            // when
             long runningCount = runningManager.getAvailableToRunning(performanceId);
 
-            //then
+            // then
             assertThat(runningCount).isEqualTo(80);
         }
     }
@@ -145,24 +138,21 @@ class RedisRunningManagerTest extends TestContainerStarter {
             performanceId = 1;
             waitingMembers = new HashSet<>();
             for (int i = 0; i < waitingMemberCount; i++) {
-                waitingMembers.add(new WaitingMember(
-                        "email" + i + "@email.com",
-                        performanceId,
-                        i,
-                        ZonedDateTime.now()
-                ));
+                waitingMembers.add(
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
             }
         }
 
         @Test
         @DisplayName("입장 인원만큼 작업 가능 공간 이동 인원 카운터를 증가시킨다.")
         void incrementRunningCounter() {
-            //given
+            // given
 
-            //when
+            // when
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
-            //then
+            // then
             long runningCount = runningManager.getRunningCount(performanceId);
             assertThat(runningCount).isEqualTo(waitingMemberCount);
         }
@@ -170,12 +160,12 @@ class RedisRunningManagerTest extends TestContainerStarter {
         @Test
         @DisplayName("작업 가능 공간에 사용자를 추가한다.")
         void enterRunningRoom() {
-            //given
+            // given
 
-            //when
+            // when
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
-            //then
+            // then
             Set<String> waitingMembers = rawRunningRoom.members(getRunningRoomKey(performanceId));
             assertThat(waitingMembers).hasSize(waitingMemberCount);
         }
