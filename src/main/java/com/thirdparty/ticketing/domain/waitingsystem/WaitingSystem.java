@@ -1,12 +1,10 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
-import java.util.Set;
-
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis;
 
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,19 @@ public class TestRedisConfig {
     @Autowired private StringRedisTemplate redisTemplate;
 
     @Autowired private ObjectMapper objectMapper;
+
+    @Bean
+    public SpyEventPublisher eventPublisher() {
+        return new SpyEventPublisher();
+    }
+
+    @Bean
+    public WaitingSystem waitingSystem(
+            RedisWaitingManager waitingManager,
+            RedisRunningManager runningManager,
+            SpyEventPublisher eventPublisher) {
+        return new WaitingSystem(waitingManager, runningManager, eventPublisher);
+    }
 
     @Bean
     public RedisWaitingManager waitingManager(
