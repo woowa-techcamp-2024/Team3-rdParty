@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,5 +23,9 @@ public class MemoryWaitingRoom implements WaitingRoom {
     public void updateMemberInfo(WaitingMember waitingMember) {
         room.computeIfAbsent(waitingMember.getPerformanceId(), k -> new ConcurrentHashMap<>())
                 .put(waitingMember.getEmail(), waitingMember);
+    }
+
+    public Optional<WaitingMember> findWaitingMember(String email, long performanceId) {
+        return Optional.ofNullable(room.get(performanceId)).map(map -> map.get(email));
     }
 }

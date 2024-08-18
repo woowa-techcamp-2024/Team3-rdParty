@@ -3,6 +3,8 @@ package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
@@ -28,7 +30,9 @@ public class MemoryWaitingManager implements WaitingManager {
 
     @Override
     public WaitingMember findWaitingMember(String email, long performanceId) {
-        return null;
+        return waitingRoom
+                .findWaitingMember(email, performanceId)
+                .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_WAITING_MEMBER));
     }
 
     @Override
