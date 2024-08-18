@@ -1,7 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis;
 
 import java.util.concurrent.TimeUnit;
-import lombok.extern.slf4j.Slf4j;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Aspect
@@ -26,7 +28,8 @@ public class DebounceAspect {
     @Pointcut("@annotation(com.thirdparty.ticketing.global.waitingsystem.Debounce)")
     private void debounceAnnotation() {}
 
-    @Pointcut("execution(public void com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem.moveUserToRunning(long))")
+    @Pointcut(
+            "execution(public void com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem.moveUserToRunning(long))")
     private void moveWaitingMemberToRunning() {}
 
     @Around("debounceAnnotation() || moveWaitingMemberToRunning()")
@@ -37,10 +40,7 @@ public class DebounceAspect {
                 performanceId = (long) arg;
             }
         }
-        if (debounce.setIfAbsent(
-                getDebounceKey(performanceId),
-                "debounce",
-                10, TimeUnit.SECONDS)) {
+        if (debounce.setIfAbsent(getDebounceKey(performanceId), "debounce", 10, TimeUnit.SECONDS)) {
             log.info("[waiting] 디바운스 요청 실행. 공연 ID={}", performanceId);
             return joinPoint.proceed();
         }

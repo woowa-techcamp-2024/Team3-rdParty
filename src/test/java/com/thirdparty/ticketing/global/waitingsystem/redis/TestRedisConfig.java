@@ -1,13 +1,12 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis;
 
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
-import com.thirdparty.ticketing.support.SpyEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningCounter;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
@@ -15,6 +14,7 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingC
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingRoom;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
 
 @TestConfiguration
 public class TestRedisConfig {
