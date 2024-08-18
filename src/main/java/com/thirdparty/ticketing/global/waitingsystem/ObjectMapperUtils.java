@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waiting;
+package com.thirdparty.ticketing.global.waitingsystem;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
