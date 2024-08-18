@@ -2,6 +2,9 @@ package com.thirdparty.ticketing.global.waitingsystem.memory.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -98,6 +101,37 @@ class MemoryRunningRoomTest {
 
             // then
             assertThat(availableToRunning).isEqualTo(expectAvailableToRunning);
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 가능 공간 입장 호출 시")
+    class EnterTest {
+
+        @Test
+        @DisplayName("사용자의 이메일 정보를 작업 가능 공간에 넣는다.")
+        void putEmailInfo() {
+            // given
+            long performanceId = 1;
+            Set<WaitingMember> waitingMembers = new HashSet<>();
+            for (int i = 0; i < 10; i++) {
+                waitingMembers.add(
+                        new WaitingMember(
+                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+            }
+
+            // when
+            runningRoom.enter(performanceId, waitingMembers);
+
+            // then
+            String[] emails =
+                    waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
+            // 각 이메일이 runningRoom 에 존재하는지 확인
+            for (String email : emails) {
+                assertThat(runningRoom.contains(email, performanceId)).isTrue();
+            }
+            // 존재하지 않는 이메일은 false 를 반환하는지 확인
+            assertThat(runningRoom.contains("nonexistent@email.com", performanceId)).isFalse();
         }
     }
 }
