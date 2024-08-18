@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +22,8 @@ import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waiting.ObjectMapperUtils;
 import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
@@ -152,6 +155,48 @@ class RedisWaitingManagerTest extends TestContainerStarter {
 
             // then
             assertThat(rawWaitingRoom.entries(getWaitingRoomKey(performanceId))).hasSize(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("대기중인 사용자 조회 시")
+    class FindWaitingMemberTest {
+
+        @Test
+        @DisplayName("사용자가 존재하면 반환한다.")
+        void returnWaitingMember() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+            waitingManager.enterWaitingRoom(email, performanceId);
+
+            // when
+            WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(waitingMember.getEmail()).isEqualTo(email);
+            assertThat(waitingMember.getPerformanceId()).isEqualTo(performanceId);
+        }
+
+        @Test
+        @DisplayName("예외(NOT_FOUND_WAITING_MEMBER): 사용자가 존재하지 않으면")
+        void notFoundWaitingMember() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+
+            // when
+            Exception exception =
+                    catchException(() -> waitingManager.findWaitingMember(email, performanceId));
+
+            // then
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
+                    .extracting(e -> ((TicketingException) e).getErrorCode())
+                    .satisfies(
+                            errorCode -> {
+                                assertThat(errorCode).isEqualTo(ErrorCode.NOT_FOUND_WAITING_MEMBER);
+                            });
         }
     }
 }

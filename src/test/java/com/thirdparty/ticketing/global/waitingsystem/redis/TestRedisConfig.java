@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningCounter;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingCounter;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
@@ -43,7 +45,18 @@ public class TestRedisConfig {
     }
 
     @Bean
+    public RedisRunningManager runningManager(
+            RedisRunningRoom runningRoom, RedisRunningCounter runningCounter) {
+        return new RedisRunningManager(runningRoom, runningCounter);
+    }
+
+    @Bean
     public RedisRunningRoom runningRoom() {
         return new RedisRunningRoom(redisTemplate);
+    }
+
+    @Bean
+    public RedisRunningCounter runningCounter() {
+        return new RedisRunningCounter(redisTemplate);
     }
 }

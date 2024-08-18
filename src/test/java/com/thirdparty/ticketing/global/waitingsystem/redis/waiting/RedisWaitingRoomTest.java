@@ -113,4 +113,50 @@ class RedisWaitingRoomTest extends TestContainerStarter {
                             });
         }
     }
+
+    @Nested
+    @DisplayName("대기 중인 사용자 조회 시")
+    class FindWaitingMemberTest {
+
+        @Test
+        @DisplayName("사용자가 존재하면 반환한다.")
+        void returnWaitingMember() {
+            // given
+            String email = "email@email.com";
+            long performanceId = 1;
+            waitingRoom.enter(email, performanceId);
+            waitingRoom.updateMemberInfo(
+                    new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
+
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(optionalWaitingMember)
+                    .isNotEmpty()
+                    .get()
+                    .satisfies(
+                            waitingMember -> {
+                                assertThat(waitingMember.getEmail()).isEqualTo(email);
+                                assertThat(waitingMember.getPerformanceId())
+                                        .isEqualTo(performanceId);
+                            });
+        }
+
+        @Test
+        @DisplayName("사용자가 존재하지 않으면 빈 값을 반환한다.")
+        void returnEmpty() {
+            // given
+            String email = "email@email.com";
+            long performanceId = 1;
+
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(optionalWaitingMember).isEmpty();
+        }
+    }
 }
