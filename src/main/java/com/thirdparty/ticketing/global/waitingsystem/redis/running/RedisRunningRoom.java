@@ -27,6 +27,9 @@ public class RedisRunningRoom implements RunningRoom {
     }
 
     public void enter(long performanceId, Set<WaitingMember> waitingMembers) {
+        if (waitingMembers.isEmpty()) {
+            return;
+        }
         String[] emails = waitingMembers.stream()
                 .map(WaitingMember::getEmail)
                 .toArray(String[]::new);
