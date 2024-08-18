@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,18 +17,17 @@ import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 class MemoryWaitingRoomTest {
 
     private MemoryWaitingRoom waitingRoom;
+    private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
+
+    @BeforeEach
+    void setUp() {
+        room = new ConcurrentHashMap<>();
+        waitingRoom = new MemoryWaitingRoom(room);
+    }
 
     @Nested
     @DisplayName("대기방 입장 메서드 호출 시")
     class EnterTest {
-
-        private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
-
-        @BeforeEach
-        void setUp() {
-            room = new ConcurrentHashMap<>();
-            waitingRoom = new MemoryWaitingRoom(room);
-        }
 
         @Test
         @DisplayName("사용자가 없으면 대기방에 추가한다.")
@@ -66,14 +66,6 @@ class MemoryWaitingRoomTest {
     @DisplayName("대기방 사용자 업데이트 메서드 호출 시")
     class UpdateMemberInfoTest {
 
-        private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
-
-        @BeforeEach
-        void setUp() {
-            room = new ConcurrentHashMap<>();
-            waitingRoom = new MemoryWaitingRoom(room);
-        }
-
         @Test
         @DisplayName("사용자 정보를 업데이트 한다.")
         void updateWaitingMemberInfo() {
@@ -91,6 +83,52 @@ class MemoryWaitingRoomTest {
             // then
             WaitingMember result = room.get(performanceId).get(email);
             assertThat(result).isEqualTo(waitingMember);
+        }
+    }
+
+    @Nested
+    @DisplayName("대기 중인 사용자 조회 시")
+    class FindWaitingMemberTest {
+
+        @Test
+        @DisplayName("사용자가 존재하면 반환한다.")
+        void returnWaitingMember() {
+            // given
+            String email = "email@email.com";
+            long performanceId = 1;
+            waitingRoom.enter(email, performanceId);
+            waitingRoom.updateMemberInfo(
+                    new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
+
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(optionalWaitingMember)
+                    .isNotEmpty()
+                    .get()
+                    .satisfies(
+                            waitingMember -> {
+                                assertThat(waitingMember.getEmail()).isEqualTo(email);
+                                assertThat(waitingMember.getPerformanceId())
+                                        .isEqualTo(performanceId);
+                            });
+        }
+
+        @Test
+        @DisplayName("사용자가 존재하지 않으면 빈 값을 반환한다.")
+        void returnNotWaitingMember() {
+            // given
+            String email = "email@email.com";
+            long performanceId = 1;
+
+            // when
+            Optional<WaitingMember> optionalWaitingMember =
+                    waitingRoom.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(optionalWaitingMember).isEmpty();
         }
     }
 }

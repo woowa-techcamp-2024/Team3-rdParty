@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -10,30 +11,31 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 class MemoryWaitingManagerTest {
 
     private MemoryWaitingManager waitingManager;
+    private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> rawWaitingRoom =
+            new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, AtomicLong> rawWaitingCounter = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, ConcurrentLinkedQueue<WaitingMember>> rawWaitingLine =
+            new ConcurrentHashMap<>();
+
+    @BeforeEach
+    void setUp() {
+        waitingManager =
+                new MemoryWaitingManager(
+                        new MemoryWaitingRoom(rawWaitingRoom),
+                        new MemoryWaitingCounter(rawWaitingCounter),
+                        new MemoryWaitingLine(rawWaitingLine));
+    }
 
     @Nested
     @DisplayName("웨이팅 룸 입장 메서드 호출 시")
     class EnterWaitingRoomTest {
-
-        private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> rawWaitingRoom =
-                new ConcurrentHashMap<>();
-        private ConcurrentMap<Long, AtomicLong> rawWaitingCounter = new ConcurrentHashMap<>();
-        private ConcurrentMap<Long, ConcurrentLinkedQueue<WaitingMember>> rawWaitingLine =
-                new ConcurrentHashMap<>();
-
-        @BeforeEach
-        void setUp() {
-            waitingManager =
-                    new MemoryWaitingManager(
-                            new MemoryWaitingRoom(rawWaitingRoom),
-                            new MemoryWaitingCounter(rawWaitingCounter),
-                            new MemoryWaitingLine(rawWaitingLine));
-        }
 
         @Test
         @DisplayName("대기방에 추가한다.")
@@ -96,7 +98,6 @@ class MemoryWaitingManagerTest {
             waitingManager.enterWaitingRoom(email, performanceIdB);
 
             // then
-            // then
             assertThat(rawWaitingRoom)
                     .hasSize(2)
                     .satisfies(
@@ -151,6 +152,48 @@ class MemoryWaitingManagerTest {
                                                                     WaitingMember::getPerformanceId)
                                                             .containsExactly(email, performanceId);
                                                 });
+                            });
+        }
+    }
+
+    @Nested
+    @DisplayName("대기중인 사용자 조회 시")
+    class FindWaitingMemberTest {
+
+        @Test
+        @DisplayName("사용자가 존재하면 반환한다.")
+        void returnWaitingMember() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+            waitingManager.enterWaitingRoom(email, performanceId);
+
+            // when
+            WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
+
+            // then
+            assertThat(waitingMember.getEmail()).isEqualTo(email);
+            assertThat(waitingMember.getPerformanceId()).isEqualTo(performanceId);
+        }
+
+        @Test
+        @DisplayName("예외(NOT_FOUND_WAITING_MEMBER): 사용자가 존재하지 않으면")
+        void notFoundWaitingMember() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+
+            // when
+            Exception exception =
+                    catchException(() -> waitingManager.findWaitingMember(email, performanceId));
+
+            // then
+            assertThat(exception)
+                    .isInstanceOf(TicketingException.class)
+                    .extracting(e -> ((TicketingException) e).getErrorCode())
+                    .satisfies(
+                            errorCode -> {
+                                assertThat(errorCode).isEqualTo(ErrorCode.NOT_FOUND_WAITING_MEMBER);
                             });
         }
     }
