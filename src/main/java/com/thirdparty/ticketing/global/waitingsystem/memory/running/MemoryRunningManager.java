@@ -25,7 +25,7 @@ public class MemoryRunningManager implements RunningManager {
 
     @Override
     public long getAvailableToRunning(long performanceId) {
-        return 0;
+        return runningRoom.getAvailableToRunning(performanceId);
     }
 
     @Override
