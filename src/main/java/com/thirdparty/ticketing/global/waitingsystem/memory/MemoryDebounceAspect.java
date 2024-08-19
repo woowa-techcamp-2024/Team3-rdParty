@@ -1,14 +1,15 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory;
 
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
-import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Aspect
@@ -28,13 +29,11 @@ public class MemoryDebounceAspect {
     }
 
     @Pointcut("@annotation(com.thirdparty.ticketing.global.waitingsystem.Debounce)")
-    private void debounceAnnotation() {
-    }
+    private void debounceAnnotation() {}
 
     @Pointcut(
             "execution(public void com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem.moveUserToRunning(long))")
-    private void moveWaitingMemberToRunning() {
-    }
+    private void moveWaitingMemberToRunning() {}
 
     @Around("debounceAnnotation() || moveWaitingMemberToRunning()")
     public Object debounce(ProceedingJoinPoint joinPoint) throws Throwable {

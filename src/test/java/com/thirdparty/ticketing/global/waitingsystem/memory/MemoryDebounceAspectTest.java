@@ -1,6 +1,12 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory;
 
-import com.thirdparty.ticketing.global.waitingsystem.Debounce;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,19 +18,13 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.thirdparty.ticketing.global.waitingsystem.Debounce;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = MemoryDebounceAspectTest.MemoryDebounceAopConfig.class)
 class MemoryDebounceAspectTest {
 
-    @Autowired
-    private MemoryDebounceAspectTest.MemoryDebounceTarget memoryDebounceTarget;
+    @Autowired private MemoryDebounceAspectTest.MemoryDebounceTarget memoryDebounceTarget;
 
     @Configuration
     @EnableAspectJAutoProxy
