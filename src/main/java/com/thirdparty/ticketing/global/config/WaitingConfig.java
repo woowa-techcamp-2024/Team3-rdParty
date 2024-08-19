@@ -1,13 +1,14 @@
-package com.thirdparty.ticketing.global.waitingsystem.redis;
+package com.thirdparty.ticketing.global.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningCounter;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
@@ -16,57 +17,55 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingL
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingRoom;
 
-@TestConfiguration
-public class TestRedisConfig {
-
-    @Autowired private StringRedisTemplate redisTemplate;
-
-    @Autowired private ObjectMapper objectMapper;
+@Configuration
+public class WaitingConfig {
 
     @Bean
     public WaitingSystem waitingSystem(
-            RedisWaitingManager waitingManager,
-            RedisRunningManager runningManager,
+            WaitingManager waitingManager,
+            RunningManager runningManager,
             EventPublisher eventPublisher) {
         return new WaitingSystem(waitingManager, runningManager, eventPublisher);
     }
 
     @Bean
-    public RedisWaitingManager waitingManager(
-            RedisWaitingLine waitingLine,
+    public WaitingManager waitingManager(
             RedisWaitingRoom waitingRoom,
+            RedisWaitingLine waitingLine,
             RedisWaitingCounter waitingCounter) {
         return new RedisWaitingManager(waitingRoom, waitingCounter, waitingLine);
     }
 
     @Bean
-    public RedisWaitingRoom waitingRoom() {
+    public RedisWaitingRoom waitingRoom(
+            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         return new RedisWaitingRoom(redisTemplate, objectMapper);
     }
 
     @Bean
-    public RedisWaitingLine waitingLine() {
+    public RedisWaitingLine waitingLine(
+            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         return new RedisWaitingLine(redisTemplate, objectMapper);
     }
 
     @Bean
-    public RedisWaitingCounter waitingCounter() {
+    public RedisWaitingCounter waitingCounter(StringRedisTemplate redisTemplate) {
         return new RedisWaitingCounter(redisTemplate);
     }
 
     @Bean
-    public RedisRunningManager runningManager(
-            RedisRunningCounter runningCounter, RedisRunningRoom runningRoom) {
+    public RunningManager runningManager(
+            RedisRunningRoom runningRoom, RedisRunningCounter runningCounter) {
         return new RedisRunningManager(runningRoom, runningCounter);
     }
 
     @Bean
-    public RedisRunningRoom runningRoom() {
+    public RedisRunningRoom runningRoom(StringRedisTemplate redisTemplate) {
         return new RedisRunningRoom(redisTemplate);
     }
 
     @Bean
-    public RedisRunningCounter runningCounter() {
+    public RedisRunningCounter runningCounter(StringRedisTemplate redisTemplate) {
         return new RedisRunningCounter(redisTemplate);
     }
 }

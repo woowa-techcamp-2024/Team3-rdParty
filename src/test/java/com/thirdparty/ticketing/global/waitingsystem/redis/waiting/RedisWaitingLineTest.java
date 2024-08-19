@@ -13,18 +13,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Import(TestRedisConfig.class)
 class RedisWaitingLineTest extends TestContainerStarter {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";

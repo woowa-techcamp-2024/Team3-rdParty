@@ -14,16 +14,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Import(TestRedisConfig.class)
 class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private RedisRunningRoom runningRoom;
