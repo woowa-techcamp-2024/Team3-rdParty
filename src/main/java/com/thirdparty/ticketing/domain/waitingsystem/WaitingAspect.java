@@ -1,8 +1,15 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.net.URI;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -10,31 +17,31 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.thirdparty.ticketing.domain.waiting.manager.WaitingManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-
-import lombok.RequiredArgsConstructor;
-
+@Slf4j
+@Aspect
 @RequiredArgsConstructor
 public class WaitingAspect {
 
-    private final WaitingManager waitingManager;
+    private final WaitingSystem waitingSystem;
 
+    @Around("@annotation(com.thirdparty.ticketing.domain.waitingsystem.Waiting)")
     private Object waitingRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                         .getRequest();
-        Long performanceId = Long.valueOf(request.getHeader("performanceId"));
+        long performanceId = Optional.ofNullable(request.getHeader("performanceId"))
+                .map(Long::parseLong)
+                .orElseThrow(() -> new TicketingException(ErrorCode.NOT_CONTAINS_PERFORMANCE_INFO));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
-
-        WaitingMember waitingMember = new WaitingMember(email, performanceId);
-        if (waitingManager.isReadyToHandle(waitingMember)) {
+        if (waitingSystem.isReadyToHandle(email, performanceId)) {
             return joinPoint.proceed();
         } else {
-            long waitingNumber = waitingManager.enterWaitingRoom(waitingMember);
-            return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).body(waitingNumber);
+            waitingSystem.enterWaitingRoom(email, performanceId);
+            return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+                    .location(URI.create("/api/performances/" + performanceId + "/wait"))
+                    .build();
         }
     }
 }
