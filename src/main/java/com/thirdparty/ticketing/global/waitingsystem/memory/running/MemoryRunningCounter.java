@@ -14,4 +14,8 @@ public class MemoryRunningCounter implements RunningCounter {
     public long getRunningCounter(long performanceId) {
         return counter.getOrDefault(performanceId, 0L);
     }
+
+    public void increment(long performanceId, int size) {
+        counter.compute(performanceId, (key, value) -> (value == null) ? size : value + size);
+    }
 }
