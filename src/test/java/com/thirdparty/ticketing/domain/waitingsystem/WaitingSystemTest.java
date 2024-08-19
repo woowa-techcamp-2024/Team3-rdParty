@@ -24,13 +24,13 @@ import com.thirdparty.ticketing.support.TestContainerStarter;
 @Import(TestRedisConfig.class)
 class WaitingSystemTest extends TestContainerStarter {
 
-    private WaitingSystem waitingSystem;
+    @Autowired private WaitingSystem waitingSystem;
 
     @Autowired private WaitingManager waitingManager;
 
     @Autowired private RunningManager runningManager;
 
-    private SpyEventPublisher eventPublisher;
+    @Autowired private SpyEventPublisher eventPublisher;
 
     @Autowired private StringRedisTemplate redisTemplate;
 
@@ -39,8 +39,6 @@ class WaitingSystemTest extends TestContainerStarter {
     @BeforeEach
     void setUp() {
         rawRunningCounter = redisTemplate.opsForValue();
-        eventPublisher = new SpyEventPublisher();
-        waitingSystem = new WaitingSystem(waitingManager, runningManager, eventPublisher);
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
