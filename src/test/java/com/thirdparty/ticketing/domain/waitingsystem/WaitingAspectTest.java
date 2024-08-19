@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +28,7 @@ import com.thirdparty.ticketing.domain.member.service.JwtProvider;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspectTest.TestController;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
+import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
@@ -43,6 +45,8 @@ class WaitingAspectTest extends TestContainerStarter {
     @Autowired private StringRedisTemplate redisTemplate;
 
     @Autowired private RedisRunningRoom runningRoom;
+
+    @Autowired private RedisWaitingLine waitingLine;
 
     @RestController
     static class TestController {
@@ -67,27 +71,61 @@ class WaitingAspectTest extends TestContainerStarter {
     @DisplayName("대기열 시스템 AOP 적용 시")
     class WaitingSystemAop {
 
-        @Test
-        @DisplayName("사용자가 작업 가능 공간에 없으면 리다이렉트한다.")
-        void redirect_WhenRunningRoomNotContainsMember() throws Exception {
-            // given
-            Member member =
-                    Member.builder()
-                            .email("email@email.com")
-                            .password("asdfasdf")
-                            .memberRole(MemberRole.USER)
-                            .build();
-            String bearerToken = getBearerToken(member);
+        @Nested
+        @DisplayName("사용자가 작업 가능 공간에 없으면")
+        class WhenRunningRoomNotContainsMember {
 
-            // when
-            ResultActions result =
-                    mockMvc.perform(
-                            get("/api/waiting/test")
-                                    .header("performanceId", 1)
-                                    .header(AUTHORIZATION_HEADER, bearerToken));
+            private Member member;
+            private String bearerToken;
+            private long performanceId;
 
-            // then
-            result.andExpect(status().isTemporaryRedirect());
+            @BeforeEach
+            void setUp() {
+                member =
+                        Member.builder()
+                                .email("email@email.com")
+                                .password("asdfasdf")
+                                .memberRole(MemberRole.USER)
+                                .build();
+                bearerToken = getBearerToken(member);
+                performanceId = 1;
+            }
+
+            @Test
+            @DisplayName("리다이렉트한다.")
+            void redirect() throws Exception {
+                // given
+
+                // when
+                ResultActions result =
+                        mockMvc.perform(
+                                get("/api/waiting/test")
+                                        .header("performanceId", performanceId)
+                                        .header(AUTHORIZATION_HEADER, bearerToken));
+
+                // then
+                result.andExpect(status().isTemporaryRedirect());
+            }
+
+            @Test
+            @DisplayName("대기열에 추가한다.")
+            void enterWaitingLine() throws Exception {
+                // given
+
+                // when
+                ResultActions result =
+                        mockMvc.perform(
+                                get("/api/waiting/test")
+                                        .header("performanceId", performanceId)
+                                        .header(AUTHORIZATION_HEADER, bearerToken));
+
+                // then
+                assertThat(waitingLine.pullOutMembers(performanceId, 1))
+                        .map(WaitingMember::getEmail)
+                        .hasSize(1)
+                        .first()
+                        .satisfies(email -> assertThat(email).isEqualTo(member.getEmail()));
+            }
         }
 
         @Test
