@@ -128,6 +128,7 @@ public class CacheReservationTest extends TestContainerStarter {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         AtomicInteger successfulSelections = new AtomicInteger(0);
+        AtomicInteger failureSelections = new AtomicInteger(0);
 
         for (Member member : members) {
             // 각 멤버에 대해 작업을 스레드 풀에 제출
@@ -141,6 +142,7 @@ public class CacheReservationTest extends TestContainerStarter {
                                     member.getEmail(), seatSelectionRequest);
                             successfulSelections.incrementAndGet();
                         } catch (TicketingException e) {
+                            failureSelections.incrementAndGet();
                         } catch (Exception e) {
                         } finally {
                             // latch 카운트 감소, 스레드 완료 시 호출
@@ -153,5 +155,7 @@ public class CacheReservationTest extends TestContainerStarter {
 
         Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
         assertThat(reservedSeat.getMember()).isNotNull();
+        assertThat(successfulSelections.get()).isEqualTo(1);
+        assertThat(failureSelections.get()).isEqualTo(4);
     }
 }

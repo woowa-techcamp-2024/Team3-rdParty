@@ -11,47 +11,45 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class LettuceReservationServiceProxy implements ReservationServiceProxy {
+
     private final LettuceRepository lettuceRepository;
     private final ReservationTransactionService reservationTransactionService;
 
-    @Override
-    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        int limit = 5;
+    private void performSeatAction(String seatId, Runnable action) {
+        int retryLimit = 5;
+        int sleepDuration = 300;
         try {
-            while (limit > 0
-                    && !lettuceRepository.seatLock(seatSelectionRequest.getSeatId().toString())) {
-                limit -= 1;
-                Thread.sleep(200);
+            while (retryLimit > 0 && !lettuceRepository.seatLock(seatId)) {
+                retryLimit -= 1;
+                Thread.sleep(sleepDuration);
             }
 
-            if (limit > 0) {
-                reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
+            if (retryLimit > 0) {
+                action.run();
+            } else {
+                throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
             }
 
         } catch (InterruptedException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
         } finally {
-            lettuceRepository.unlock(seatSelectionRequest.getSeatId().toString());
+            lettuceRepository.unlock(seatId);
         }
     }
 
     @Override
-    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
-        int limit = 5;
-        try {
-            while (limit > 0
-                    && !lettuceRepository.seatLock(ticketPaymentRequest.getSeatId().toString())) {
-                limit -= 1;
-                Thread.sleep(300);
-            }
+    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        performSeatAction(
+                seatSelectionRequest.getSeatId().toString(),
+                () -> reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest));
+    }
 
-            if (limit > 0) {
-                reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lettuceRepository.unlock(ticketPaymentRequest.getSeatId().toString());
-        }
+    @Override
+    public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
+        performSeatAction(
+                ticketPaymentRequest.getSeatId().toString(),
+                () ->
+                        reservationTransactionService.reservationTicket(
+                                memberEmail, ticketPaymentRequest));
     }
 }
