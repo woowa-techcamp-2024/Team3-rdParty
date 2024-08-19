@@ -1,9 +1,11 @@
 package com.thirdparty.ticketing.global.waitingsystem;
 
+import org.springframework.context.event.EventListener;
+
 import com.thirdparty.ticketing.domain.waitingsystem.PollingEvent;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 
 @RequiredArgsConstructor
 public class WaitingEventListener {

@@ -1,5 +1,9 @@
 package com.thirdparty.ticketing.global.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
@@ -12,9 +16,6 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingC
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingManager;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingRoom;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 public class WaitingConfig {
@@ -31,22 +32,19 @@ public class WaitingConfig {
     public WaitingManager waitingManager(
             RedisWaitingRoom waitingRoom,
             RedisWaitingLine waitingLine,
-            RedisWaitingCounter waitingCounter
-    ) {
+            RedisWaitingCounter waitingCounter) {
         return new RedisWaitingManager(waitingRoom, waitingCounter, waitingLine);
     }
 
     @Bean
     public RedisWaitingRoom waitingRoom(
-            StringRedisTemplate redisTemplate,
-            ObjectMapper objectMapper) {
+            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         return new RedisWaitingRoom(redisTemplate, objectMapper);
     }
 
     @Bean
     public RedisWaitingLine waitingLine(
-            StringRedisTemplate redisTemplate,
-            ObjectMapper objectMapper) {
+            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         return new RedisWaitingLine(redisTemplate, objectMapper);
     }
 
@@ -57,8 +55,7 @@ public class WaitingConfig {
 
     @Bean
     public RunningManager runningManager(
-            RedisRunningRoom runningRoom,
-            RedisRunningCounter runningCounter) {
+            RedisRunningRoom runningRoom, RedisRunningCounter runningCounter) {
         return new RedisRunningManager(runningRoom, runningCounter);
     }
 
