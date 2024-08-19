@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.global.config;
 
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,6 +20,11 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingR
 
 @Configuration
 public class WaitingConfig {
+
+    @Bean
+    public WaitingAspect waitingAspect(WaitingSystem waitingSystem) {
+        return new WaitingAspect(waitingSystem);
+    }
 
     @Bean
     public WaitingSystem waitingSystem(
