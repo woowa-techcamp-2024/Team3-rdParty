@@ -1,12 +1,12 @@
 package com.thirdparty.ticketing.global.config;
 
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspect;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;

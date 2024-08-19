@@ -2,10 +2,6 @@ package com.thirdparty.ticketing.domain.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
 class WaitingSystemTest extends TestContainerStarter {
