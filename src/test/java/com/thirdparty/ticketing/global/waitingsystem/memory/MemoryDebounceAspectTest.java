@@ -1,17 +1,6 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory;
 
-import com.thirdparty.ticketing.global.waitingsystem.Debounce;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -19,14 +8,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.thirdparty.ticketing.global.waitingsystem.Debounce;
 
 @ExtendWith(SpringExtension.class)
 @Import(MemoryDebounceAspectTest.MemoryDebounceAopConfig.class)
 class MemoryDebounceAspectTest {
 
-    @Autowired
-    private MemoryDebounceAspectTest.MemoryDebounceTarget memoryDebounceTarget;
+    @Autowired private MemoryDebounceAspectTest.MemoryDebounceTarget memoryDebounceTarget;
 
     @Configuration
     @EnableAspectJAutoProxy
@@ -102,7 +101,7 @@ class MemoryDebounceAspectTest {
             for (int i = 0; i < totalCalls; i++) {
                 memoryDebounceTarget.increment(performanceId);
                 latch.countDown();
-                if (i < totalCalls - 1) {  // 마지막 호출 후에는 대기하지 않음
+                if (i < totalCalls - 1) { // 마지막 호출 후에는 대기하지 않음
                     TimeUnit.SECONDS.sleep(1);
                 }
             }
