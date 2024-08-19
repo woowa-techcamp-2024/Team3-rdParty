@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,6 +88,28 @@ class MemoryDebounceAspectTest {
 
             // then
             assertThat(memoryDebounceTarget.get()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("15초 동안 1초마다 호출하면 2번만 실행된다.")
+        void debounceWithTimeInterval() throws InterruptedException {
+            // given
+            int totalCalls = 15;
+            long performanceId = 1L;
+            CountDownLatch latch = new CountDownLatch(totalCalls);
+
+            // when
+            for (int i = 0; i < totalCalls; i++) {
+                memoryDebounceTarget.increment(performanceId);
+                latch.countDown();
+                if (i < totalCalls - 1) {  // 마지막 호출 후에는 대기하지 않음
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            }
+            latch.await();
+
+            // then
+            assertThat(memoryDebounceTarget.get()).isEqualTo(2);
         }
     }
 }
