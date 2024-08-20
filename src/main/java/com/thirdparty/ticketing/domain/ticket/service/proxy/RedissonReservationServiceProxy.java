@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -18,46 +17,41 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class RedissonReservationServiceProxy implements ReservationServiceProxy {
+
     private final RedissonClient redissonClient;
     private final ReservationTransactionService reservationTransactionService;
 
-    @Override
-    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        RLock lock = redissonClient.getLock(seatSelectionRequest.getSeatId().toString());
+    private void performSeatAction(String seatId, Runnable action) {
+        RLock lock = redissonClient.getLock(seatId);
+
+        int tryTime = 1;
+        int releaseTime = 60;
 
         try {
-            if (!lock.tryLock(1, 60, TimeUnit.SECONDS)) {
+            if (!lock.tryLock(tryTime, releaseTime, TimeUnit.SECONDS)) {
                 return;
             }
-            reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
+            action.run();
         } catch (InterruptedException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
         } finally {
-            try {
-                lock.unlock();
-            } catch (IllegalMonitorStateException e) {
-                log.info("Redisson Lock Already UnLock");
-            }
-            log.info("finished lock on {}", seatSelectionRequest.getSeatId().toString());
+            lock.unlock();
         }
     }
 
     @Override
-    @Transactional
+    public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        performSeatAction(
+                seatSelectionRequest.getSeatId().toString(),
+                () -> reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest));
+    }
+
+    @Override
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
-        RLock lock = redissonClient.getLock(ticketPaymentRequest.getSeatId().toString());
-
-        try {
-            boolean available = lock.tryLock(5, 300, TimeUnit.MICROSECONDS);
-            if (!available) {
-                return;
-            }
-
-            reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
+        performSeatAction(
+                ticketPaymentRequest.getSeatId().toString(),
+                () ->
+                        reservationTransactionService.reservationTicket(
+                                memberEmail, ticketPaymentRequest));
     }
 }

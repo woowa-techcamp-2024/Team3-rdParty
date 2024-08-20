@@ -10,27 +10,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.SpyEventPublisher;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Import(TestRedisConfig.class)
 class WaitingSystemTest extends TestContainerStarter {
 
-    @Autowired private WaitingSystem waitingSystem;
+    private WaitingSystem waitingSystem;
 
     @Autowired private WaitingManager waitingManager;
 
     @Autowired private RunningManager runningManager;
 
-    @Autowired private SpyEventPublisher eventPublisher;
+    private SpyEventPublisher eventPublisher;
 
     @Autowired private StringRedisTemplate redisTemplate;
 
@@ -38,6 +35,8 @@ class WaitingSystemTest extends TestContainerStarter {
 
     @BeforeEach
     void setUp() {
+        eventPublisher = new SpyEventPublisher();
+        waitingSystem = new WaitingSystem(waitingManager, runningManager, eventPublisher);
         rawRunningCounter = redisTemplate.opsForValue();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
