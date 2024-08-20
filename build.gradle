@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // Redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.17.6'
