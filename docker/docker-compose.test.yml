@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  spring:
+    hostname: spring
+    container_name: spring
+    build:
+      context: ..
+      dockerfile: docker/spring/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    restart: always
