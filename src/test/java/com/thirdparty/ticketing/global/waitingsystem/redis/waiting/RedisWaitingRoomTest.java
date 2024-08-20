@@ -11,18 +11,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
-import com.thirdparty.ticketing.global.waitingsystem.redis.TestRedisConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
-@Import(TestRedisConfig.class)
 class RedisWaitingRoomTest extends TestContainerStarter {
 
     @Autowired private RedisWaitingRoom waitingRoom;

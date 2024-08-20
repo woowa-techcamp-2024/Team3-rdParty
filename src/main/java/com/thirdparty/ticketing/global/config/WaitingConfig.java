@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
+import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspect;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
@@ -19,6 +20,11 @@ import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingR
 
 @Configuration
 public class WaitingConfig {
+
+    @Bean
+    public WaitingAspect waitingAspect(WaitingSystem waitingSystem) {
+        return new WaitingAspect(waitingSystem);
+    }
 
     @Bean
     public WaitingSystem waitingSystem(
