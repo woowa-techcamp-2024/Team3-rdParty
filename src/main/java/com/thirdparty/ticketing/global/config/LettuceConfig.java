@@ -1,23 +1,19 @@
 package com.thirdparty.ticketing.global.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import lombok.Setter;
-
 @Configuration
-@ConfigurationProperties(prefix = "spring.data.redis.lettuce")
-@Setter
 public class LettuceConfig {
-    private String host;
-    private Integer port;
 
     @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory() {
+    public LettuceConnectionFactory lettuceConnectionFactory(
+            @Value("${spring.data.redis.port}") int port,
+            @Value("${spring.data.redis.host}") String host) {
         return new LettuceConnectionFactory(host, port);
     }
 
