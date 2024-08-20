@@ -4,21 +4,17 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Setter;
-
 @Configuration
-@ConfigurationProperties(prefix = "spring.data.redis.redisson")
-@Setter
 public class RedissonConfig {
-    private String host;
-    private Integer port;
 
     @Bean
-    public RedissonClient redissonClient() {
+    public RedissonClient redissonClient(
+            @Value("${spring.data.redis.port}") int port,
+            @Value("${spring.data.redis.host}") String host) {
         Config config = new Config();
         SingleServerConfig serverConfig = config.useSingleServer();
         serverConfig.setAddress("redis://" + host + ":" + port);

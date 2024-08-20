@@ -19,12 +19,7 @@ public class TestContainerStarter {
 
     @DynamicPropertySource
     private static void registerRedisProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.lettuce.host", REDIS::getHost);
-        registry.add(
-                "spring.data.redis.lettuce.port", () -> REDIS.getMappedPort(REDIS_PORT).toString());
-        registry.add("spring.data.redis.redisson.host", REDIS::getHost);
-        registry.add(
-                "spring.data.redis.redisson.port",
-                () -> REDIS.getMappedPort(REDIS_PORT).toString());
+        registry.add("spring.data.redis.host", REDIS::getHost);
+        registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(REDIS_PORT).toString());
     }
 }
