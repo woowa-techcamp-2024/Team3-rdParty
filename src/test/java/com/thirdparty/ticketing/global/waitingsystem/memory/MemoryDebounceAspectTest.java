@@ -2,12 +2,14 @@ package com.thirdparty.ticketing.global.waitingsystem.memory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,13 +29,16 @@ class MemoryDebounceAspectTest {
 
     @Autowired private MemoryDebounceAspectTest.MemoryDebounceTarget memoryDebounceTarget;
 
+    private static final ConcurrentHashMap<Long, MemoryDebounceAspect.DebounceInfo> debounceMap =
+            new ConcurrentHashMap<>();
+
     @Configuration
     @EnableAspectJAutoProxy
     static class MemoryDebounceAopConfig {
 
         @Bean
         public MemoryDebounceAspect memoryDebounceAspect() {
-            return new MemoryDebounceAspect();
+            return new MemoryDebounceAspect(debounceMap);
         }
 
         @Bean
@@ -42,7 +47,7 @@ class MemoryDebounceAspectTest {
         }
     }
 
-    static class MemoryDebounceTarget {
+    public static class MemoryDebounceTarget {
 
         private final AtomicInteger counter;
 
@@ -58,6 +63,16 @@ class MemoryDebounceAspectTest {
         public int get() {
             return counter.get();
         }
+
+        public void reset() {
+            counter.set(0);
+            debounceMap.clear();
+        }
+    }
+
+    @BeforeEach
+    void setUp() {
+        memoryDebounceTarget.reset();
     }
 
     @Nested
