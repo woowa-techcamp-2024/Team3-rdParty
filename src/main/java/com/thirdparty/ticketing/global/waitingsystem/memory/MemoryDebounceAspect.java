@@ -9,16 +9,18 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Aspect
+@RequiredArgsConstructor
 public class MemoryDebounceAspect {
 
-    private final ConcurrentHashMap<Long, DebounceInfo> debounceMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, DebounceInfo> debounceMap;
     private static final long DEBOUNCE_MILLIS = 10_000; // 10초
 
-    private static class DebounceInfo {
+    public static class DebounceInfo {
         volatile Instant lastExecution;
         final ReentrantLock lock;
 
