@@ -136,8 +136,8 @@ public class CacheReservationTest extends TestContainerStarter {
                     () -> {
                         try {
                             // 스레드 풀에서 병렬로 실행되는 작업
-                            SeatSelectionRequest seatSelectionRequest =
-                                    new SeatSelectionRequest(seat.getSeatId());
+                            SeatSelectionRequest seatSelectionRequest = new SeatSelectionRequest();
+                            seatSelectionRequest.setSeatId(seat.getSeatId());
                             reservationServiceProxy.selectSeat(
                                     member.getEmail(), seatSelectionRequest);
                             successfulSelections.incrementAndGet();

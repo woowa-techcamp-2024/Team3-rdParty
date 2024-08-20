@@ -115,7 +115,9 @@ public class PersistenceReservationTest extends TestContainerStarter {
             try {
                 latch.await();
                 try {
-                    reservationService.selectSeat(memberEmail, new SeatSelectionRequest(seatId));
+                    SeatSelectionRequest seatSelectionRequest = new SeatSelectionRequest();
+                    seatSelectionRequest.setSeatId(seatId);
+                    reservationService.selectSeat(memberEmail, seatSelectionRequest);
                     successfulSelections.incrementAndGet();
                 } catch (TicketingException e) {
                     log.error(e.getMessage(), e);
@@ -209,7 +211,9 @@ public class PersistenceReservationTest extends TestContainerStarter {
                 AtomicInteger successfulReservations,
                 AtomicInteger failedReservations) {
             try {
-                reservationService.reservationTicket(memberEmail, new TicketPaymentRequest(seatId));
+                TicketPaymentRequest ticketPaymentRequest = new TicketPaymentRequest();
+                ticketPaymentRequest.setSeatId(seatId);
+                reservationService.reservationTicket(memberEmail, ticketPaymentRequest);
                 successfulReservations.incrementAndGet();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
