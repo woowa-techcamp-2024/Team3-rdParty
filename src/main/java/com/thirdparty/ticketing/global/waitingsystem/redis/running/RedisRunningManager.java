@@ -36,5 +36,7 @@ public class RedisRunningManager implements RunningManager {
     }
 
     @Override
-    public void pullOutRunningMember(String email, long performanceId) {}
+    public void pullOutRunningMember(String email, long performanceId) {
+        runningRoom.pullOutRunningMember(email, performanceId);
+    }
 }
