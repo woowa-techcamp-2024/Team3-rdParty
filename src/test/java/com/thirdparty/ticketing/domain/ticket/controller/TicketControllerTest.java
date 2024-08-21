@@ -89,8 +89,7 @@ class TicketControllerTest extends BaseControllerTest {
                         restDocs.document(
                                 requestHeaders(
                                         headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
-                                        headerWithName(PERFORMANCE_ID).description("공연 ID")
-                                ),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")),
                                 requestFields(
                                         fieldWithPath("seatId")
                                                 .type(JsonFieldType.NUMBER)
@@ -119,8 +118,7 @@ class TicketControllerTest extends BaseControllerTest {
                         restDocs.document(
                                 requestHeaders(
                                         headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
-                                        headerWithName(PERFORMANCE_ID).description("공연 ID")
-                                ),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")),
                                 requestFields(
                                         fieldWithPath("seatId")
                                                 .type(JsonFieldType.NUMBER)

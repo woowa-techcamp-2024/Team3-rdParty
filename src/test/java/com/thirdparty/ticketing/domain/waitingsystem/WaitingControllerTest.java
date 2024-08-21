@@ -26,8 +26,7 @@ class WaitingControllerTest extends BaseControllerTest {
 
     public static final String PERFORMANCE_ID = "performanceId";
 
-    @MockBean
-    private WaitingSystem waitingSystem;
+    @MockBean private WaitingSystem waitingSystem;
 
     @Test
     @DisplayName("남은 대기 순번 조회 API 호출 시")
@@ -50,8 +49,7 @@ class WaitingControllerTest extends BaseControllerTest {
                                         parameterWithName("performanceId").description("공연 ID")),
                                 requestHeaders(
                                         headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
-                                        headerWithName(PERFORMANCE_ID).description("공연 ID")
-                                ),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")),
                                 responseFields(
                                         fieldWithPath("remainingCount")
                                                 .type(JsonFieldType.NUMBER)
