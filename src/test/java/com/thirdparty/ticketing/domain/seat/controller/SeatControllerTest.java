@@ -60,7 +60,9 @@ public class SeatControllerTest extends BaseControllerTest {
                 .andDo(
                         restDocs.document(
                                 requestHeaders(
-                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")
+                                ),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID"),
                                         parameterWithName("zoneId").description("구역 ID")),
@@ -104,7 +106,9 @@ public class SeatControllerTest extends BaseControllerTest {
                 .andDo(
                         restDocs.document(
                                 requestHeaders(
-                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")
+                                ),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 responseFields(
