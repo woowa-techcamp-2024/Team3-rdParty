@@ -1,6 +1,8 @@
 package com.thirdparty.ticketing.domain.zone.controller;
 
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -45,6 +47,8 @@ class UserZoneControllerTest extends BaseControllerTest {
         result.andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 responseFields(

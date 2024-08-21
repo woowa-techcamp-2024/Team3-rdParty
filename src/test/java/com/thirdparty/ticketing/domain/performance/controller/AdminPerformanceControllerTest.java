@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -43,6 +45,8 @@ class AdminPerformanceControllerTest extends BaseControllerTest {
         result.andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 requestFields(
                                         fieldWithPath("performanceName")
                                                 .type(JsonFieldType.STRING)

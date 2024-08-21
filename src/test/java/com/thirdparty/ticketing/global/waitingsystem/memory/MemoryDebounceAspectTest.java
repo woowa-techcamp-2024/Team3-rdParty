@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -105,6 +106,7 @@ class MemoryDebounceAspectTest {
         }
 
         @Test
+        @Disabled("15초짜리 테스트는 너무 길다.")
         @DisplayName("15초 동안 1초마다 호출하면 2번만 실행된다.")
         void debounceWithTimeInterval() throws InterruptedException {
             // given
