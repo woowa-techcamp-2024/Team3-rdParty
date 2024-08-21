@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.seat.controller;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -53,6 +55,8 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         result.andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID"),
                                         parameterWithName("zoneId").description("존 ID")),
@@ -98,6 +102,8 @@ public class AdminSeatControllerTest extends BaseControllerTest {
         result.andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 requestFields(

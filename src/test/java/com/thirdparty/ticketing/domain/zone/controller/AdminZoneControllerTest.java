@@ -1,5 +1,7 @@
 package com.thirdparty.ticketing.domain.zone.controller;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -48,6 +50,9 @@ public class AdminZoneControllerTest extends BaseControllerTest {
         result.andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER)
+                                                .description("어드민 액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 requestFields(

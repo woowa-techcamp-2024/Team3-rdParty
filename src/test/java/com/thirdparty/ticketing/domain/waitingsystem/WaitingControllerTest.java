@@ -24,6 +24,8 @@ import com.thirdparty.ticketing.support.BaseControllerTest;
 @WebMvcTest(controllers = WaitingController.class)
 class WaitingControllerTest extends BaseControllerTest {
 
+    public static final String PERFORMANCE_ID = "performanceId";
+
     @MockBean private WaitingSystem waitingSystem;
 
     @Test
@@ -36,7 +38,8 @@ class WaitingControllerTest extends BaseControllerTest {
         ResultActions result =
                 mockMvc.perform(
                         get("/api/performances/{performanceId}/wait", 1)
-                                .header(AUTHORIZATION_HEADER, userBearerToken));
+                                .header(AUTHORIZATION_HEADER, userBearerToken)
+                                .header(PERFORMANCE_ID, 1));
 
         // then
         result.andExpect(status().isOk())

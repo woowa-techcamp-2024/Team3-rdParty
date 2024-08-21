@@ -2,6 +2,8 @@ package com.thirdparty.ticketing.domain.seat.controller;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -26,6 +28,9 @@ import com.thirdparty.ticketing.support.BaseControllerTest;
 
 @WebMvcTest(SeatController.class)
 public class SeatControllerTest extends BaseControllerTest {
+
+    public static final String PERFORMANCE_ID = "performanceId";
+
     @MockBean private SeatService seatService;
 
     @Test
@@ -47,12 +52,15 @@ public class SeatControllerTest extends BaseControllerTest {
                                         "/api/performances/{performanceId}/zones/{zoneId}/seats",
                                         performanceId,
                                         zoneId)
-                                .header(AUTHORIZATION_HEADER, adminBearerToken));
+                                .header(AUTHORIZATION_HEADER, adminBearerToken)
+                                .header(PERFORMANCE_ID, 1));
 
         // Then
         result.andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID"),
                                         parameterWithName("zoneId").description("구역 ID")),
@@ -88,12 +96,15 @@ public class SeatControllerTest extends BaseControllerTest {
         ResultActions result =
                 mockMvc.perform(
                         get("/api/performances/{performanceId}/grades", performanceId)
-                                .header(AUTHORIZATION_HEADER, adminBearerToken));
+                                .header(AUTHORIZATION_HEADER, adminBearerToken)
+                                .header(PERFORMANCE_ID, 1));
 
         // Then
         result.andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰")),
                                 pathParameters(
                                         parameterWithName("performanceId").description("공연 ID")),
                                 responseFields(
