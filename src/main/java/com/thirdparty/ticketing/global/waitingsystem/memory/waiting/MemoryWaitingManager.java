@@ -42,6 +42,6 @@ public class MemoryWaitingManager implements WaitingManager {
 
     @Override
     public void removeMemberInfo(String email, long performanceId) {
-
+        waitingRoom.removeMemberInfo(email, performanceId);
     }
 }
