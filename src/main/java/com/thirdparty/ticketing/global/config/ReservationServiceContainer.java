@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
@@ -51,29 +52,32 @@ public class ReservationServiceContainer {
     public ReservationTransactionService cacheReservationTransactionService(
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
-            SeatRepository seatRepository) {
+            SeatRepository seatRepository,
+            EventPublisher eventPublisher) {
         LockSeatStrategy lockSeatStrategy = new NaiveSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy);
+                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
     }
 
     @Bean
     public ReservationTransactionService persistenceOptimisticReservationService(
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
-            SeatRepository seatRepository) {
+            SeatRepository seatRepository,
+            EventPublisher eventPublisher) {
         LockSeatStrategy lockSeatStrategy = new OptimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy);
+                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
     }
 
     @Bean
     public ReservationTransactionService persistencePessimisticReservationService(
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
-            SeatRepository seatRepository) {
+            SeatRepository seatRepository,
+            EventPublisher eventPublisher) {
         LockSeatStrategy lockSeatStrategy = new PessimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy);
+                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
     }
 }
