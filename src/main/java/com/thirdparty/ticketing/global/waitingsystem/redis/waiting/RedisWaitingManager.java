@@ -44,6 +44,6 @@ public class RedisWaitingManager implements WaitingManager {
 
     @Override
     public void removeMemberInfo(String email, long performanceId) {
-
+        waitingRoom.removeMemberInfo(email, performanceId);
     }
 }

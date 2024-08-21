@@ -45,4 +45,8 @@ public class RedisWaitingRoom implements WaitingRoom {
                                 ObjectMapperUtils.readValue(
                                         objectMapper, waitingMember, WaitingMember.class));
     }
+
+    public void removeMemberInfo(String email, long performanceId) {
+        waitingRoom.delete(getWaitingRoomKey(performanceId), email);
+    }
 }
