@@ -34,4 +34,7 @@ public class RedisRunningManager implements RunningManager {
         runningCounter.increment(performanceId, waitingMembers.size());
         runningRoom.enter(performanceId, waitingMembers);
     }
+
+    @Override
+    public void pullOutRunningMember(String email, long performanceId) {}
 }

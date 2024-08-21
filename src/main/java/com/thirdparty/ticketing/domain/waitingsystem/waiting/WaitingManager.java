@@ -8,4 +8,6 @@ public interface WaitingManager {
     WaitingMember findWaitingMember(String email, long performanceId);
 
     Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning);
+
+    void removeMemberInfo(String email, long performanceId);
 }

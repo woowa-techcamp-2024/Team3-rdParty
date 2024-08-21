@@ -37,4 +37,9 @@ public class WaitingSystem {
                 waitingManager.pullOutMembers(performanceId, availableToRunning);
         runningManager.enterRunningRoom(performanceId, waitingMembers);
     }
+
+    public void pullOutRunningMember(String email, long performanceId) {
+        runningManager.pullOutRunningMember(email, performanceId);
+        waitingManager.removeMemberInfo(email, performanceId);
+    }
 }
