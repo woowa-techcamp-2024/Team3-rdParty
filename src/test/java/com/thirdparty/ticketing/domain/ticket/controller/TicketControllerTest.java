@@ -23,9 +23,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.response.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
