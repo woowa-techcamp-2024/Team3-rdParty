@@ -3,8 +3,8 @@ package com.thirdparty.ticketing.domain.ticket.service.proxy;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.service.ReservationTransactionService;
 
 import lombok.RequiredArgsConstructor;

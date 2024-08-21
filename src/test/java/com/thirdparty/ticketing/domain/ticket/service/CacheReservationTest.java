@@ -30,7 +30,7 @@ import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.SeatStatus;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
-import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 import com.thirdparty.ticketing.support.TestContainerStarter;

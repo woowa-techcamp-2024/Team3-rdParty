@@ -9,7 +9,7 @@ import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketElement;
+import com.thirdparty.ticketing.domain.ticket.dto.response.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 
 import lombok.RequiredArgsConstructor;
