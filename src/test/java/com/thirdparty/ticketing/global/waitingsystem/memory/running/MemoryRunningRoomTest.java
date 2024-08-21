@@ -134,4 +134,54 @@ class MemoryRunningRoomTest {
             assertThat(runningRoom.contains("nonexistent@email.com", performanceId)).isFalse();
         }
     }
+
+    @Nested
+    @DisplayName("작업 가능 공간 사용자 제거 호출 시")
+    class PullOutRunningMemberTest {
+
+        @Test
+        @DisplayName("사용자를 제거한다.")
+        void pullOutRunningMember() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+            Set<WaitingMember> waitingMembers = Set.of(new WaitingMember(
+                    email,
+                    performanceId,
+                    1,
+                    ZonedDateTime.now()
+            ));
+            runningRoom.enter(performanceId, waitingMembers);
+            assertThat(room.get(performanceId)).hasSize(1);
+
+            //when
+            runningRoom.pullOutRunningMember(email, performanceId);
+
+            //then
+            assertThat(room.get(performanceId)).hasSize(0);
+        }
+
+        @Test
+        @DisplayName("사용자가 작업 가능 공간에 없으면 무시한다.")
+        void ignore_WhenNotExistsMember() {
+            //given
+            long performanceId = 1;
+            String anotherEmail = "email@email.com";
+            Set<WaitingMember> waitingMembers = Set.of(new WaitingMember(
+                    anotherEmail,
+                    performanceId,
+                    1,
+                    ZonedDateTime.now()
+            ));
+            runningRoom.enter(performanceId, waitingMembers);
+
+            String email = "email" + 1 + "@email.com";
+
+            //when
+            runningRoom.pullOutRunningMember(email, performanceId);
+
+            //then
+            assertThat(room.get(performanceId)).hasSize(1);
+        }
+    }
 }

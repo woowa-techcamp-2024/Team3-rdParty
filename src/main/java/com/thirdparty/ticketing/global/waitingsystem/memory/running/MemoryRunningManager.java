@@ -36,5 +36,6 @@ public class MemoryRunningManager implements RunningManager {
 
     @Override
     public void pullOutRunningMember(String email, long performanceId) {
+        runningRoom.pullOutRunningMember(email, performanceId);
     }
 }
