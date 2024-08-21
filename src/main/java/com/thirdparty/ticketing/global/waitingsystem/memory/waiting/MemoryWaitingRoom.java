@@ -30,7 +30,8 @@ public class MemoryWaitingRoom implements WaitingRoom {
     }
 
     public void removeMemberInfo(String email, long performanceId) {
-        room.computeIfPresent(performanceId,
+        room.computeIfPresent(
+                performanceId,
                 (key, waitingRoom) -> {
                     waitingRoom.remove(email);
                     return waitingRoom;

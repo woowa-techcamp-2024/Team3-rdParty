@@ -42,7 +42,8 @@ public class MemoryRunningRoom implements RunningRoom {
     }
 
     public void pullOutRunningMember(String email, long performanceId) {
-        room.computeIfPresent(performanceId,
+        room.computeIfPresent(
+                performanceId,
                 (key, room) -> {
                     room.remove(email);
                     return room;
