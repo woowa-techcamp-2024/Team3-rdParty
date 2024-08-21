@@ -3,14 +3,16 @@ package com.thirdparty.ticketing.domain.ticket.service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.Seat;
-import com.thirdparty.ticketing.domain.ticket.dto.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.dto.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class ReservationTransactionService implements ReservationService {
     private final MemberRepository memberRepository;
     private final PaymentProcessor paymentProcessor;
     private final LockSeatStrategy lockSeatStrategy;
+    private final EventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -55,12 +58,18 @@ public class ReservationTransactionService implements ReservationService {
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-        seat.markAsPendingPayment();
-        paymentProcessor.processPayment(new PaymentRequest());
-        seat.markAsPaid();
+        processPayment(seat, loginMember);
 
         if (seat.isAssignedByMember(loginMember)) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
+    }
+
+    private void processPayment(Seat seat, Member loginMember) {
+        seat.markAsPendingPayment();
+        paymentProcessor.processPayment(new PaymentRequest());
+        seat.markAsPaid();
+        PaymentEvent paymentEvent = new PaymentEvent(loginMember.getEmail());
+        eventPublisher.publish(paymentEvent);
     }
 }

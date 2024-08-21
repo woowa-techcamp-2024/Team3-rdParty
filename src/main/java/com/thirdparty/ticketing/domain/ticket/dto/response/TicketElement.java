@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.ticket.dto;
+package com.thirdparty.ticketing.domain.ticket.dto.response;
 
 import java.util.UUID;
 

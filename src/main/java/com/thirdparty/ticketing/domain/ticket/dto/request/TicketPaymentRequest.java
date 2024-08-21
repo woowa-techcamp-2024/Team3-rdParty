@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.ticket.dto;
+package com.thirdparty.ticketing.domain.ticket.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
