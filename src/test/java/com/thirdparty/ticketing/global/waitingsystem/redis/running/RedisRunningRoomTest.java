@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +15,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.TestContainerStarter;
@@ -27,11 +28,11 @@ class RedisRunningRoomTest extends TestContainerStarter {
 
     @Autowired private StringRedisTemplate redisTemplate;
 
-    private SetOperations<String, String> rawRunningRoom;
+    private ZSetOperations<String, String> rawRunningRoom;
 
     @BeforeEach
     void setUp() {
-        rawRunningRoom = redisTemplate.opsForSet();
+        rawRunningRoom = redisTemplate.opsForZSet();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
@@ -49,7 +50,8 @@ class RedisRunningRoomTest extends TestContainerStarter {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            rawRunningRoom.add(getRunningRoomKey(performanceId), email);
+            rawRunningRoom.add(
+                    getRunningRoomKey(performanceId), email, ZonedDateTime.now().toEpochSecond());
 
             // when
             boolean contains = runningRoom.contains(email, performanceId);
@@ -79,7 +81,8 @@ class RedisRunningRoomTest extends TestContainerStarter {
             long performanceIdA = 1;
             long performanceIdB = 2;
             String email = "email@email.com";
-            rawRunningRoom.add(getRunningRoomKey(performanceIdA), email);
+            rawRunningRoom.add(
+                    getRunningRoomKey(performanceIdA), email, ZonedDateTime.now().toEpochSecond());
 
             // when
             boolean contains = runningRoom.contains(email, performanceIdB);
@@ -100,7 +103,10 @@ class RedisRunningRoomTest extends TestContainerStarter {
             // given
             long performanceId = 1;
             for (int i = 0; i < runningMembers; i++) {
-                rawRunningRoom.add(getRunningRoomKey(performanceId), "email" + i + "@email.com");
+                rawRunningRoom.add(
+                        getRunningRoomKey(performanceId),
+                        "email" + i + "@email.com",
+                        ZonedDateTime.now().toEpochSecond());
             }
 
             // when
@@ -133,8 +139,8 @@ class RedisRunningRoomTest extends TestContainerStarter {
             // then
             String[] emails =
                     waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
-            assertThat(rawRunningRoom.isMember(getRunningRoomKey(performanceId), emails))
-                    .allSatisfy((key, value) -> assertThat(value).isTrue());
+            List<Double> score = rawRunningRoom.score(getRunningRoomKey(performanceId), emails);
+            assertThat(score).allSatisfy(value -> assertThat(value).isNotNull());
         }
     }
 

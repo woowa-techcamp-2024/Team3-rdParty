@@ -14,4 +14,6 @@ public interface RunningManager {
     void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers);
 
     void pullOutRunningMember(String email, long performanceId);
+
+    void removeExpiredMemberInfo(long performanceId);
 }

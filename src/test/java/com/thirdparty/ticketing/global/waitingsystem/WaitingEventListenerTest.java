@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
@@ -26,11 +26,11 @@ class WaitingEventListenerTest extends TestContainerStarter {
 
     @Autowired private StringRedisTemplate redisTemplate;
 
-    private SetOperations<String, String> rawRunningRoom;
+    private ZSetOperations<String, String> rawRunningRoom;
 
     @BeforeEach
     void setUp() {
-        rawRunningRoom = redisTemplate.opsForSet();
+        rawRunningRoom = redisTemplate.opsForZSet();
         redisTemplate.getConnectionFactory().getConnection().commands().flushAll();
     }
 
@@ -51,7 +51,7 @@ class WaitingEventListenerTest extends TestContainerStarter {
             waitingSystem.getRemainingCount(email, performanceId);
 
             // then
-            Set<String> members = rawRunningRoom.members("running_room:" + performanceId);
+            Set<String> members = rawRunningRoom.range("running_room:" + performanceId, 0, -1);
             System.out.println("회원 목록 출력 " + members);
             assertThat(waitingSystem.isReadyToHandle(email, performanceId)).isTrue();
         }

@@ -32,6 +32,7 @@ public class WaitingSystem {
     }
 
     public void moveUserToRunning(long performanceId) {
+        runningManager.removeExpiredMemberInfo(performanceId);
         long availableToRunning = runningManager.getAvailableToRunning(performanceId);
         Set<WaitingMember> waitingMembers =
                 waitingManager.pullOutMembers(performanceId, availableToRunning);
