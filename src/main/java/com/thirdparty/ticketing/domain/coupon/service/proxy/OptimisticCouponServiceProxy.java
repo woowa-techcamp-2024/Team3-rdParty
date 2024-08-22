@@ -17,8 +17,8 @@ public class OptimisticCouponServiceProxy implements CouponServiceProxy {
 
     @Override
     public void receiveCoupon(String memberEmail, ReceiveCouponRequest receiveCouponRequest) {
-        int retryLimit = 5;
-        int sleepDuration = 200;
+        int retryLimit = 10;
+        int sleepDuration = 300;
         while (retryLimit > 0) {
             try {
                 couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);

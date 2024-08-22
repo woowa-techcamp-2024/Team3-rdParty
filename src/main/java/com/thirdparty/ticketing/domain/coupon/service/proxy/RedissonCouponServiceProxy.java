@@ -20,7 +20,7 @@ public class RedissonCouponServiceProxy implements CouponServiceProxy {
 
     @Override
     public void receiveCoupon(String memberEmail, ReceiveCouponRequest receiveCouponRequest) {
-        int tryTime = 1;
+        int tryTime = 3;
         int releaseTime = 60;
         Long couponId = receiveCouponRequest.getCouponId();
         RLock lock = redissonClient.getLock(couponId.toString());

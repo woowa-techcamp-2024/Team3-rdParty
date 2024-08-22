@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,13 +29,14 @@ import lombok.extern.slf4j.Slf4j;
 public class Coupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_id")
     private Long couponId;
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private Integer code;
+    private String code;
 
     @Column(nullable = false)
     private Integer discountRate;
@@ -45,7 +48,7 @@ public class Coupon extends BaseEntity {
 
     public void giveCoupon(Integer amount) {
         if (this.amount < amount) {
-            throw new IllegalArgumentException("Not enough coupon amount");
+            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
         log.info("Give coupon amount: {}", amount);
         this.amount -= amount;

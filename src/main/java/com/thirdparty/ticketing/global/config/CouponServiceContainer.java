@@ -43,7 +43,7 @@ public class CouponServiceContainer {
     @Bean
     public CouponService optimisticCouponServiceProxy(
             LettuceRepository lettuceRepository,
-            @Qualifier("persistenceOptimisticReservationService")
+            @Qualifier("persistenceOptimisticCouponService")
                     CouponTransactionalService optimisticReservationService) {
         return new LettuceCouponServiceProxy(lettuceRepository, optimisticReservationService);
     }
@@ -51,9 +51,9 @@ public class CouponServiceContainer {
     @Bean
     public CouponService pessimisticCouponServiceProxy(
             LettuceRepository lettuceRepository,
-            @Qualifier("persistencePessimisticReservationService")
-                    CouponTransactionalService pessimisticReservationService) {
-        return new LettuceCouponServiceProxy(lettuceRepository, pessimisticReservationService);
+            @Qualifier("persistencePessimisticCouponService")
+                    CouponTransactionalService pessimisticCouponService) {
+        return new LettuceCouponServiceProxy(lettuceRepository, pessimisticCouponService);
     }
 
     @Bean
@@ -67,7 +67,7 @@ public class CouponServiceContainer {
     }
 
     @Bean
-    public CouponTransactionalService persistenceOptimisticReservationService(
+    public CouponTransactionalService persistenceOptimisticCouponService(
             MemberRepository memberRepository,
             CouponRepository couponRepository,
             MemberCouponRepository memberCouponRepository) {
@@ -77,7 +77,7 @@ public class CouponServiceContainer {
     }
 
     @Bean
-    public CouponTransactionalService persistencePessimisticReservationService(
+    public CouponTransactionalService persistencePessimisticCouponService(
             MemberRepository memberRepository,
             CouponRepository couponRepository,
             MemberCouponRepository memberCouponRepository) {

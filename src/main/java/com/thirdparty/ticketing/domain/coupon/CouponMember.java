@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "coupon")
+@Table(name = "coupon_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponMember extends BaseEntity {
 

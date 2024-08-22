@@ -16,8 +16,8 @@ public class LettuceCouponServiceProxy implements CouponServiceProxy {
 
     @Override
     public void receiveCoupon(String memberEmail, ReceiveCouponRequest receiveCouponRequest) {
-        int retryLimit = 5;
-        int sleepDuration = 200;
+        int retryLimit = 10;
+        int sleepDuration = 300;
 
         String couponId = receiveCouponRequest.getCouponId().toString();
         String lockKey = "coupon:" + couponId;
