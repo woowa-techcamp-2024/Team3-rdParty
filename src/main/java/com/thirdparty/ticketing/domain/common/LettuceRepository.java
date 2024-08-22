@@ -18,6 +18,10 @@ public class LettuceRepository {
         return redisTemplate.opsForValue().setIfAbsent(key, "lock", Duration.ofMinutes(1));
     }
 
+    public Boolean couponLock(String key) {
+        return redisTemplate.opsForValue().setIfAbsent(key, "lock", Duration.ofMinutes(1));
+    }
+
     public void unlock(String string) {
         redisTemplate.delete(string);
     }
