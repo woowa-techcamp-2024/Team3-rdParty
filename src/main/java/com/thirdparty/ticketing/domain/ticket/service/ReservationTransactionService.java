@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,9 +16,11 @@ import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.Seat;
+import com.thirdparty.ticketing.domain.ticket.Ticket;
 import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
+import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ReservationTransactionService implements ReservationService {
+    private final TicketRepository ticketRepository;
     private final MemberRepository memberRepository;
     private final PaymentProcessor paymentProcessor;
     private final LockSeatStrategy lockSeatStrategy;
@@ -86,12 +90,21 @@ public class ReservationTransactionService implements ReservationService {
 
         processPayment(seat, loginMember);
 
-        if (seat.isAssignedByMember(loginMember)) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
-        }
+        Ticket ticket =
+                Ticket.builder()
+                        .ticketSerialNumber(UUID.randomUUID())
+                        .seat(seat)
+                        .member(loginMember)
+                        .build();
+
+        ticketRepository.save(ticket);
     }
 
     private void processPayment(Seat seat, Member loginMember) {
+        if (!seat.isAssignedByMember(loginMember)) {
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+        }
+
         seat.markAsPendingPayment();
         paymentProcessor.processPayment(new PaymentRequest());
         seat.markAsPaid();
