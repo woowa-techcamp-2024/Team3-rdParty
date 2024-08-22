@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Entity
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "coupon")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Coupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +42,12 @@ public class Coupon extends BaseEntity {
     private Integer amount;
 
     @Version private Long version;
+
+    public void giveCoupon(Integer amount) {
+        if (this.amount < amount) {
+            throw new IllegalArgumentException("Not enough coupon amount");
+        }
+        log.info("Give coupon amount: {}", amount);
+        this.amount -= amount;
+    }
 }

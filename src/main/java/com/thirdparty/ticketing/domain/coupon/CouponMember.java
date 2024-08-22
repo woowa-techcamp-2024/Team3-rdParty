@@ -37,4 +37,18 @@ public class CouponMember extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    private Integer amount;
+
+    public CouponMember(Coupon coupon, Member member, Integer amount) {
+        this.coupon = coupon;
+        this.member = member;
+        this.amount = amount;
+    }
+
+    public static CouponMember CreateCouponMember(Coupon coupon, Member member, Integer amount) {
+        coupon.giveCoupon(amount);
+
+        return CouponMember.builder().coupon(coupon).member(member).amount(amount).build();
+    }
 }
