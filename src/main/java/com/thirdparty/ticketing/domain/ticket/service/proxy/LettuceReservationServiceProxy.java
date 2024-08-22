@@ -18,8 +18,9 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
     private void performSeatAction(String seatId, Runnable action) {
         int retryLimit = 5;
         int sleepDuration = 300;
+        String lockPrefix = "seat:";
         try {
-            while (retryLimit > 0 && !lettuceRepository.seatLock(seatId)) {
+            while (retryLimit > 0 && !lettuceRepository.seatLock(lockPrefix + seatId)) {
                 retryLimit -= 1;
                 Thread.sleep(sleepDuration);
             }

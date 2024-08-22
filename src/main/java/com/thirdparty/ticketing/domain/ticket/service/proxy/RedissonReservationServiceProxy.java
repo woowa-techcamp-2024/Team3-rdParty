@@ -22,7 +22,8 @@ public class RedissonReservationServiceProxy implements ReservationServiceProxy 
     private final ReservationTransactionService reservationTransactionService;
 
     private void performSeatAction(String seatId, Runnable action) {
-        RLock lock = redissonClient.getLock(seatId);
+        String lockPrefix = "seat:";
+        RLock lock = redissonClient.getLock(lockPrefix + seatId);
 
         int tryTime = 1;
         int releaseTime = 60;
