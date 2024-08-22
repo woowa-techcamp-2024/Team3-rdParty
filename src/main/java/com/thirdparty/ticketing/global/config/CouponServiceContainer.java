@@ -16,6 +16,7 @@ import com.thirdparty.ticketing.domain.coupon.service.proxy.RedissonCouponServic
 import com.thirdparty.ticketing.domain.coupon.service.strategy.LockCouponStrategy;
 import com.thirdparty.ticketing.domain.coupon.service.strategy.NaiveCouponStrategy;
 import com.thirdparty.ticketing.domain.coupon.service.strategy.OptimisticCouponStrategy;
+import com.thirdparty.ticketing.domain.coupon.service.strategy.PessimisticCouponStrategy;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 
 @Configuration
@@ -36,6 +37,22 @@ public class CouponServiceContainer {
             @Qualifier("cacheCouponTransactionService")
                     CouponTransactionalService cacheCouponTransactionService) {
         return new LettuceCouponServiceProxy(lettuceRepository, cacheCouponTransactionService);
+    }
+
+    @Bean
+    public CouponServiceProxy optimisticCouponServiceProxy(
+            LettuceRepository lettuceRepository,
+            @Qualifier("persistenceOptimisticReservationService")
+                    CouponTransactionalService optimisticReservationService) {
+        return new LettuceCouponServiceProxy(lettuceRepository, optimisticReservationService);
+    }
+
+    @Bean
+    public CouponServiceProxy pessimisticCouponServiceProxy(
+            LettuceRepository lettuceRepository,
+            @Qualifier("persistencePessimisticReservationService")
+                    CouponTransactionalService pessimisticReservationService) {
+        return new LettuceCouponServiceProxy(lettuceRepository, pessimisticReservationService);
     }
 
     @Bean
@@ -63,7 +80,7 @@ public class CouponServiceContainer {
             MemberRepository memberRepository,
             CouponRepository couponRepository,
             MemberCouponRepository memberCouponRepository) {
-        LockCouponStrategy lockCouponStrategy = new OptimisticCouponStrategy(couponRepository);
+        LockCouponStrategy lockCouponStrategy = new PessimisticCouponStrategy(couponRepository);
         return new CouponTransactionalService(
                 memberRepository, lockCouponStrategy, memberCouponRepository);
     }
