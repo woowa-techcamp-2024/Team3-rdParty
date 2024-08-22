@@ -8,13 +8,11 @@ import com.thirdparty.ticketing.domain.BaseEntity;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.seat.Seat;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
+@Builder
 @AllArgsConstructor
 @Table(name = "ticket")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

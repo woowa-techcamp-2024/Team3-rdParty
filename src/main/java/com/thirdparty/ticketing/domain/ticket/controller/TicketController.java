@@ -33,6 +33,14 @@ public class TicketController {
         return ResponseEntity.ok().body(tickets);
     }
 
+    @PostMapping("/seats/release")
+    public ResponseEntity<Void> releaseSeat(
+            @LoginMember String memberEmail,
+            @RequestBody @Valid SeatSelectionRequest seatSelectionRequest) {
+        reservationService.releaseSeat(memberEmail, seatSelectionRequest);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/seats/select")
     public ResponseEntity<Void> selectSeat(
             @LoginMember String memberEmail,

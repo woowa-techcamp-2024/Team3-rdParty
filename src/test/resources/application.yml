@@ -4,8 +4,16 @@ spring:
       host: localhost
       port: 6379
   jpa:
+    show-sql: true # 콘솔로그로 출력하려면
+    properties:
+      hibernate:
+        format_sql: true # SQL 포맷팅
+        highlight_sql: true # ANSI 코드에 색을 나타낸다
+        use_sql_comments: true # SQL 내부에 /* */ 주석 추가
     hibernate:
       ddl-auto: create-drop
+
+
   datasource:
     hikari:
       max-lifetime: 10
@@ -15,3 +23,6 @@ jwt:
   expiry-seconds: 1800
   secret: thisisjusttestaccesssecretsodontworry
 
+ticketing:
+  reservation:
+    release-delay-seconds: 10

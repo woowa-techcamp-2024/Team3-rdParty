@@ -46,8 +46,8 @@ public enum ErrorCode {
        Seat Error
     */
     NOT_FOUND_SEAT(HttpStatus.NOT_FOUND, "S404-1", "존재하지 않는 좌석입니다."),
-    NOT_SELECTABLE_SEAT(HttpStatus.FORBIDDEN, "S403-1", "이미 선택된 좌석입니다."),
-    INVALID_SEAT_STATUS(HttpStatus.FORBIDDEN, "S403-2", "해당 좌석에는 접근할 수 없습니다."),
+    NOT_SELECTABLE_SEAT(HttpStatus.CONFLICT, "S409-1", "이미 선택된 좌석입니다."),
+    INVALID_SEAT_STATUS(HttpStatus.CONFLICT, "S409-2", "해당 좌석에는 접근할 수 없습니다."),
 
     /*
        Payment Error

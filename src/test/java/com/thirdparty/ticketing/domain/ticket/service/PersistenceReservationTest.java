@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
@@ -71,7 +72,7 @@ public class PersistenceReservationTest extends TestContainerStarter {
             }
         }
 
-        public void selectSeat_ConcurrencyTest(ReservationService reservationService)
+        private void selectSeat_ConcurrencyTest(ReservationService reservationService)
                 throws InterruptedException {
             // Given
             int numRequests = 100;
@@ -143,6 +144,7 @@ public class PersistenceReservationTest extends TestContainerStarter {
     @Sql(
             scripts = "/db/reservation-test.sql",
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Transactional
     class reservationTicketTest {
         @Nested
         @DisplayName("낙관 락을 사용하면")

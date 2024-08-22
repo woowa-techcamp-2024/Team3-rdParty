@@ -1,4 +1,6 @@
 DELETE
+FROM ticket;
+DELETE
 FROM seat;
 DELETE
 FROM seat_grade;
@@ -28,4 +30,4 @@ VALUES (1, 'Grade1', 10000, 1, NOW(), NOW());
 
 -- Seat 테이블에 데이터 삽입
 INSERT INTO seat (seat_id, seat_code, seat_status, zone_id, seat_grade_id, version, created_at, updated_at)
-VALUES (1, 'A01', 'SELECTABLE', 1, 1, 0, NOW(), NOW());
+VALUES (1, 'A01', 'SELECTABLE', 1, 1, 1, NOW(), NOW());
