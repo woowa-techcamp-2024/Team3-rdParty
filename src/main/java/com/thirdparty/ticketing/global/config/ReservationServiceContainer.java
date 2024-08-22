@@ -53,10 +53,15 @@ public class ReservationServiceContainer {
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new NaiveSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 
     @Bean
@@ -64,10 +69,15 @@ public class ReservationServiceContainer {
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new OptimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 
     @Bean
@@ -75,9 +85,14 @@ public class ReservationServiceContainer {
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new PessimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 }

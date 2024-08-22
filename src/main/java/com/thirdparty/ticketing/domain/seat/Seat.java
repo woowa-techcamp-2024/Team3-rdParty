@@ -84,4 +84,10 @@ public class Seat extends BaseEntity {
     public boolean isAssignedByMember(Member loginMember) {
         return loginMember.equals(member);
     }
+
+    public void releaseSeat(Member loginMember) {
+        if (isSelectable() || !isAssignedByMember(loginMember)) {
+            throw new TicketingException(ErrorCode.INVALID_SEAT_STATUS);
+        }
+    }
 }

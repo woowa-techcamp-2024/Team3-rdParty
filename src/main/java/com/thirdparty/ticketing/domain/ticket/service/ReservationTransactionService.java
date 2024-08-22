@@ -1,5 +1,10 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -26,6 +31,12 @@ public class ReservationTransactionService implements ReservationService {
     private final LockSeatStrategy lockSeatStrategy;
     private final EventPublisher eventPublisher;
 
+    private final ReservationManager reservationManager;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+
+    @Value("ticketing.reservation.release-delay-seconds")
+    private int reservationReleaseDelay;
+
     @Override
     @Transactional
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
@@ -42,6 +53,21 @@ public class ReservationTransactionService implements ReservationService {
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         seat.assignByMember(member);
+        scheduler.schedule(
+                () -> reservationManager.releaseSeat(member, seatId),
+                reservationReleaseDelay,
+                TimeUnit.SECONDS);
+    }
+
+    @Override
+    @Transactional
+    public void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        Member member =
+                memberRepository
+                        .findByEmail(memberEmail)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+
+        reservationManager.releaseSeat(member, seatSelectionRequest.getSeatId());
     }
 
     @Override
