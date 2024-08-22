@@ -134,6 +134,12 @@ operation::ticket-controller-test/select-my-tickets[snippets='http-request,reque
 === response
 operation::ticket-controller-test/select-my-tickets[snippets='http-response,response-fields']
 
+== 좌석 점유 해제
+operation::ticket-controller-test/release-seat[snippets='http-request,request-headers']
+
+=== response
+operation::ticket-controller-test/release-seat[snippets='http-response']
+
 = 대기열(WaitingSystem)
 
 == 남은 순번 조회

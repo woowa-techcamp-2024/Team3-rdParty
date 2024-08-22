@@ -139,7 +139,7 @@ class TicketControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @DisplayName("티켓 예약 API 호출 시")
+    @DisplayName("티켓 결제 API 호출 시")
     void reservationTicket() throws Exception {
         // given
         TicketPaymentRequest request = new TicketPaymentRequest();
@@ -149,6 +149,35 @@ class TicketControllerTest extends BaseControllerTest {
         ResultActions result =
                 mockMvc.perform(
                         post("/api/tickets")
+                                .header(AUTHORIZATION_HEADER, userBearerToken)
+                                .header(PERFORMANCE_ID, 1)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION_HEADER).description("액세스 토큰"),
+                                        headerWithName(PERFORMANCE_ID).description("공연 ID")),
+                                requestFields(
+                                        fieldWithPath("seatId")
+                                                .type(JsonFieldType.NUMBER)
+                                                .description("좌석 ID"))));
+    }
+
+    @Test
+    @DisplayName("좌석 점유 해제 API")
+    void releaseSeat() throws Exception {
+        // given
+        SeatSelectionRequest request = new SeatSelectionRequest();
+        request.setSeatId(1L);
+
+        // when
+        ResultActions result =
+                mockMvc.perform(
+                        post("/api/seats/release")
                                 .header(AUTHORIZATION_HEADER, userBearerToken)
                                 .header(PERFORMANCE_ID, 1)
                                 .contentType(MediaType.APPLICATION_JSON)
