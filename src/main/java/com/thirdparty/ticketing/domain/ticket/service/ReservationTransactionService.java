@@ -38,7 +38,7 @@ public class ReservationTransactionService implements ReservationService {
     private final ReservationManager reservationManager;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
-    @Value("ticketing.reservation.release-delay-seconds")
+    @Value("${ticketing.reservation.release-delay-seconds}")
     private int reservationReleaseDelay;
 
     @Override
