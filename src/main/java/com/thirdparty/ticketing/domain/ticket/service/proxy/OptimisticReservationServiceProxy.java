@@ -23,7 +23,7 @@ public class OptimisticReservationServiceProxy implements ReservationServiceProx
             reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
         } catch (OptimisticLockingFailureException | StaleObjectStateException e) {
             log.error(e.getMessage(), e);
-            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }
 
@@ -33,7 +33,7 @@ public class OptimisticReservationServiceProxy implements ReservationServiceProx
             reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
         } catch (OptimisticLockingFailureException | StaleObjectStateException e) {
             log.error(e.getMessage(), e);
-            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }
 

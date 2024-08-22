@@ -24,7 +24,7 @@ public class PessimisticReservationServiceProxy implements ReservationServicePro
             reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
         } catch (PessimisticLockException | LockTimeoutException e) {
             log.error(e.getMessage(), e);
-            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }
 
@@ -34,7 +34,7 @@ public class PessimisticReservationServiceProxy implements ReservationServicePro
             reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
         } catch (PessimisticLockException | LockTimeoutException e) {
             log.error(e.getMessage(), e);
-            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }
 
