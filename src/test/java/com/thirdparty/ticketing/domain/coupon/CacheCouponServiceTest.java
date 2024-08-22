@@ -88,7 +88,7 @@ public class CacheCouponServiceTest extends TestContainerStarter {
         memberRepository.deleteAll();
     }
 
-    // 쿠폰 재고가 6개인 쿠폰을 5명의 맴버가 2개씩 동시에 발급받는 테스트
+    // 쿠폰 재고가 6개인 쿠폰을 12명의 맴버가 2개씩 동시에 발급받는 테스트
     @Test
     public void testConcurrentCouponSelectionWithLettuce() throws InterruptedException {
         runConcurrentSeatSelectionTest(lettuceCouponService);

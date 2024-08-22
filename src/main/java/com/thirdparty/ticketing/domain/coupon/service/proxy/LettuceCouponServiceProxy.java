@@ -29,8 +29,6 @@ public class LettuceCouponServiceProxy implements CouponServiceProxy {
 
             if (retryLimit > 0) {
                 couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
-            } else {
-                throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
             }
 
         } catch (InterruptedException e) {

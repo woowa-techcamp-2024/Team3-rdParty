@@ -27,8 +27,8 @@ public class OptimisticCouponServiceProxy implements CouponServiceProxy {
                 retryLimit -= 1;
                 try {
                     Thread.sleep(sleepDuration);
-                } catch (InterruptedException interruptedException) {
-                    throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON, e);
+                } catch (InterruptedException e1) {
+                    throw new CouponException(ErrorCode.NOT_SELECTABLE_SEAT, e1);
                 }
             }
         }
