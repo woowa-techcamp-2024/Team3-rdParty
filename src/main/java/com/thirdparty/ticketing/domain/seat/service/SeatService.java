@@ -52,4 +52,12 @@ public class SeatService {
 
         return ItemResult.of(seatGrades);
     }
+
+    public ItemResult<SeatElement> getAllSeats(long performanceId) {
+        List<SeatElement> seats =
+                seatRepository.findByPerformanceId(performanceId).stream()
+                        .map(SeatElement::of)
+                        .toList();
+        return ItemResult.of(seats);
+    }
 }

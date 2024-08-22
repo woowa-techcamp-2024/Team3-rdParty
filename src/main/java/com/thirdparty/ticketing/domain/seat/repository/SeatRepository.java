@@ -30,4 +30,13 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Seat> findByIdWithPessimistic(@Param("seatId") Long seatId);
+
+    @Query(
+            """
+			SELECT s FROM Seat s
+			JOIN FETCH s.zone z
+			JOIN FETCH z.performance p
+			WHERE p.performanceId = :performanceId
+			""")
+    List<Seat> findByPerformanceId(@Param("performanceId") long performanceId);
 }
