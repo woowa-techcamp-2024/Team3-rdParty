@@ -82,7 +82,7 @@ public class Seat extends BaseEntity {
     }
 
     public boolean isAssignedByMember(Member loginMember) {
-        return loginMember.equals(member);
+        return loginMember.getMemberId().equals(member.getMemberId());
     }
 
     public void releaseSeat(Member loginMember) {

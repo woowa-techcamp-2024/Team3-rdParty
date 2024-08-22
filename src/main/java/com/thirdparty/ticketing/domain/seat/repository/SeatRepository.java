@@ -19,15 +19,15 @@ import io.lettuce.core.dynamic.annotation.Param;
 public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findByZone(Zone zone);
 
-    @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
+    @Query("SELECT s FROM Seat as s WHERE s.seatId = :seatId")
     @Lock(LockModeType.NONE)
     Optional<Seat> findById(@Param("seatId") Long seatId);
 
-    @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
+    @Query("SELECT s FROM Seat as s WHERE s.seatId = :seatId")
     @Lock(LockModeType.OPTIMISTIC)
     Optional<Seat> findByIdWithOptimistic(@Param("seatId") Long seatId);
 
-    @Query("SELECT s FROM Seat as s WHERE s.id = :seatId")
+    @Query("SELECT s FROM Seat as s WHERE s.seatId = :seatId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Seat> findByIdWithPessimistic(@Param("seatId") Long seatId);
 
