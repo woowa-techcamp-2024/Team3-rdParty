@@ -25,4 +25,4 @@ jwt:
 
 ticketing:
   reservation:
-    release-delay-seconds: 1
+    release-delay-seconds: 10
