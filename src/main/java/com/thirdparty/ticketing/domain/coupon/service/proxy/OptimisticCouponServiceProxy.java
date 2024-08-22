@@ -3,8 +3,8 @@ package com.thirdparty.ticketing.domain.coupon.service.proxy;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
@@ -28,7 +28,7 @@ public class OptimisticCouponServiceProxy implements CouponServiceProxy {
                 try {
                     Thread.sleep(sleepDuration);
                 } catch (InterruptedException interruptedException) {
-                    throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+                    throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON, e);
                 }
             }
         }

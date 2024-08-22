@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
@@ -31,7 +31,7 @@ public class RedissonCouponServiceProxy implements CouponServiceProxy {
             }
             couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
         } catch (InterruptedException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
+            throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON, e);
         } finally {
             lock.unlock();
         }

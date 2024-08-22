@@ -9,8 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class Coupon extends BaseEntity {
 
     public void giveCoupon(Integer amount) {
         if (this.amount < amount) {
-            throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
         }
         log.info("Give coupon amount: {}", amount);
         this.amount -= amount;

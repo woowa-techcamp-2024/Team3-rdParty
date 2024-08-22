@@ -1,8 +1,8 @@
 package com.thirdparty.ticketing.domain.coupon.service.proxy;
 
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
@@ -30,11 +30,11 @@ public class LettuceCouponServiceProxy implements CouponServiceProxy {
             if (retryLimit > 0) {
                 couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
             } else {
-                throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+                throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
             }
 
         } catch (InterruptedException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
+            throw new CouponException(ErrorCode.NOT_SELECTABLE_SEAT, e);
         } finally {
             lettuceRepository.unlock(couponId);
         }

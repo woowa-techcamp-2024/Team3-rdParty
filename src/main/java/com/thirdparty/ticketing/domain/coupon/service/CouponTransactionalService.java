@@ -2,8 +2,8 @@ package com.thirdparty.ticketing.domain.coupon.service;
 
 import jakarta.transaction.Transactional;
 
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.Coupon;
 import com.thirdparty.ticketing.domain.coupon.CouponMember;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
@@ -30,12 +30,12 @@ public class CouponTransactionalService implements CouponService {
         Member member =
                 memberRepository
                         .findByEmail(memberEmail)
-                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+                        .orElseThrow(() -> new CouponException(ErrorCode.NOT_FOUND_MEMBER));
 
         Coupon coupon =
                 lockCouponStrategy
                         .getCouponWithLock(couponId)
-                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_COUPON));
+                        .orElseThrow(() -> new CouponException(ErrorCode.NOT_FOUND_COUPON));
 
         memberCouponRepository.save(CouponMember.CreateCouponMember(coupon, member, amount));
     }

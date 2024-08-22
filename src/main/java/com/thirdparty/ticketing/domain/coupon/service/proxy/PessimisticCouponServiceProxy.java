@@ -4,8 +4,8 @@ import jakarta.persistence.LockTimeoutException;
 
 import org.hibernate.PessimisticLockException;
 
+import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
@@ -30,7 +30,7 @@ public class PessimisticCouponServiceProxy implements CouponServiceProxy {
                 try {
                     Thread.sleep(sleepDuration);
                 } catch (InterruptedException interruptedException) {
-                    throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
+                    throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
                 }
             }
         }

@@ -65,7 +65,8 @@ public enum ErrorCode {
     /*
      Coupon Error
     */
-    NOT_FOUND_COUPON(HttpStatus.NOT_FOUND, "C404-1", "존재하지 않는 쿠폰입니다.");
+    NOT_FOUND_COUPON(HttpStatus.NOT_FOUND, "C404-1", "존재하지 않는 쿠폰입니다."),
+    NOT_AVAILABLE_COUPON(HttpStatus.NOT_FOUND, "C500-1", "구매 불가능한 쿠폰입니다.");
 
     ErrorCode(HttpStatus httpStatus, String code, String message) {
         this.httpStatus = httpStatus;
