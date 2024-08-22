@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
-import com.thirdparty.ticketing.domain.coupon.service.CouponServiceProxy;
+import com.thirdparty.ticketing.domain.coupon.service.proxy.CouponServiceProxy;
 
 import lombok.RequiredArgsConstructor;
 

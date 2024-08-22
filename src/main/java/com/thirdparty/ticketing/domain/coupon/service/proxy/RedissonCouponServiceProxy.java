@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.domain.coupon.service;
+package com.thirdparty.ticketing.domain.coupon.service.proxy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
+import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
 import lombok.RequiredArgsConstructor;
 
