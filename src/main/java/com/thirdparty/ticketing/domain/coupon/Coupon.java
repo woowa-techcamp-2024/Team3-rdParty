@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 import com.thirdparty.ticketing.domain.BaseEntity;
 
@@ -37,4 +38,6 @@ public class Coupon extends BaseEntity {
 
     @Column(nullable = false)
     private Integer amount;
+
+    @Version private Long version;
 }
