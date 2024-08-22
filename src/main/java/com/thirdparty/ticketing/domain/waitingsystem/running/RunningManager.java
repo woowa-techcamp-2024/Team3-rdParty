@@ -12,4 +12,6 @@ public interface RunningManager {
     long getAvailableToRunning(long performanceId);
 
     void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers);
+
+    void pullOutRunningMember(String email, long performanceId);
 }

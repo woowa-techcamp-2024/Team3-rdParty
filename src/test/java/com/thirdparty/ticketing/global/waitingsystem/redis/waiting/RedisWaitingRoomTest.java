@@ -156,4 +156,55 @@ class RedisWaitingRoomTest extends TestContainerStarter {
             assertThat(optionalWaitingMember).isEmpty();
         }
     }
+
+    @Nested
+    @DisplayName("대기방 사용자 정보 제거 호출 시")
+    class removeMemberInfoTest {
+
+        @Test
+        @DisplayName("샤용자 정보를 제거한다.")
+        void removeMemberInfo() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+            waitingRoom.enter(email, performanceId);
+
+            // when
+            waitingRoom.removeMemberInfo(email, performanceId);
+
+            // then
+            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+        }
+
+        @Test
+        @DisplayName("사용자 정보가 존재하지 않으면 무시한다.")
+        void ignore_WhenNotExistsMemberInfo() {
+            // given
+            long performanceId = 1;
+            String anotherEmail = "anotherEmail@email.com";
+            waitingRoom.enter(anotherEmail, performanceId);
+
+            String email = "email@email.com";
+
+            // when
+            waitingRoom.removeMemberInfo(email, performanceId);
+
+            // then
+            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+        }
+
+        @Test
+        @DisplayName("대기방 정보가 존재하지 않으면 무시한다.")
+        void ignore_WhenNotExistsWaitingRoom() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+
+            // when
+            waitingRoom.removeMemberInfo(email, performanceId);
+
+            // then
+            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+        }
+    }
 }

@@ -40,4 +40,13 @@ public class MemoryRunningRoom implements RunningRoom {
                     return runningRoom;
                 });
     }
+
+    public void pullOutRunningMember(String email, long performanceId) {
+        room.computeIfPresent(
+                performanceId,
+                (key, room) -> {
+                    room.remove(email);
+                    return room;
+                });
+    }
 }

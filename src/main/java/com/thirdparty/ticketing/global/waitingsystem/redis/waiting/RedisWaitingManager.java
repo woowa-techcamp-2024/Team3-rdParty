@@ -41,4 +41,9 @@ public class RedisWaitingManager implements WaitingManager {
     public Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning) {
         return waitingLine.pullOutMembers(performanceId, availableToRunning);
     }
+
+    @Override
+    public void removeMemberInfo(String email, long performanceId) {
+        waitingRoom.removeMemberInfo(email, performanceId);
+    }
 }
