@@ -52,4 +52,9 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
                         reservationTransactionService.reservationTicket(
                                 memberEmail, ticketPaymentRequest));
     }
+
+    @Override
+    public void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        reservationTransactionService.releaseSeat(memberEmail, seatSelectionRequest);
+    }
 }

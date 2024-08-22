@@ -28,4 +28,13 @@ public class MemoryWaitingRoom implements WaitingRoom {
     public Optional<WaitingMember> findWaitingMember(String email, long performanceId) {
         return Optional.ofNullable(room.get(performanceId)).map(map -> map.get(email));
     }
+
+    public void removeMemberInfo(String email, long performanceId) {
+        room.computeIfPresent(
+                performanceId,
+                (key, waitingRoom) -> {
+                    waitingRoom.remove(email);
+                    return waitingRoom;
+                });
+    }
 }

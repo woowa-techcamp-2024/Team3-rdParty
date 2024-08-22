@@ -51,6 +51,16 @@ operation::user-performance-controller-test/get-performances[snippets='http-requ
 
 operation::user-performance-controller-test/get-performances[snippets='http-response,response-fields']
 
+== 공연 상세 조회
+
+=== request
+
+operation::user-performance-controller-test/get-performance[snippets='http-request']
+
+=== response
+
+operation::user-performance-controller-test/get-performance[snippets='http-response,response-fields']
+
 = 좌석(Seat)
 
 == 관리자 좌석 등급 생성 API
@@ -123,6 +133,12 @@ operation::ticket-controller-test/select-my-tickets[snippets='http-request,reque
 
 === response
 operation::ticket-controller-test/select-my-tickets[snippets='http-response,response-fields']
+
+== 좌석 점유 해제
+operation::ticket-controller-test/release-seat[snippets='http-request,request-headers']
+
+=== response
+operation::ticket-controller-test/release-seat[snippets='http-response']
 
 = 대기열(WaitingSystem)
 

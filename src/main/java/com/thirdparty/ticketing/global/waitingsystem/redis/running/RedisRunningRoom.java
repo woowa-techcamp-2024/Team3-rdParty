@@ -39,4 +39,8 @@ public class RedisRunningRoom implements RunningRoom {
     private String getRunningRoomKey(long performanceId) {
         return RUNNING_ROOM_KEY + performanceId;
     }
+
+    public void pullOutRunningMember(String email, long performanceId) {
+        runningRoom.remove(getRunningRoomKey(performanceId), email);
+    }
 }

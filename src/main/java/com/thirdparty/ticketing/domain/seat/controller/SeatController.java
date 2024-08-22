@@ -10,6 +10,7 @@ import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
 import com.thirdparty.ticketing.domain.seat.service.SeatService;
+import com.thirdparty.ticketing.domain.waitingsystem.Waiting;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,14 @@ public class SeatController {
     @GetMapping("/performances/{performanceId}/zones/{zoneId}/seats")
     public ResponseEntity<ItemResult<SeatElement>> getSeats(@PathVariable("zoneId") long zoneId) {
         ItemResult<SeatElement> seats = seatService.getSeats(zoneId);
+        return ResponseEntity.ok().body(seats);
+    }
+
+    @Waiting
+    @GetMapping("/performances/{performanceId}/seats")
+    public ResponseEntity<ItemResult<SeatElement>> getAllSeats(
+            @PathVariable("performanceId") long performanceId) {
+        ItemResult<SeatElement> seats = seatService.getAllSeats(performanceId);
         return ResponseEntity.ok().body(seats);
     }
 

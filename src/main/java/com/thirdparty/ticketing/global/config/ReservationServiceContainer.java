@@ -10,6 +10,7 @@ import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
+import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 import com.thirdparty.ticketing.domain.ticket.service.*;
 import com.thirdparty.ticketing.domain.ticket.service.proxy.*;
 import com.thirdparty.ticketing.domain.ticket.service.strategy.LockSeatStrategy;
@@ -50,34 +51,55 @@ public class ReservationServiceContainer {
 
     @Bean
     public ReservationTransactionService cacheReservationTransactionService(
+            TicketRepository ticketRepository,
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new NaiveSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                ticketRepository,
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 
     @Bean
     public ReservationTransactionService persistenceOptimisticReservationService(
+            TicketRepository ticketRepository,
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new OptimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                ticketRepository,
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 
     @Bean
     public ReservationTransactionService persistencePessimisticReservationService(
+            TicketRepository ticketRepository,
             PaymentProcessor paymentProcessor,
             MemberRepository memberRepository,
             SeatRepository seatRepository,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new PessimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
-                memberRepository, paymentProcessor, lockSeatStrategy, eventPublisher);
+                ticketRepository,
+                memberRepository,
+                paymentProcessor,
+                lockSeatStrategy,
+                eventPublisher,
+                reservationManager);
     }
 }
