@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
+import com.thirdparty.ticketing.domain.coupon.repository.CouponMemberRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.CouponRepository;
-import com.thirdparty.ticketing.domain.coupon.repository.MemberCouponRepository;
 import com.thirdparty.ticketing.domain.coupon.service.CouponService;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 import com.thirdparty.ticketing.domain.coupon.service.proxy.CouponServiceProxy;
@@ -60,29 +60,29 @@ public class CouponServiceContainer {
     public CouponTransactionalService cacheCouponTransactionService(
             MemberRepository memberRepository,
             CouponRepository couponRepository,
-            MemberCouponRepository memberCouponRepository) {
+            CouponMemberRepository couponMemberRepository) {
         NaiveCouponStrategy lockCouponStrategy = new NaiveCouponStrategy(couponRepository);
         return new CouponTransactionalService(
-                memberRepository, lockCouponStrategy, memberCouponRepository);
+                memberRepository, lockCouponStrategy, couponMemberRepository);
     }
 
     @Bean
     public CouponTransactionalService persistenceOptimisticCouponService(
             MemberRepository memberRepository,
             CouponRepository couponRepository,
-            MemberCouponRepository memberCouponRepository) {
+            CouponMemberRepository couponMemberRepository) {
         LockCouponStrategy lockCouponStrategy = new OptimisticCouponStrategy(couponRepository);
         return new CouponTransactionalService(
-                memberRepository, lockCouponStrategy, memberCouponRepository);
+                memberRepository, lockCouponStrategy, couponMemberRepository);
     }
 
     @Bean
     public CouponTransactionalService persistencePessimisticCouponService(
             MemberRepository memberRepository,
             CouponRepository couponRepository,
-            MemberCouponRepository memberCouponRepository) {
+            CouponMemberRepository couponMemberRepository) {
         LockCouponStrategy lockCouponStrategy = new PessimisticCouponStrategy(couponRepository);
         return new CouponTransactionalService(
-                memberRepository, lockCouponStrategy, memberCouponRepository);
+                memberRepository, lockCouponStrategy, couponMemberRepository);
     }
 }

@@ -17,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
+import com.thirdparty.ticketing.domain.coupon.repository.CouponMemberRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.CouponRepository;
-import com.thirdparty.ticketing.domain.coupon.repository.MemberCouponRepository;
 import com.thirdparty.ticketing.domain.coupon.service.CouponService;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
@@ -32,7 +32,7 @@ public class CacheCouponServiceTest extends TestContainerStarter {
 
     @Autowired private CouponRepository couponRepository;
 
-    @Autowired private MemberCouponRepository memberCouponRepository;
+    @Autowired private CouponMemberRepository couponMemberRepository;
 
     @Autowired
     @Qualifier("lettuceCouponServiceProxy")
@@ -83,7 +83,7 @@ public class CacheCouponServiceTest extends TestContainerStarter {
 
     @AfterEach
     void breakUp() {
-        memberCouponRepository.deleteAll();
+        couponMemberRepository.deleteAll();
         couponRepository.deleteAll();
         memberRepository.deleteAll();
     }
@@ -143,7 +143,8 @@ public class CacheCouponServiceTest extends TestContainerStarter {
         latch.await();
 
         Coupon testCoupon = couponRepository.findById(this.coupon.getCouponId()).orElseThrow();
-        List<CouponMember> couponMember = memberCouponRepository.findAll();
+        List<com.thirdparty.ticketing.domain.coupon.CouponMember> couponMember =
+                this.couponMemberRepository.findAll();
         assertThat(testCoupon).isNotNull();
         assertThat(testCoupon.getAmount()).isEqualTo(0);
         assertThat(couponMember.size()).isEqualTo(3);

@@ -4,4 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.thirdparty.ticketing.domain.coupon.CouponMember;
 
-public interface MemberCouponRepository extends JpaRepository<CouponMember, Long> {}
+public interface CouponMemberRepository extends JpaRepository<CouponMember, Long> {}
