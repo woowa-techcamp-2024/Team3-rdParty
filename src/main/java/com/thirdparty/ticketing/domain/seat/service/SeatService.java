@@ -60,5 +60,4 @@ public class SeatService {
                         .toList();
         return ItemResult.of(seats);
     }
-
 }

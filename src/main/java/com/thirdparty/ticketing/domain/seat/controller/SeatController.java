@@ -1,6 +1,5 @@
 package com.thirdparty.ticketing.domain.seat.controller;
 
-import com.thirdparty.ticketing.domain.waitingsystem.Waiting;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +10,7 @@ import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
 import com.thirdparty.ticketing.domain.seat.service.SeatService;
+import com.thirdparty.ticketing.domain.waitingsystem.Waiting;
 
 import lombok.RequiredArgsConstructor;
 
