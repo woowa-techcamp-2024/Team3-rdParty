@@ -1,11 +1,16 @@
 package com.thirdparty.ticketing.domain.coupon.service;
 
-import org.springframework.stereotype.Service;
-
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
+import com.thirdparty.ticketing.domain.coupon.service.strategy.LockCouponStrategy;
+import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 
-@Service
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class CouponTransactionalService implements CouponService {
+
+    private final MemberRepository memberRepository;
+    private final LockCouponStrategy lockCouponStrategy;
 
     @Override
     public void receiveCoupon(String userEmail, ReceiveCouponRequest receiveCouponRequest) {}
