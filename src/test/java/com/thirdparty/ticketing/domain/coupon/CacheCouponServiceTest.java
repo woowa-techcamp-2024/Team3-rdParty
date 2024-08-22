@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.thirdparty.ticketing.domain.common.CouponException;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.repository.CouponRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.MemberCouponRepository;
@@ -29,14 +28,11 @@ import com.thirdparty.ticketing.support.TestContainerStarter;
 @SpringBootTest
 public class CacheCouponServiceTest extends TestContainerStarter {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private MemberRepository memberRepository;
 
-    @Autowired
-    private CouponRepository couponRepository;
+    @Autowired private CouponRepository couponRepository;
 
-    @Autowired
-    private MemberCouponRepository memberCouponRepository;
+    @Autowired private MemberCouponRepository memberCouponRepository;
 
     @Autowired
     @Qualifier("lettuceCouponServiceProxy")
