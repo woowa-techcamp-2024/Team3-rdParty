@@ -143,8 +143,9 @@ public class CacheCouponServiceTest extends TestContainerStarter {
         latch.await();
 
         Coupon testCoupon = couponRepository.findById(this.coupon.getCouponId()).orElseThrow();
+        List<CouponMember> couponMember = memberCouponRepository.findAll();
         assertThat(testCoupon).isNotNull();
         assertThat(testCoupon.getAmount()).isEqualTo(0);
-        System.out.println("total count: " + testCoupon.getAmount());
+        assertThat(couponMember.size()).isEqualTo(3);
     }
 }

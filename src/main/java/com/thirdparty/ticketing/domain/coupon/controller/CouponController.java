@@ -19,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CouponController {
 
-    private final CouponService couponServiceProxy;
+    private final CouponService couponService;
 
     @PostMapping("/receive")
     public ResponseEntity<Void> receiveCoupon(
             @LoginMember String memberEmail,
             @RequestBody @Valid ReceiveCouponRequest receiveCouponRequest) {
-        couponServiceProxy.receiveCoupon(memberEmail, receiveCouponRequest);
+        couponService.receiveCoupon(memberEmail, receiveCouponRequest);
         return ResponseEntity.ok().build();
     }
 }
