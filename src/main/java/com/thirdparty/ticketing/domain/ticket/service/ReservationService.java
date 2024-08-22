@@ -8,5 +8,5 @@ public interface ReservationService {
 
     void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest);
 
-    default void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {}
+    void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest);
 }

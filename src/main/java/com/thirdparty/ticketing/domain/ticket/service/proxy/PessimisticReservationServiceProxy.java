@@ -37,4 +37,9 @@ public class PessimisticReservationServiceProxy implements ReservationServicePro
             throw new TicketingException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
+        reservationTransactionService.releaseSeat(memberEmail, seatSelectionRequest);
+    }
 }
