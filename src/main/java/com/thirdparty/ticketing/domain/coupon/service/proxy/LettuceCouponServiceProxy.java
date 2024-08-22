@@ -7,8 +7,10 @@ import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class LettuceCouponServiceProxy implements CouponServiceProxy {
 
     private final LettuceRepository lettuceRepository;
@@ -32,9 +34,10 @@ public class LettuceCouponServiceProxy implements CouponServiceProxy {
             }
 
         } catch (InterruptedException e) {
+            log.error("Failed to lock coupon: {}", couponId, e);
             throw new CouponException(ErrorCode.NOT_SELECTABLE_SEAT, e);
         } finally {
-            lettuceRepository.unlock(couponId);
+            lettuceRepository.unlock(lockKey);
         }
     }
 }

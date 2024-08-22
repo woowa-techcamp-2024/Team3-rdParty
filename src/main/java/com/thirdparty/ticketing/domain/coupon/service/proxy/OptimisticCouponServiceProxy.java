@@ -9,8 +9,10 @@ import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class OptimisticCouponServiceProxy implements CouponServiceProxy {
 
     private final CouponTransactionalService couponTransactionalService;
@@ -30,7 +32,12 @@ public class OptimisticCouponServiceProxy implements CouponServiceProxy {
                 } catch (InterruptedException e1) {
                     throw new CouponException(ErrorCode.NOT_SELECTABLE_SEAT, e1);
                 }
+                log.info(
+                        "Optimistic lock failed on thread {}. Retry count: {}",
+                        Thread.currentThread().getId(),
+                        10 - retryLimit);
             }
         }
+        log.info("Optimistic lock success on thread {}", Thread.currentThread().getId());
     }
 }

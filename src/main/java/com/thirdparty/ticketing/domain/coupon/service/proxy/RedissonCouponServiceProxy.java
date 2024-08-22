@@ -23,7 +23,8 @@ public class RedissonCouponServiceProxy implements CouponServiceProxy {
         int tryTime = 3;
         int releaseTime = 60;
         Long couponId = receiveCouponRequest.getCouponId();
-        RLock lock = redissonClient.getLock(couponId.toString());
+        String lockKey = "coupon:" + couponId;
+        RLock lock = redissonClient.getLock(lockKey);
 
         try {
             if (!lock.tryLock(tryTime, releaseTime, TimeUnit.SECONDS)) {
