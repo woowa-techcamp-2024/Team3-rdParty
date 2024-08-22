@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thirdparty.ticketing.domain.common.LoginMember;
 import com.thirdparty.ticketing.domain.coupon.dto.ReceiveCouponRequest;
-import com.thirdparty.ticketing.domain.coupon.service.proxy.CouponServiceProxy;
+import com.thirdparty.ticketing.domain.coupon.service.CouponService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CouponController {
 
-    private final CouponServiceProxy couponServiceProxy;
+    private final CouponService couponServiceProxy;
 
     @PostMapping("/receive")
     public ResponseEntity<Void> receiveCoupon(

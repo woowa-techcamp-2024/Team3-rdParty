@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.CouponRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.MemberCouponRepository;
+import com.thirdparty.ticketing.domain.coupon.service.CouponService;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
 import com.thirdparty.ticketing.domain.coupon.service.proxy.CouponServiceProxy;
 import com.thirdparty.ticketing.domain.coupon.service.proxy.LettuceCouponServiceProxy;
@@ -32,7 +33,7 @@ public class CouponServiceContainer {
     }
 
     @Bean
-    public CouponServiceProxy lettuceCouponServiceProxy(
+    public CouponService lettuceCouponServiceProxy(
             LettuceRepository lettuceRepository,
             @Qualifier("cacheCouponTransactionService")
                     CouponTransactionalService cacheCouponTransactionService) {
@@ -40,7 +41,7 @@ public class CouponServiceContainer {
     }
 
     @Bean
-    public CouponServiceProxy optimisticCouponServiceProxy(
+    public CouponService optimisticCouponServiceProxy(
             LettuceRepository lettuceRepository,
             @Qualifier("persistenceOptimisticReservationService")
                     CouponTransactionalService optimisticReservationService) {
@@ -48,7 +49,7 @@ public class CouponServiceContainer {
     }
 
     @Bean
-    public CouponServiceProxy pessimisticCouponServiceProxy(
+    public CouponService pessimisticCouponServiceProxy(
             LettuceRepository lettuceRepository,
             @Qualifier("persistencePessimisticReservationService")
                     CouponTransactionalService pessimisticReservationService) {
