@@ -1,6 +1,7 @@
 package com.thirdparty.ticketing.global.config;
 
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,7 +24,8 @@ public class ReservationServiceContainer {
     @Bean
     public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient,
-            ReservationTransactionService cacheReservationTransactionService) {
+            @Qualifier("cacheReservationTransactionService")
+                    ReservationTransactionService cacheReservationTransactionService) {
         return new RedissonReservationServiceProxy(
                 redissonClient, cacheReservationTransactionService);
     }
@@ -31,7 +33,8 @@ public class ReservationServiceContainer {
     @Bean
     public ReservationService lettuceReservationServiceProxy(
             LettuceRepository lettuceRepository,
-            ReservationTransactionService cacheReservationTransactionService) {
+            @Qualifier("cacheReservationTransactionService")
+                    ReservationTransactionService cacheReservationTransactionService) {
         return new LettuceReservationServiceProxy(
                 lettuceRepository, cacheReservationTransactionService);
     }
@@ -39,13 +42,15 @@ public class ReservationServiceContainer {
     @Primary
     @Bean
     ReservationService optimisticReservationServiceProxy(
-            ReservationTransactionService persistenceOptimisticReservationService) {
+            @Qualifier("persistenceOptimisticReservationService")
+                    ReservationTransactionService persistenceOptimisticReservationService) {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
     @Bean
     ReservationService pessimisticReservationServiceProxy(
-            ReservationTransactionService persistencePessimisticReservationService) {
+            @Qualifier("persistencePessimisticReservationService")
+                    ReservationTransactionService persistencePessimisticReservationService) {
         return new PessimisticReservationServiceProxy(persistencePessimisticReservationService);
     }
 

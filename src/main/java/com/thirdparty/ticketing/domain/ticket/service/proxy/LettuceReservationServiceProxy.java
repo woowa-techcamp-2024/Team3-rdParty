@@ -18,8 +18,10 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
     private void performSeatAction(String seatId, Runnable action) {
         int retryLimit = 5;
         int sleepDuration = 300;
+        String lockPrefix = "seat:";
+        String lockKey = lockPrefix + seatId;
         try {
-            while (retryLimit > 0 && !lettuceRepository.seatLock(seatId)) {
+            while (retryLimit > 0 && !lettuceRepository.seatLock(lockKey)) {
                 retryLimit -= 1;
                 Thread.sleep(sleepDuration);
             }
@@ -33,7 +35,7 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
         } catch (InterruptedException e) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
         } finally {
-            lettuceRepository.unlock(seatId);
+            lettuceRepository.unlock(lockKey);
         }
     }
 
