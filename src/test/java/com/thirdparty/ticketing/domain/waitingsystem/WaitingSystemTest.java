@@ -1,9 +1,13 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchException;
 
+import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.time.ZonedDateTime;
-
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -155,6 +159,44 @@ class WaitingSystemTest extends TestContainerStarter {
             // then
             assertThat(runningManager.getRunningCount(performanceId)).isEqualTo(100);
             assertThat(runningManager.getAvailableToRunning(performanceId)).isEqualTo(0);
+        }
+    }
+
+    @Nested
+    @DisplayName("대기중인 사용자 제거 호출 시")
+    class PullOutRunningMemberTest {
+
+        @Test
+        @DisplayName("대기열 시스템에서 사용자 정보를 제거한다.")
+        void pullOutMember() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+            waitingManager.enterWaitingRoom(email, performanceId);
+            WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, ZonedDateTime.now());
+            runningManager.enterRunningRoom(performanceId, Set.of(waitingMember));
+
+            //when
+            waitingSystem.pullOutRunningMember(email, performanceId);
+
+            //then
+            assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
+            assertThatThrownBy(() -> waitingManager.findWaitingMember(email, performanceId))
+                    .isInstanceOf(TicketingException.class);
+        }
+
+        @Test
+        @DisplayName("사용자 정보가 없으면 무시한다.")
+        void ignore_WhenMemberInfoNotExists() {
+            //given
+            String email = "email@email.com";
+            long performanceId = 1;
+
+            //when
+            Exception exception = catchException(() -> waitingSystem.pullOutRunningMember(email, performanceId));
+
+            //then
+            assertThat(exception).doesNotThrowAnyException();
         }
     }
 }
