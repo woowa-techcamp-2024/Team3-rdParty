@@ -2,6 +2,8 @@ package com.thirdparty.ticketing.domain.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.ZonedDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
@@ -27,6 +30,8 @@ class WaitingSystemTest extends TestContainerStarter {
 
     @Autowired private RunningManager runningManager;
 
+    private ZSetOperations<String, String> rawRunningRoom;
+
     private SpyEventPublisher eventPublisher;
 
     @Autowired private StringRedisTemplate redisTemplate;
@@ -37,8 +42,13 @@ class WaitingSystemTest extends TestContainerStarter {
     void setUp() {
         eventPublisher = new SpyEventPublisher();
         waitingSystem = new WaitingSystem(waitingManager, runningManager, eventPublisher);
+        rawRunningRoom = redisTemplate.opsForZSet();
         rawRunningCounter = redisTemplate.opsForValue();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+    }
+
+    private String getRunningRoomKey(long performanceId) {
+        return "running_room:" + performanceId;
     }
 
     private String getRunningCounterKey(long performanceId) {
@@ -88,6 +98,22 @@ class WaitingSystemTest extends TestContainerStarter {
     @Nested
     @DisplayName("대기열 사용자 작업 가능 공간 이동 호출 시")
     class MoveUserToRunningTest {
+
+        @Test
+        @DisplayName("작업 공간의 작업 시간이 만료된 사용자를 제거한다.")
+        void removeExpiredMemberInfo() {
+            // given
+            long performanceId = 1;
+            String email = "email@email.com";
+            long score = ZonedDateTime.now().minusMinutes(5).toEpochSecond();
+            rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
+
+            // when
+            waitingSystem.moveUserToRunning(performanceId);
+
+            // then
+            assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
+        }
 
         @Test
         @DisplayName("작업 가능 공간의 수용 가능한 인원이 감소한다.")

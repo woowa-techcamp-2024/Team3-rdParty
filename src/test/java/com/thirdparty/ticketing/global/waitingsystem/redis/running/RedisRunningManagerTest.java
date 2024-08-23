@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.TestContainerStarter;
@@ -27,12 +27,12 @@ class RedisRunningManagerTest extends TestContainerStarter {
     @Autowired private StringRedisTemplate redisTemplate;
 
     private ValueOperations<String, String> rawRunningCounter;
-    private SetOperations<String, String> rawRunningRoom;
+    private ZSetOperations<String, String> rawRunningRoom;
 
     @BeforeEach
     void setUp() {
         rawRunningCounter = redisTemplate.opsForValue();
-        rawRunningRoom = redisTemplate.opsForSet();
+        rawRunningRoom = redisTemplate.opsForZSet();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
@@ -163,7 +163,8 @@ class RedisRunningManagerTest extends TestContainerStarter {
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
             // then
-            Set<String> waitingMembers = rawRunningRoom.members(getRunningRoomKey(performanceId));
+            Set<String> waitingMembers =
+                    rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1);
             assertThat(waitingMembers).hasSize(waitingMemberCount);
         }
     }
