@@ -16,6 +16,7 @@ public class RedisRunningRoom implements RunningRoom {
 
     private static final int MAX_RUNNING_ROOM_SIZE = 100;
     private static final String RUNNING_ROOM_KEY = "running_room:";
+    private static final int EXPIRED_MINUTE = 5;
 
     private final ZSetOperations<String, String> runningRoom;
 
@@ -53,5 +54,13 @@ public class RedisRunningRoom implements RunningRoom {
 
     public void pullOutRunningMember(String email, long performanceId) {
         runningRoom.remove(getRunningRoomKey(performanceId), email);
+    }
+
+    public void removeExpiredMemberInfo(long performanceId) {
+        long removeRange = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE).toEpochSecond();
+        runningRoom.removeRangeByScore(
+                getRunningRoomKey(performanceId),
+                0,
+                removeRange);
     }
 }
