@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waitingsystem;
+package com.thirdparty.ticketing.domain.waitingsystem;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

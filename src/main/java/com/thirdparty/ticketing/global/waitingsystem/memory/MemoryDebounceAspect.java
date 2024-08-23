@@ -30,7 +30,7 @@ public class MemoryDebounceAspect {
         }
     }
 
-    @Pointcut("@annotation(com.thirdparty.ticketing.global.waitingsystem.Debounce)")
+    @Pointcut("@annotation(com.thirdparty.ticketing.domain.waitingsystem.Debounce)")
     private void debounceAnnotation() {}
 
     @Pointcut(

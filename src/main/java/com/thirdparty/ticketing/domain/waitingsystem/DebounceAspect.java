@@ -1,4 +1,4 @@
-package com.thirdparty.ticketing.global.waitingsystem.redis;
+package com.thirdparty.ticketing.domain.waitingsystem;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ public class DebounceAspect {
         debounce = redisTemplate.opsForValue();
     }
 
-    @Pointcut("@annotation(com.thirdparty.ticketing.global.waitingsystem.Debounce)")
+    @Pointcut("@annotation(com.thirdparty.ticketing.domain.waitingsystem.Debounce)")
     private void debounceAnnotation() {}
 
     @Pointcut(
