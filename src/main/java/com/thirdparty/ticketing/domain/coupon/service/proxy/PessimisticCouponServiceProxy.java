@@ -20,24 +20,15 @@ public class PessimisticCouponServiceProxy implements CouponServiceProxy {
 
     @Override
     public void receiveCoupon(String memberEmail, ReceiveCouponRequest receiveCouponRequest) {
-        int retryLimit = 10;
         int sleepDuration = 300;
-
-        while (retryLimit > 0) {
+        try {
+            log.info("Pessimistic lock on thread {}", Thread.currentThread().getId());
+            couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
+        } catch (PessimisticLockException | LockTimeoutException e) {
             try {
-                couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
-                break;
-            } catch (PessimisticLockException | LockTimeoutException e) {
-                retryLimit -= 1;
-                try {
-                    Thread.sleep(sleepDuration);
-                } catch (InterruptedException interruptedException) {
-                    throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
-                }
-                log.info(
-                        "Pessimistic lock failed on thread {}. Retry count: {}",
-                        Thread.currentThread().getId(),
-                        10 - retryLimit);
+                Thread.sleep(sleepDuration);
+            } catch (InterruptedException interruptedException) {
+                throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
             }
         }
         log.info("Pessimistic lock success on thread {}", Thread.currentThread().getId());
