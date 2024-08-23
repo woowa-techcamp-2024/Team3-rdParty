@@ -20,7 +20,6 @@ public class PessimisticCouponServiceProxy implements CouponServiceProxy {
 
     @Override
     public void receiveCoupon(String memberEmail, ReceiveCouponRequest receiveCouponRequest) {
-        int sleepDuration = 300;
         try {
             log.info("Pessimistic lock on thread {}", Thread.currentThread().getId());
             couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
