@@ -2,6 +2,11 @@ package com.thirdparty.ticketing.domain.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
+import com.thirdparty.ticketing.support.TestContainerStarter;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,11 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import org.springframework.data.redis.core.ZSetOperations;
 
 @SpringBootTest
 class WaitingSystemTest extends TestContainerStarter {
@@ -26,6 +27,8 @@ class WaitingSystemTest extends TestContainerStarter {
     @Autowired private WaitingManager waitingManager;
 
     @Autowired private RunningManager runningManager;
+
+    private ZSetOperations<String, String> rawRunningRoom;
 
     private SpyEventPublisher eventPublisher;
 
@@ -37,8 +40,13 @@ class WaitingSystemTest extends TestContainerStarter {
     void setUp() {
         eventPublisher = new SpyEventPublisher();
         waitingSystem = new WaitingSystem(waitingManager, runningManager, eventPublisher);
+        rawRunningRoom = redisTemplate.opsForZSet();
         rawRunningCounter = redisTemplate.opsForValue();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+    }
+
+    private String getRunningRoomKey(long performanceId) {
+        return "running_room:" + performanceId;
     }
 
     private String getRunningCounterKey(long performanceId) {
@@ -48,6 +56,7 @@ class WaitingSystemTest extends TestContainerStarter {
     @Nested
     @DisplayName("사용자의 남은 순번 조회 시")
     class GetRemainingCountTest {
+
 
         @ParameterizedTest
         @CsvSource({"0, 0, 1", "15, 10, 6"})
@@ -68,7 +77,6 @@ class WaitingSystemTest extends TestContainerStarter {
             // then
             assertThat(remainingCount).isEqualTo(expected);
         }
-
         @Test
         @DisplayName("폴링 이벤트를 발행한다.")
         void publishPollingEvent() {
@@ -83,11 +91,28 @@ class WaitingSystemTest extends TestContainerStarter {
             // then
             assertThat(eventPublisher.counter).hasValue(1);
         }
-    }
 
+    }
     @Nested
     @DisplayName("대기열 사용자 작업 가능 공간 이동 호출 시")
     class MoveUserToRunningTest {
+
+
+        @Test
+        @DisplayName("작업 공간의 작업 시간이 만료된 사용자를 제거한다.")
+        void removeExpiredMemberInfo() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+            long score = ZonedDateTime.now().minusMinutes(5).toEpochSecond();
+            rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
+
+            //when
+            waitingSystem.moveUserToRunning(performanceId);
+
+            //then
+            assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
+        }
 
         @Test
         @DisplayName("작업 가능 공간의 수용 가능한 인원이 감소한다.")
@@ -107,7 +132,6 @@ class WaitingSystemTest extends TestContainerStarter {
             assertThat(runningManager.getAvailableToRunning(performanceId))
                     .isEqualTo(100 - memberCount);
         }
-
         @Test
         @DisplayName("더 이상 인원을 수용할 수 없으면 작업 가능 공간에 사용자를 추가하지 않는다.")
         void doNotMoveUserToRunning_WhenNoMoreAvailableSpace() {
