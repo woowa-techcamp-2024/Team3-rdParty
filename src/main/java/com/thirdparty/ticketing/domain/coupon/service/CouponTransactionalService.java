@@ -13,8 +13,10 @@ import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class CouponTransactionalService implements CouponService {
 
     private final MemberRepository memberRepository;
@@ -31,7 +33,7 @@ public class CouponTransactionalService implements CouponService {
                 memberRepository
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new CouponException(ErrorCode.NOT_FOUND_MEMBER));
-
+        log.info("Receive coupon for member {}", memberEmail);
         Coupon coupon =
                 lockCouponStrategy
                         .getCouponWithLock(couponId)
