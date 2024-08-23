@@ -2,7 +2,7 @@ package com.thirdparty.ticketing.domain.coupon.service.proxy;
 
 import jakarta.persistence.LockTimeoutException;
 
-import org.hibernate.PessimisticLockException;
+import org.springframework.dao.PessimisticLockingFailureException;
 
 import com.thirdparty.ticketing.domain.common.CouponException;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -24,7 +24,7 @@ public class PessimisticCouponServiceProxy implements CouponServiceProxy {
         try {
             log.info("Pessimistic lock on thread {}", Thread.currentThread().getId());
             couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
-        } catch (PessimisticLockException | LockTimeoutException e) {
+        } catch (PessimisticLockingFailureException | LockTimeoutException e) {
             throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
         }
         log.info("Pessimistic lock success on thread {}", Thread.currentThread().getId());
