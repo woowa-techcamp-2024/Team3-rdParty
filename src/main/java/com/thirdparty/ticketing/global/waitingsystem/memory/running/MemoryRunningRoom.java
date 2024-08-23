@@ -1,11 +1,13 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory.running;
 
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -51,14 +53,16 @@ public class MemoryRunningRoom implements RunningRoom {
     }
 
     public void removeExpiredMemberInfo(long performanceId) {
-        room.computeIfPresent(performanceId,
+        room.computeIfPresent(
+                performanceId,
                 (key, room) -> {
                     ZonedDateTime fiveMinutesAgo = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE);
                     room.values().stream()
                             .filter(member -> member.getEnteredAt().isBefore(fiveMinutesAgo))
-                            .forEach(member -> {
-                                room.remove(member.getEmail());
-                            });
+                            .forEach(
+                                    member -> {
+                                        room.remove(member.getEmail());
+                                    });
                     return room;
                 });
     }

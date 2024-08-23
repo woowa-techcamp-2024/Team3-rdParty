@@ -58,9 +58,6 @@ public class RedisRunningRoom implements RunningRoom {
 
     public void removeExpiredMemberInfo(long performanceId) {
         long removeRange = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE).toEpochSecond();
-        runningRoom.removeRangeByScore(
-                getRunningRoomKey(performanceId),
-                0,
-                removeRange);
+        runningRoom.removeRangeByScore(getRunningRoomKey(performanceId), 0, removeRange);
     }
 }

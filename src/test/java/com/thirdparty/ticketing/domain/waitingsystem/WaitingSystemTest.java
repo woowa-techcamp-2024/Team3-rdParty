@@ -2,11 +2,8 @@ package com.thirdparty.ticketing.domain.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.time.ZonedDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
+
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
+import com.thirdparty.ticketing.support.TestContainerStarter;
 
 @SpringBootTest
 class WaitingSystemTest extends TestContainerStarter {
@@ -57,7 +59,6 @@ class WaitingSystemTest extends TestContainerStarter {
     @DisplayName("사용자의 남은 순번 조회 시")
     class GetRemainingCountTest {
 
-
         @ParameterizedTest
         @CsvSource({"0, 0, 1", "15, 10, 6"})
         @DisplayName("자신이 몇 번째 차례인지 반환한다.")
@@ -77,6 +78,7 @@ class WaitingSystemTest extends TestContainerStarter {
             // then
             assertThat(remainingCount).isEqualTo(expected);
         }
+
         @Test
         @DisplayName("폴링 이벤트를 발행한다.")
         void publishPollingEvent() {
@@ -91,26 +93,25 @@ class WaitingSystemTest extends TestContainerStarter {
             // then
             assertThat(eventPublisher.counter).hasValue(1);
         }
-
     }
+
     @Nested
     @DisplayName("대기열 사용자 작업 가능 공간 이동 호출 시")
     class MoveUserToRunningTest {
 
-
         @Test
         @DisplayName("작업 공간의 작업 시간이 만료된 사용자를 제거한다.")
         void removeExpiredMemberInfo() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             long score = ZonedDateTime.now().minusMinutes(5).toEpochSecond();
             rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
 
-            //when
+            // when
             waitingSystem.moveUserToRunning(performanceId);
 
-            //then
+            // then
             assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
         }
 
@@ -132,6 +133,7 @@ class WaitingSystemTest extends TestContainerStarter {
             assertThat(runningManager.getAvailableToRunning(performanceId))
                     .isEqualTo(100 - memberCount);
         }
+
         @Test
         @DisplayName("더 이상 인원을 수용할 수 없으면 작업 가능 공간에 사용자를 추가하지 않는다.")
         void doNotMoveUserToRunning_WhenNoMoreAvailableSpace() {

@@ -206,33 +206,32 @@ class RedisRunningRoomTest extends TestContainerStarter {
         @Test
         @DisplayName("입장한지 5분이 지난 사용자 정보를 제거한다.")
         void removeExpiredMemberInfo() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             long score = ZonedDateTime.now().minusMinutes(5).minusSeconds(1).toEpochSecond();
             rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
 
-            //when
+            // when
             runningRoom.removeExpiredMemberInfo(performanceId);
 
-            //then
-            assertThat(rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1))
-                    .isEmpty();
+            // then
+            assertThat(rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1)).isEmpty();
         }
 
         @Test
         @DisplayName("입장한지 5분이 지나지 않은 사용자 정보는 제거하지 않는다.")
         void notRemoveMemberInfo() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             long score = ZonedDateTime.now().minusMinutes(5).plusSeconds(10).toEpochSecond();
             rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
 
-            //when
+            // when
             runningRoom.removeExpiredMemberInfo(performanceId);
 
-            //then
+            // then
             assertThat(rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1))
                     .hasSize(1)
                     .first()

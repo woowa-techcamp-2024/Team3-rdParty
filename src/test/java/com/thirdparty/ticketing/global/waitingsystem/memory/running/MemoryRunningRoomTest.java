@@ -184,34 +184,35 @@ class MemoryRunningRoomTest {
         @Test
         @DisplayName("입장한지 5분이 지난 사용자 정보를 제거한다.")
         void removeExpiredMemberInfo() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             ZonedDateTime fiveMinuteAgo = ZonedDateTime.now().minusMinutes(5).minusSeconds(1);
             WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, fiveMinuteAgo);
             runningRoom.enter(performanceId, Set.of(waitingMember));
 
-            //when
+            // when
             runningRoom.removeExpiredMemberInfo(performanceId);
 
-            //then
+            // then
             assertThat(room.get(performanceId).get(email)).isNull();
         }
 
         @Test
         @DisplayName("입장한지 5분이 지나지 않은 사용자 정보는 제거하지 않는다.")
         void notRemoveMemberInfo() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             ZonedDateTime nearFiveMinuteAgo = ZonedDateTime.now().minusMinutes(5).plusSeconds(2);
-            WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, nearFiveMinuteAgo);
+            WaitingMember waitingMember =
+                    new WaitingMember(email, performanceId, 1, nearFiveMinuteAgo);
             runningRoom.enter(performanceId, Set.of(waitingMember));
 
-            //when
+            // when
             runningRoom.removeExpiredMemberInfo(performanceId);
 
-            //then
+            // then
             assertThat(room.get(performanceId).get(email)).isEqualTo(waitingMember);
         }
     }
