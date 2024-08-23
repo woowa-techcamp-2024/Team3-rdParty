@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import java.time.ZonedDateTime;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,8 +19,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.SpyEventPublisher;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
@@ -169,17 +170,18 @@ class WaitingSystemTest extends TestContainerStarter {
         @Test
         @DisplayName("대기열 시스템에서 사용자 정보를 제거한다.")
         void pullOutMember() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             waitingManager.enterWaitingRoom(email, performanceId);
-            WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, ZonedDateTime.now());
+            WaitingMember waitingMember =
+                    new WaitingMember(email, performanceId, 1, ZonedDateTime.now());
             runningManager.enterRunningRoom(performanceId, Set.of(waitingMember));
 
-            //when
+            // when
             waitingSystem.pullOutRunningMember(email, performanceId);
 
-            //then
+            // then
             assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
             assertThatThrownBy(() -> waitingManager.findWaitingMember(email, performanceId))
                     .isInstanceOf(TicketingException.class);
@@ -188,14 +190,15 @@ class WaitingSystemTest extends TestContainerStarter {
         @Test
         @DisplayName("사용자 정보가 없으면 무시한다.")
         void ignore_WhenMemberInfoNotExists() {
-            //given
+            // given
             String email = "email@email.com";
             long performanceId = 1;
 
-            //when
-            Exception exception = catchException(() -> waitingSystem.pullOutRunningMember(email, performanceId));
+            // when
+            Exception exception =
+                    catchException(() -> waitingSystem.pullOutRunningMember(email, performanceId));
 
-            //then
+            // then
             assertThat(exception).doesNotThrowAnyException();
         }
     }
