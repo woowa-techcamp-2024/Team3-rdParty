@@ -11,8 +11,9 @@ import com.thirdparty.ticketing.domain.coupon.repository.CouponMemberRepository;
 import com.thirdparty.ticketing.domain.coupon.repository.CouponRepository;
 import com.thirdparty.ticketing.domain.coupon.service.CouponService;
 import com.thirdparty.ticketing.domain.coupon.service.CouponTransactionalService;
-import com.thirdparty.ticketing.domain.coupon.service.proxy.CouponServiceProxy;
 import com.thirdparty.ticketing.domain.coupon.service.proxy.LettuceCouponServiceProxy;
+import com.thirdparty.ticketing.domain.coupon.service.proxy.OptimisticCouponServiceProxy;
+import com.thirdparty.ticketing.domain.coupon.service.proxy.PessimisticCouponServiceProxy;
 import com.thirdparty.ticketing.domain.coupon.service.proxy.RedissonCouponServiceProxy;
 import com.thirdparty.ticketing.domain.coupon.service.strategy.LockCouponStrategy;
 import com.thirdparty.ticketing.domain.coupon.service.strategy.NaiveCouponStrategy;
@@ -24,8 +25,7 @@ import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 public class CouponServiceContainer {
 
     @Bean
-    @Primary
-    public CouponServiceProxy redissonCouponServiceProxy(
+    public CouponService redissonCouponServiceProxy(
             RedissonClient redissonClient,
             @Qualifier("cacheCouponTransactionService")
                     CouponTransactionalService cacheCouponTransactionService) {
@@ -41,19 +41,18 @@ public class CouponServiceContainer {
     }
 
     @Bean
+    @Primary
     public CouponService optimisticCouponServiceProxy(
-            LettuceRepository lettuceRepository,
             @Qualifier("persistenceOptimisticCouponService")
                     CouponTransactionalService optimisticReservationService) {
-        return new LettuceCouponServiceProxy(lettuceRepository, optimisticReservationService);
+        return new OptimisticCouponServiceProxy(optimisticReservationService);
     }
 
     @Bean
     public CouponService pessimisticCouponServiceProxy(
-            LettuceRepository lettuceRepository,
             @Qualifier("persistencePessimisticCouponService")
                     CouponTransactionalService pessimisticCouponService) {
-        return new LettuceCouponServiceProxy(lettuceRepository, pessimisticCouponService);
+        return new PessimisticCouponServiceProxy(pessimisticCouponService);
     }
 
     @Bean
