@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TicketingException.class)
     public ResponseEntity<ErrorResponse<Void>> handleTicketingException(TicketingException e) {
         ErrorCode errorCode = e.getErrorCode();
-        log.warn("예외 발생. 메세지={}", e.getMessage(), e);
+        log.warn("예외 발생. 메세지={}", errorCode.getMessage());
         return ResponseEntity.status(errorCode.getHttpStatusValue())
                 .body(ErrorResponse.of(errorCode));
     }
