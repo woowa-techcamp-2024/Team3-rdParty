@@ -41,6 +41,6 @@ public class MemoryRunningManager implements RunningManager {
 
     @Override
     public void removeExpiredMemberInfo(long performanceId) {
-
+        runningRoom.removeExpiredMemberInfo(performanceId);
     }
 }
