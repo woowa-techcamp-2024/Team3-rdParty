@@ -25,11 +25,7 @@ public class PessimisticCouponServiceProxy implements CouponServiceProxy {
             log.info("Pessimistic lock on thread {}", Thread.currentThread().getId());
             couponTransactionalService.receiveCoupon(memberEmail, receiveCouponRequest);
         } catch (PessimisticLockException | LockTimeoutException e) {
-            try {
-                Thread.sleep(sleepDuration);
-            } catch (InterruptedException interruptedException) {
-                throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
-            }
+            throw new CouponException(ErrorCode.NOT_AVAILABLE_COUPON);
         }
         log.info("Pessimistic lock success on thread {}", Thread.currentThread().getId());
     }
