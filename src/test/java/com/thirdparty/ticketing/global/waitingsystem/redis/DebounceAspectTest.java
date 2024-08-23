@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import com.thirdparty.ticketing.global.waitingsystem.Debounce;
+import com.thirdparty.ticketing.domain.waitingsystem.Debounce;
 import com.thirdparty.ticketing.global.waitingsystem.redis.DebounceAspectTest.TestConfig;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 

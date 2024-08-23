@@ -22,7 +22,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.thirdparty.ticketing.global.waitingsystem.Debounce;
+import com.thirdparty.ticketing.domain.waitingsystem.Debounce;
 
 @ExtendWith(SpringExtension.class)
 @Import(MemoryDebounceAspectTest.MemoryDebounceAopConfig.class)
