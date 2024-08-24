@@ -64,13 +64,13 @@ function PerformanceSelect() {
       console.log("파싱된 데이터:", data);
       if (data.status === "SELECTED" || data.status === "SELECTABLE") {
         setSeats(prevSeats => {
-          return prevSeats.map(seat => 
-            seat.seatId === data.seatId
-              ? { ...seat, seatAvailable: data.status === "SELECTABLE" } 
-              : seat
+          return prevSeats.map(seat =>
+              seat.seatId === data.seatId
+                  ? { ...seat, seatAvailable: data.status === "SELECTABLE" }
+                  : seat
           );
         });
-        
+
         // 현재 선택된 좌석이 다른 사용자에 의해 선택되었다면 선택 해제
         if (data.status === "SELECTED" && String(selectedSeat) === data.seatId) {
           setSelectedSeat(null);
@@ -84,10 +84,10 @@ function PerformanceSelect() {
 
   useEffect(() => {
     fetchSeats();
-    
+
     // 새로운 SSE 연결 생성
     connectSse(performanceId, accessToken);
-    
+
     // SELECT와 RELEASE 이벤트 모두 동일한 핸들러를 사용합니다.
     addEventListenerToSse('SELECT', handleSeatEvent);
     addEventListenerToSse('RELEASE', handleSeatEvent);
@@ -106,14 +106,6 @@ function PerformanceSelect() {
   const handlePayment = useCallback(async () => {
     if (selectedSeat) {
       try {
-        const sseResponse = await fetch(`${config.API_URL}/api/performances/${performanceId}/seats/${selectedSeat}/select`, {
-          method: 'POST',
-          headers: getCommonHeaders()
-        });
-
-        if (!sseResponse.ok) {
-          throw new Error('SSE 이벤트 발생에 실패했습니다.');
-        }
 
         const dbResponse = await fetch(`${config.API_URL}/api/seats/select`, {
           method: 'POST',
@@ -128,11 +120,11 @@ function PerformanceSelect() {
         }
 
         const selectedSeatInfo = seats.find(seat => seat.seatId === selectedSeat);
-        navigate(`/performances/${performanceId}/payment`, { 
-          state: { 
-            seatId: selectedSeat, 
-            seatCode: selectedSeatInfo.seatCode 
-          } 
+        navigate(`/performances/${performanceId}/payment`, {
+          state: {
+            seatId: selectedSeat,
+            seatCode: selectedSeatInfo.seatCode
+          }
         });
       } catch (err) {
         setError(err.message);
@@ -154,61 +146,61 @@ function PerformanceSelect() {
   }
 
   return (
-    <div className="content">
-      <h2>좌석 선택</h2>
-      <p>공연 ID: {performanceId}</p>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        width: '100%'
-      }}>
-      <div className="seat-grid" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-        {rows.map((row, rowIndex) => (
-          <div key={rowIndex} style={{ display: 'flex', gap: '5px' }}>
-            {row.map((seat) => (
-              <button
-                key={seat.seatId}
-                className={`seat ${seat.seatAvailable ? 'available' : 'unavailable'} ${selectedSeat === seat.seatId ? 'selected' : ''}`}
-                disabled={!seat.seatAvailable}
-                onClick={() => seat.seatAvailable && selectSeat(seat.seatId)}
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontSize: '10px',
-                  border: '1px solid #ccc',
-                  backgroundColor: selectedSeat === seat.seatId ? '#4CAF50' : 
-                                   seat.seatAvailable ? '#fff' : '#ff0000',
-                  cursor: seat.seatAvailable ? 'pointer' : 'not-allowed',
-                  color: selectedSeat === seat.seatId ? '#fff' : 
-                         seat.seatAvailable ? '#000' : '#fff',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  padding: '0 2px'
-                }}
-              >
-                {getShortSeatCode(seat.seatCode)}
-              </button>
+      <div className="content">
+        <h2>좌석 선택</h2>
+        <p>공연 ID: {performanceId}</p>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%'
+        }}>
+          <div className="seat-grid" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {rows.map((row, rowIndex) => (
+                <div key={rowIndex} style={{ display: 'flex', gap: '5px' }}>
+                  {row.map((seat) => (
+                      <button
+                          key={seat.seatId}
+                          className={`seat ${seat.seatAvailable ? 'available' : 'unavailable'} ${selectedSeat === seat.seatId ? 'selected' : ''}`}
+                          disabled={!seat.seatAvailable}
+                          onClick={() => seat.seatAvailable && selectSeat(seat.seatId)}
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            fontSize: '10px',
+                            border: '1px solid #ccc',
+                            backgroundColor: selectedSeat === seat.seatId ? '#4CAF50' :
+                                seat.seatAvailable ? '#fff' : '#ff0000',
+                            cursor: seat.seatAvailable ? 'pointer' : 'not-allowed',
+                            color: selectedSeat === seat.seatId ? '#fff' :
+                                seat.seatAvailable ? '#000' : '#fff',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            padding: '0 2px'
+                          }}
+                      >
+                        {getShortSeatCode(seat.seatCode)}
+                      </button>
+                  ))}
+                </div>
             ))}
           </div>
-        ))}
+        </div>
+        <p>선택된 좌석: {selectedSeat ? seats.find(seat => seat.seatId === selectedSeat)?.seatCode : '없음'}</p>
+        <button
+            onClick={handlePayment}
+            disabled={!selectedSeat}
+            style={{
+              opacity: selectedSeat ? 1 : 0.5,
+              cursor: selectedSeat ? 'pointer' : 'not-allowed'
+            }}
+        >
+          결제하기
+        </button>
       </div>
-      </div>
-      <p>선택된 좌석: {selectedSeat ? seats.find(seat => seat.seatId === selectedSeat)?.seatCode : '없음'}</p>
-      <button 
-        onClick={handlePayment}
-        disabled={!selectedSeat}
-        style={{ 
-          opacity: selectedSeat ? 1 : 0.5,
-          cursor: selectedSeat ? 'pointer' : 'not-allowed'
-        }}
-      >
-        결제하기
-      </button>
-    </div>
   );
 }
 
