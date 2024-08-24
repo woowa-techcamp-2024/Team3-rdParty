@@ -65,7 +65,7 @@ function PerformanceSelect() {
       if (data.status === "SELECTED" || data.status === "SELECTABLE") {
         setSeats(prevSeats => {
           return prevSeats.map(seat => 
-            String(seat.seatId) === data.seatId 
+            seat.seatId === data.seatId
               ? { ...seat, seatAvailable: data.status === "SELECTABLE" } 
               : seat
           );

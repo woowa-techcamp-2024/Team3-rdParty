@@ -8,17 +8,23 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.LoginMember;
+import com.thirdparty.ticketing.domain.ticket.dto.sse.SeatEventResponse;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class TicketSseController {
 
     private final ConcurrentMap<Long, ConcurrentMap<String, SseEmitter>> emitters =
             new ConcurrentHashMap<>();
+
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/subscribe/performances/{performanceId}")
     public SseEmitter subscribePerformances(
@@ -79,28 +85,21 @@ public class TicketSseController {
 
     @Async
     public void sendEventToPerformanceAsync(
-            String memberEmail, Long performanceId, String eventName, Long data) {
+            String memberEmail, Long performanceId, String eventName, Long seatId) {
         log.debug("공연 ID: {}, 이벤트: {}에 대한 비동기 브로드캐스트를 시작합니다", performanceId, eventName);
         ConcurrentMap<String, SseEmitter> performanceEmitters = emitters.get(performanceId);
         if (performanceEmitters != null) {
             String status = eventName.equals("SELECT") ? "SELECTED" : "SELECTABLE";
+            SeatEventResponse eventData = new SeatEventResponse(seatId, status);
             performanceEmitters.forEach(
                     (email, emitter) -> {
-                        // 특정 이메일로는 이벤트를 전송하지 않음
                         if (email.equals(memberEmail)) {
                             log.debug("공연 ID: {}, 이메일: {}로는 이벤트를 전송하지 않음", performanceId, email);
                             return;
                         }
                         try {
-                            emitter.send(
-                                    SseEmitter.event()
-                                            .name(eventName)
-                                            .data(
-                                                    "{\"seatId\":\""
-                                                            + data
-                                                            + "\",\"status\":\""
-                                                            + status
-                                                            + "\"}"));
+                            String jsonData = objectMapper.writeValueAsString(eventData);
+                            emitter.send(SseEmitter.event().name(eventName).data(jsonData));
                             log.debug(
                                     "공연 ID: {}, 이미터 ID: {}로 이벤트가 전송되었습니다. 이벤트: {}, 상태: {}",
                                     performanceId,
