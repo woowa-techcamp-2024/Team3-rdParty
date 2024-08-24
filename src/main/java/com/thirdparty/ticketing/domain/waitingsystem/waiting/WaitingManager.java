@@ -10,4 +10,6 @@ public interface WaitingManager {
     Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning);
 
     void removeMemberInfo(String email, long performanceId);
+
+    void removeMemberInfo(Set<String> emails, long performanceId);
 }

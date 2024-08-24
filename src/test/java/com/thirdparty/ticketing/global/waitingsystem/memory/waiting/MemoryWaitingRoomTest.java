@@ -1,9 +1,11 @@
 package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -180,6 +182,43 @@ class MemoryWaitingRoomTest {
 
             // then
             assertThat(room.get(performanceId)).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("대기방 사용자 정보 목록 제거 호출 시")
+    class RemoveMemberInfos {
+
+        @Test
+        @DisplayName("사용자 정보가 제거된다.")
+        void removeMemberInfo() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+            String email2 = "email2@email.com";
+            waitingRoom.enter(email, performanceId);
+            waitingRoom.enter(email2, performanceId);
+
+            //when
+            waitingRoom.removeMemberInfo(Set.of(email, email2), performanceId);
+
+            //then
+            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+            assertThat(waitingRoom.findWaitingMember(email2, performanceId)).isEmpty();
+        }
+
+        @Test
+        @DisplayName("사용자 정보가 대기방에 존재하지 않으면 무시한다.")
+        void ignore_WhenNotExistsWaitingRoom() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+
+            //when
+            Exception exception = catchException(() -> waitingRoom.removeMemberInfo(Set.of(email), performanceId));
+
+            //then
+            assertThat(exception).doesNotThrowAnyException();
         }
     }
 }
