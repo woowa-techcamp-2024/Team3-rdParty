@@ -72,7 +72,7 @@ function PerformanceSelect() {
         });
 
         // 현재 선택된 좌석이 다른 사용자에 의해 선택되었다면 선택 해제
-        if (data.status === "SELECTED" && String(selectedSeat) === data.seatId) {
+        if (data.status === "SELECTED" && selectedSeat === data.seatId) {
           setSelectedSeat(null);
           alert("선택하신 좌석이 다른 사용자에 의해 선택되었습니다. 다른 좌석을 선택해 주세요.");
         }
