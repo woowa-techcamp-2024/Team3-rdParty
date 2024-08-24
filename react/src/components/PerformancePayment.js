@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import config from '../config';
 import useAuthStore from '../store';
@@ -31,7 +31,7 @@ function PerformancePayment() {
     if (!seatId) return;
 
     try {
-      const response = await fetch(`${config.API_URL}/api/seats/release`, {
+      const dbResponse = await fetch(`${config.API_URL}/api/seats/release`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,19 +43,13 @@ function PerformancePayment() {
         })
       });
 
-      if (!response.ok) {
-        console.error('좌석 해제 중 오류가 발생했습니다.');
+      if (!dbResponse.ok) {
+        console.error('DB 좌석 해제 중 오류가 발생했습니다.');
       }
     } catch (err) {
       console.error('Seat release error:', err);
     }
   }, [seatId, accessToken, performanceId]);
-
-  useEffect(() => {
-    return () => {
-      releaseSeat();
-    };
-  }, [releaseSeat]);
 
   const handlePayment = async () => {
     setIsLoading(true);
@@ -79,7 +73,7 @@ function PerformancePayment() {
       }
 
       alert('결제가 완료되었습니다!');
-      navigate('/my-tickets'); // 내 티켓 페이지로 이동
+      navigate('/my-tickets');
     } catch (err) {
       setError(err.message);
       console.error('Payment error:', err);
@@ -93,35 +87,40 @@ function PerformancePayment() {
     navigate(`/performances/${performanceId}/select`);
   };
 
+  const handleGoHome = async () => {
+    await releaseSeat();
+    navigate('/');
+  };
+
   return (
-    <div className="content" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h2 style={{ textAlign: 'center' }}>공연 결제</h2>
-      <p>공연 ID: {performanceId}</p>
-      <p>선택한 좌석: {seatInfo}</p>
-      <p>결제 금액: 50,000원</p>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-        <button 
-          style={{ ...buttonStyle, opacity: isLoading ? 0.5 : 1 }} 
-          onClick={handlePayment} 
-          disabled={isLoading}
-        >
-          {isLoading ? '처리 중...' : '결제하기'}
-        </button>
-        <button 
-          onClick={handleBackToSeatSelection}
-          style={{ ...buttonStyle, backgroundColor: '#2196F3' }}
-        >
-          좌석 선택으로 돌아가기
-        </button>
-        <button 
-          onClick={() => navigate('/')} 
-          style={{ ...buttonStyle, backgroundColor: '#f44336' }}
-        >
-          홈
-        </button>
+      <div className="content" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+        <h2 style={{ textAlign: 'center' }}>공연 결제</h2>
+        <p>공연 ID: {performanceId}</p>
+        <p>선택한 좌석: {seatInfo}</p>
+        <p>결제 금액: 50,000원</p>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          <button
+              style={{ ...buttonStyle, opacity: isLoading ? 0.5 : 1 }}
+              onClick={handlePayment}
+              disabled={isLoading}
+          >
+            {isLoading ? '처리 중...' : '결제하기'}
+          </button>
+          <button
+              onClick={handleBackToSeatSelection}
+              style={{ ...buttonStyle, backgroundColor: '#2196F3' }}
+          >
+            좌석 선택으로 돌아가기
+          </button>
+          <button
+              onClick={handleGoHome}
+              style={{ ...buttonStyle, backgroundColor: '#f44336' }}
+          >
+            홈
+          </button>
+        </div>
       </div>
-    </div>
   );
 }
 
