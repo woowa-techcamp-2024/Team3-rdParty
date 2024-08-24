@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.thirdparty'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
+    implementation 'com.amazonaws:aws-lambda-java-events:3.13.0'
+    implementation 'com.amazonaws:aws-lambda-java-log4j2:1.6.0'
+    testImplementation 'com.amazonaws:aws-lambda-java-tests:1.1.1'
+}
+
+test {
+    useJUnitPlatform()
+}
