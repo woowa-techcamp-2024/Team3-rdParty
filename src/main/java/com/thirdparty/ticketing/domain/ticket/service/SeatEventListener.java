@@ -1,6 +1,6 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -9,7 +9,7 @@ import com.thirdparty.ticketing.domain.ticket.dto.event.SeatEvent;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class SeatEventListener {
     private final TicketSseController ticketSseController;
