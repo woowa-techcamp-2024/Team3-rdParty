@@ -18,6 +18,7 @@ import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.ticket.Ticket;
 import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
+import com.thirdparty.ticketing.domain.ticket.dto.event.SeatEvent;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
@@ -57,6 +58,10 @@ public class ReservationTransactionService implements ReservationService {
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         seat.assignByMember(member);
+
+        // 좌석 선택 이벤트 발행
+        eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
+
         scheduler.schedule(
                 () -> reservationManager.releaseSeat(member, seatId),
                 reservationReleaseDelay,
@@ -71,7 +76,11 @@ public class ReservationTransactionService implements ReservationService {
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-        reservationManager.releaseSeat(member, seatSelectionRequest.getSeatId());
+        Long seatId = seatSelectionRequest.getSeatId();
+        reservationManager.releaseSeat(member, seatId);
+
+        // 좌석 해제 이벤트 발행
+        eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.RELEASE));
     }
 
     @Override

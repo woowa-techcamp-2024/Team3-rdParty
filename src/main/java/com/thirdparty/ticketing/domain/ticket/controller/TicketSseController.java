@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.springframework.scheduling.annotation.Async;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.LoginMember;
+import com.thirdparty.ticketing.domain.ticket.dto.event.SeatEvent;
 import com.thirdparty.ticketing.domain.ticket.dto.sse.SeatEventResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -59,52 +63,39 @@ public class TicketSseController {
         }
     }
 
-    @PostMapping("/performances/{performanceId}/seats/{seatId}/select")
-    public void selectSeat(
-            @LoginMember String memberEmail,
-            @PathVariable("performanceId") Long performanceId,
-            @PathVariable("seatId") Long seatId) {
-        sendEventToPerformanceAsync(memberEmail, performanceId, "SELECT", seatId);
-        log.debug(
-                "좌석 선택 요청이 접수되었고 공연 ID: {}, 좌석 ID: {}에 대한 비동기 브로드캐스트가 시작되었습니다",
-                performanceId,
-                seatId);
-    }
+    public void sendEventToPerformance(SeatEvent event) {
+        Long performanceId = getPerformanceIdFromRequest();
+        if (performanceId == null) {
+            log.error("performanceId를 찾을 수 없습니다.");
+            return;
+        }
 
-    @PostMapping("/performances/{performanceId}/seats/{seatId}/release")
-    public void releaseSeat(
-            @LoginMember String memberEmail,
-            @PathVariable("performanceId") Long performanceId,
-            @PathVariable("seatId") Long seatId) {
-        sendEventToPerformanceAsync(memberEmail, performanceId, "RELEASE", seatId);
-        log.debug(
-                "좌석 해제 요청이 접수되었고 공연 ID: {}, 좌석 ID: {}에 대한 비동기 브로드캐스트가 시작되었습니다",
-                performanceId,
-                seatId);
-    }
-
-    @Async
-    public void sendEventToPerformanceAsync(
-            String memberEmail, Long performanceId, String eventName, Long seatId) {
-        log.debug("공연 ID: {}, 이벤트: {}에 대한 비동기 브로드캐스트를 시작합니다", performanceId, eventName);
+        log.debug("공연 ID: {}, 이벤트: {}에 대한 브로드캐스트를 시작합니다", performanceId, event.getEventType());
         ConcurrentMap<String, SseEmitter> performanceEmitters = emitters.get(performanceId);
         if (performanceEmitters != null) {
-            String status = eventName.equals("SELECT") ? "SELECTED" : "SELECTABLE";
-            SeatEventResponse eventData = new SeatEventResponse(seatId, status);
+            String status =
+                    event.getEventType().equals(SeatEvent.EventType.SELECT)
+                            ? "SELECTED"
+                            : "SELECTABLE";
             performanceEmitters.forEach(
                     (email, emitter) -> {
-                        if (email.equals(memberEmail)) {
+                        if (email.equals(event.getMemberEmail())) {
                             log.debug("공연 ID: {}, 이메일: {}로는 이벤트를 전송하지 않음", performanceId, email);
                             return;
                         }
                         try {
+                            SeatEventResponse eventData =
+                                    new SeatEventResponse(event.getSeatId(), status);
                             String jsonData = objectMapper.writeValueAsString(eventData);
-                            emitter.send(SseEmitter.event().name(eventName).data(jsonData));
+                            emitter.send(
+                                    SseEmitter.event()
+                                            .name(event.getEventType().toString())
+                                            .data(jsonData));
                             log.debug(
                                     "공연 ID: {}, 이미터 ID: {}로 이벤트가 전송되었습니다. 이벤트: {}, 상태: {}",
                                     performanceId,
                                     email,
-                                    eventName,
+                                    event.getEventType(),
                                     status);
                         } catch (Exception e) {
                             log.error(
@@ -116,6 +107,23 @@ public class TicketSseController {
                         }
                     });
         }
-        log.debug("공연 ID: {}, 이벤트: {}에 대한 비동기 브로드캐스트가 완료되었습니다", performanceId, eventName);
+        log.debug("공연 ID: {}, 이벤트: {}에 대한 브로드캐스트가 완료되었습니다", performanceId, event.getEventType());
+    }
+
+    private Long getPerformanceIdFromRequest() {
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            String performanceIdString = request.getHeader("performanceId");
+            if (performanceIdString != null) {
+                try {
+                    return Long.parseLong(performanceIdString);
+                } catch (NumberFormatException e) {
+                    log.error("performanceId 헤더 값을 Long 으로 변환할 수 없습니다: {}", performanceIdString);
+                }
+            }
+        }
+        return null;
     }
 }
