@@ -30,6 +30,7 @@ public class MemoryRunningManager implements RunningManager {
 
     @Override
     public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
+        waitingMembers.forEach(WaitingMember::enter);
         runningCounter.increment(performanceId, waitingMembers.size());
         runningRoom.enter(performanceId, waitingMembers);
     }
@@ -40,7 +41,7 @@ public class MemoryRunningManager implements RunningManager {
     }
 
     @Override
-    public void removeExpiredMemberInfo(long performanceId) {
-        runningRoom.removeExpiredMemberInfo(performanceId);
+    public Set<String> removeExpiredMemberInfo(long performanceId) {
+        return runningRoom.removeExpiredMemberInfo(performanceId);
     }
 }
