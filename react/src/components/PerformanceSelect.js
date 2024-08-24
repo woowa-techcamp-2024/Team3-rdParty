@@ -14,7 +14,7 @@ function PerformanceSelect() {
   const [isWaiting, setIsWaiting] = useState(false);
   const { accessToken } = useAuthStore(state => ({ accessToken: state.accessToken }));
   const setRemainingCount = useCounterStore(state => state.setRemainingCount);
-  const { connectSse, addEventListenerToSse, removeEventListenerFromSse } = useSseStore();
+  const { connectSse, disconnectSse, addEventListenerToSse, removeEventListenerFromSse } = useSseStore();
   const navigate = useNavigate();
 
   const getCommonHeaders = useCallback((includeContentType = true) => {
@@ -71,7 +71,6 @@ function PerformanceSelect() {
           );
         });
 
-        // 현재 선택된 좌석이 다른 사용자에 의해 선택되었다면 선택 해제
         if (data.status === "SELECTED" && selectedSeat === data.seatId) {
           setSelectedSeat(null);
           alert("선택하신 좌석이 다른 사용자에 의해 선택되었습니다. 다른 좌석을 선택해 주세요.");
@@ -83,21 +82,18 @@ function PerformanceSelect() {
   }, [selectedSeat]);
 
   useEffect(() => {
+    disconnectSse();
+    connectSse(performanceId, accessToken);
     fetchSeats();
 
-    // 새로운 SSE 연결 생성
-    connectSse(performanceId, accessToken);
-
-    // SELECT와 RELEASE 이벤트 모두 동일한 핸들러를 사용합니다.
     addEventListenerToSse('SELECT', handleSeatEvent);
     addEventListenerToSse('RELEASE', handleSeatEvent);
 
     return () => {
       removeEventListenerFromSse('SELECT', handleSeatEvent);
       removeEventListenerFromSse('RELEASE', handleSeatEvent);
-      // SSE 연결은 여기서 해제하지 않습니다.
     };
-  }, [performanceId, accessToken, connectSse, addEventListenerToSse, removeEventListenerFromSse, fetchSeats, handleSeatEvent]);
+  }, [performanceId, accessToken, connectSse, disconnectSse, addEventListenerToSse, removeEventListenerFromSse, fetchSeats, handleSeatEvent]);
 
   const selectSeat = useCallback((seatId) => {
     setSelectedSeat(seatId);
@@ -106,7 +102,6 @@ function PerformanceSelect() {
   const handlePayment = useCallback(async () => {
     if (selectedSeat) {
       try {
-
         const dbResponse = await fetch(`${config.API_URL}/api/seats/select`, {
           method: 'POST',
           headers: getCommonHeaders(),

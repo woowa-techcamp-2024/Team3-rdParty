@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import config from '../config';
 import useAuthStore from '../store';
@@ -31,7 +31,6 @@ function PerformancePayment() {
     if (!seatId) return;
 
     try {
-      // DB 요청
       const dbResponse = await fetch(`${config.API_URL}/api/seats/release`, {
         method: 'POST',
         headers: {
@@ -51,12 +50,6 @@ function PerformancePayment() {
       console.error('Seat release error:', err);
     }
   }, [seatId, accessToken, performanceId]);
-
-  useEffect(() => {
-    return () => {
-      releaseSeat();
-    };
-  }, [releaseSeat]);
 
   const handlePayment = async () => {
     setIsLoading(true);
@@ -80,7 +73,7 @@ function PerformancePayment() {
       }
 
       alert('결제가 완료되었습니다!');
-      navigate('/my-tickets'); // 내 티켓 페이지로 이동
+      navigate('/my-tickets');
     } catch (err) {
       setError(err.message);
       console.error('Payment error:', err);
@@ -92,6 +85,11 @@ function PerformancePayment() {
   const handleBackToSeatSelection = async () => {
     await releaseSeat();
     navigate(`/performances/${performanceId}/select`);
+  };
+
+  const handleGoHome = async () => {
+    await releaseSeat();
+    navigate('/');
   };
 
   return (
@@ -116,7 +114,7 @@ function PerformancePayment() {
             좌석 선택으로 돌아가기
           </button>
           <button
-              onClick={() => navigate('/')}
+              onClick={handleGoHome}
               style={{ ...buttonStyle, backgroundColor: '#f44336' }}
           >
             홈
