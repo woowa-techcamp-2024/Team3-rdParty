@@ -5,6 +5,20 @@ plugins {
 group = 'com.thirdparty'
 version = '0.0.1-SNAPSHOT'
 
+jar {
+    // JAR 파일 이름 설정
+    archiveBaseName = 'waiting-system'
+    archiveVersion = '1.0.0'
+
+    // 모든 의존성을 JAR에 포함
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    // 중복되는 파일 처리 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 repositories {
     mavenCentral()
 }
