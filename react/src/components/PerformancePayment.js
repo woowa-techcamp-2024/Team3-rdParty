@@ -31,7 +31,8 @@ function PerformancePayment() {
     if (!seatId) return;
 
     try {
-      const response = await fetch(`${config.API_URL}/api/seats/release`, {
+      // DB 요청
+      const dbResponse = await fetch(`${config.API_URL}/api/seats/release`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,8 +44,21 @@ function PerformancePayment() {
         })
       });
 
-      if (!response.ok) {
-        console.error('좌석 해제 중 오류가 발생했습니다.');
+      if (!dbResponse.ok) {
+        console.error('DB 좌석 해제 중 오류가 발생했습니다.');
+      }
+
+      // SSE 이벤트 요청
+      const sseResponse = await fetch(`${config.API_URL}/api/performances/${performanceId}/seats/${seatId}/release`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'performanceId': `${performanceId}`
+        }
+      });
+
+      if (!sseResponse.ok) {
+        console.error('SSE 좌석 해제 이벤트 발생 중 오류가 발생했습니다.');
       }
     } catch (err) {
       console.error('Seat release error:', err);
@@ -101,22 +115,22 @@ function PerformancePayment() {
       <p>결제 금액: 50,000원</p>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-        <button 
-          style={{ ...buttonStyle, opacity: isLoading ? 0.5 : 1 }} 
-          onClick={handlePayment} 
-          disabled={isLoading}
+        <button
+           style={{ ...buttonStyle, opacity: isLoading ? 0.5 : 1 }}
+           onClick={handlePayment}
+           disabled={isLoading}
         >
           {isLoading ? '처리 중...' : '결제하기'}
         </button>
-        <button 
-          onClick={handleBackToSeatSelection}
+        <button
+           onClick={handleBackToSeatSelection}
           style={{ ...buttonStyle, backgroundColor: '#2196F3' }}
         >
           좌석 선택으로 돌아가기
         </button>
-        <button 
-          onClick={() => navigate('/')} 
-          style={{ ...buttonStyle, backgroundColor: '#f44336' }}
+        <button
+           onClick={() => navigate('/')}
+           style={{ ...buttonStyle, backgroundColor: '#f44336' }}
         >
           홈
         </button>
