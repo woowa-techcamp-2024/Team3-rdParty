@@ -168,7 +168,7 @@ public class Handler implements RequestHandler<APIGatewayProxyRequestEvent, APIG
 
                             if (list.isEmpty()) {
                                 infoLog(3, userNumber, "남은 좌석 없음. 30초 대기");
-                                Thread.sleep(30000);
+                                Thread.sleep(15000);
                                 skippedCount.incrementAndGet();
                                 infoLog(3, userNumber, "남은 좌석 없음. 시나리오 종료.");
                                 leaveWaiting(uri, authorizationHeader);
