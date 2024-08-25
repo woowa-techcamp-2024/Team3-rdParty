@@ -1,8 +1,8 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import java.util.Optional;
-
 import java.util.Set;
+
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -52,7 +52,7 @@ public class RedisWaitingRoom implements WaitingRoom {
     }
 
     public void removeMemberInfo(Set<String> emails, long performanceId) {
-        if(emails.isEmpty()) {
+        if (emails.isEmpty()) {
             return;
         }
         waitingRoom.delete(getWaitingRoomKey(performanceId), emails.toArray(String[]::new));

@@ -4,16 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 import java.time.ZonedDateTime;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,24 +20,29 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.support.SpyEventPublisher;
+import com.thirdparty.ticketing.support.TestContainerStarter;
+
 @SpringBootTest
 class WaitingSystemTest extends TestContainerStarter {
 
     private WaitingSystem waitingSystem;
 
-    @Autowired
-    private WaitingManager waitingManager;
+    @Autowired private WaitingManager waitingManager;
 
-    @Autowired
-    private RunningManager runningManager;
+    @Autowired private RunningManager runningManager;
 
     private SpyEventPublisher eventPublisher;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
     private ZSetOperations<String, String> rawRunningRoom;
     private HashOperations<String, String, String> rawWaitingRoom;
@@ -129,7 +127,10 @@ class WaitingSystemTest extends TestContainerStarter {
             score = fiveMinuteAgo.toEpochSecond();
 
             WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, fiveMinuteAgo);
-            rawWaitingRoom.put(getWaitingRoomKey(performanceId), email, objectMapper.writeValueAsString(waitingMember));
+            rawWaitingRoom.put(
+                    getWaitingRoomKey(performanceId),
+                    email,
+                    objectMapper.writeValueAsString(waitingMember));
             rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
         }
 
@@ -146,10 +147,7 @@ class WaitingSystemTest extends TestContainerStarter {
 
             // then
             Set<String> emails = rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1);
-            assertThat(emails)
-                    .hasSize(1)
-                    .first()
-                    .isEqualTo(anotherEmail);
+            assertThat(emails).hasSize(1).first().isEqualTo(anotherEmail);
         }
 
         @Test
@@ -160,17 +158,17 @@ class WaitingSystemTest extends TestContainerStarter {
             ZonedDateTime now = ZonedDateTime.now();
             WaitingMember waitingMember = new WaitingMember(anotherEmail, performanceId, 2, now);
             rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
-            rawWaitingRoom.put(getWaitingRoomKey(performanceId), anotherEmail, objectMapper.writeValueAsString(waitingMember));
+            rawWaitingRoom.put(
+                    getWaitingRoomKey(performanceId),
+                    anotherEmail,
+                    objectMapper.writeValueAsString(waitingMember));
 
             // when
             waitingSystem.moveUserToRunning(performanceId);
 
             // then
             Set<String> emails = rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1);
-            assertThat(emails)
-                    .hasSize(1)
-                    .first()
-                    .isEqualTo(anotherEmail);
+            assertThat(emails).hasSize(1).first().isEqualTo(anotherEmail);
         }
 
         @Test

@@ -5,11 +5,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -56,15 +56,16 @@ public class MemoryRunningRoom implements RunningRoom {
 
     public Set<String> removeExpiredMemberInfo(long performanceId) {
         ConcurrentMap<String, WaitingMember> performanceRoom = room.get(performanceId);
-        if(performanceRoom == null) {
+        if (performanceRoom == null) {
             return Set.of();
         }
 
         ZonedDateTime fiveMinutesAgo = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE);
-        Set<String> removeMemberEmails = performanceRoom.entrySet().stream()
-                .filter(entry -> entry.getValue().getEnteredAt().isBefore(fiveMinutesAgo))
-                .map(Entry::getKey)
-                .collect(Collectors.toSet());
+        Set<String> removeMemberEmails =
+                performanceRoom.entrySet().stream()
+                        .filter(entry -> entry.getValue().getEnteredAt().isBefore(fiveMinutesAgo))
+                        .map(Entry::getKey)
+                        .collect(Collectors.toSet());
         removeMemberEmails.forEach(performanceRoom::remove);
         return removeMemberEmails;
     }
