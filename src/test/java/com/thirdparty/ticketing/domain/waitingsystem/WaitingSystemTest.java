@@ -15,10 +15,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
@@ -35,12 +38,14 @@ class WaitingSystemTest extends TestContainerStarter {
 
     @Autowired private RunningManager runningManager;
 
-    private ZSetOperations<String, String> rawRunningRoom;
-
     private SpyEventPublisher eventPublisher;
 
     @Autowired private StringRedisTemplate redisTemplate;
 
+    @Autowired private ObjectMapper objectMapper;
+
+    private ZSetOperations<String, String> rawRunningRoom;
+    private HashOperations<String, String, String> rawWaitingRoom;
     private ValueOperations<String, String> rawRunningCounter;
 
     @BeforeEach
@@ -49,6 +54,7 @@ class WaitingSystemTest extends TestContainerStarter {
         waitingSystem = new WaitingSystem(waitingManager, runningManager, eventPublisher);
         rawRunningRoom = redisTemplate.opsForZSet();
         rawRunningCounter = redisTemplate.opsForValue();
+        rawWaitingRoom = redisTemplate.opsForHash();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
@@ -58,6 +64,10 @@ class WaitingSystemTest extends TestContainerStarter {
 
     private String getRunningCounterKey(long performanceId) {
         return "running_counter:" + performanceId;
+    }
+
+    private String getWaitingRoomKey(long performanceId) {
+        return "waiting_room:" + performanceId;
     }
 
     @Nested
@@ -104,27 +114,67 @@ class WaitingSystemTest extends TestContainerStarter {
     @DisplayName("대기열 사용자 작업 가능 공간 이동 호출 시")
     class MoveUserToRunningTest {
 
+        private long performanceId;
+        private String email;
+        private ZonedDateTime fiveMinuteAgo;
+        private long score;
+
+        @BeforeEach
+        void setUp() throws JsonProcessingException {
+            performanceId = 1;
+            email = "email@email.com";
+            fiveMinuteAgo = ZonedDateTime.now().minusMinutes(5);
+            score = fiveMinuteAgo.toEpochSecond();
+
+            WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, fiveMinuteAgo);
+            rawWaitingRoom.put(
+                    getWaitingRoomKey(performanceId),
+                    email,
+                    objectMapper.writeValueAsString(waitingMember));
+            rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
+        }
+
         @Test
         @DisplayName("작업 공간의 작업 시간이 만료된 사용자를 제거한다.")
-        void removeExpiredMemberInfo() {
+        void removeExpiredMemberInfoFromRunningRoom() {
             // given
-            long performanceId = 1;
-            String email = "email@email.com";
-            long score = ZonedDateTime.now().minusMinutes(5).toEpochSecond();
-            rawRunningRoom.add(getRunningRoomKey(performanceId), email, score);
+            String anotherEmail = "anotherEmail@email.com";
+            ZonedDateTime now = ZonedDateTime.now();
+            rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
 
             // when
             waitingSystem.moveUserToRunning(performanceId);
 
             // then
-            assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
+            Set<String> emails = rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1);
+            assertThat(emails).hasSize(1).first().isEqualTo(anotherEmail);
+        }
+
+        @Test
+        @DisplayName("대기방의 시간이 만료된 사용자를 제거한다.")
+        void removeExpiredMemberInfoFromWaitingRoom() throws JsonProcessingException {
+            // given
+            String anotherEmail = "anotherEmail@email.com";
+            ZonedDateTime now = ZonedDateTime.now();
+            WaitingMember waitingMember = new WaitingMember(anotherEmail, performanceId, 2, now);
+            rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
+            rawWaitingRoom.put(
+                    getWaitingRoomKey(performanceId),
+                    anotherEmail,
+                    objectMapper.writeValueAsString(waitingMember));
+
+            // when
+            waitingSystem.moveUserToRunning(performanceId);
+
+            // then
+            Set<String> emails = rawRunningRoom.range(getRunningRoomKey(performanceId), 0, -1);
+            assertThat(emails).hasSize(1).first().isEqualTo(anotherEmail);
         }
 
         @Test
         @DisplayName("작업 가능 공간의 수용 가능한 인원이 감소한다.")
         void decrementAvailableCount() {
             // given
-            long performanceId = 1;
             int memberCount = 25;
             for (int i = 0; i < memberCount; i++) {
                 waitingManager.enterWaitingRoom("email" + i + "@email.com", performanceId);
@@ -143,7 +193,6 @@ class WaitingSystemTest extends TestContainerStarter {
         @DisplayName("더 이상 인원을 수용할 수 없으면 작업 가능 공간에 사용자를 추가하지 않는다.")
         void doNotMoveUserToRunning_WhenNoMoreAvailableSpace() {
             // given
-            long performanceId = 1;
             for (int i = 0; i < 100; i++) {
                 waitingSystem.enterWaitingRoom("email" + i + "@email.com", performanceId);
             }

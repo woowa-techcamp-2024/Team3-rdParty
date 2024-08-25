@@ -33,4 +33,8 @@ public class WaitingMember {
         this.waitingCount = waitingCount;
         this.enteredAt = enteredAt;
     }
+
+    public void enter() {
+        this.enteredAt = ZonedDateTime.now();
+    }
 }
