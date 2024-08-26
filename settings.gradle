@@ -1,3 +1,29 @@
 rootProject.name = 'ticketing'
+
 include 'lambda'
+
+include 'core:exception-core'
+findProject(':core:exception-core')?.name = 'exception-core'
+include 'core:test-container-core'
+findProject(':core:test-container-core')?.name = 'test-container-core'
+
+include 'domain:jpa-domain'
+findProject(':domain:jpa-domain')?.name = 'jpa-domain'
+include 'domain:redis-domain'
+findProject(':domain:redis-domain')?.name = 'redis-domain'
+
+include 'support:event-support'
+findProject(':support:event-support')?.name = 'event-support'
+
+include 'api:api-support:exception-handler'
+findProject(':api:api-support:exception-handler')?.name = 'exception-handler'
+include 'api:api-support:rest-docs-support'
+findProject(':api:api-support:rest-docs-support')?.name = 'rest-docs-support'
+include 'api:api-support:security-support'
+findProject(':api:api-support:security-support')?.name = 'security-support'
+
+include 'api:ticketing-api'
+findProject(':api:ticketing-api')?.name = 'ticketing-api'
+include 'api:waiting-api'
+findProject(':api:waiting-api')?.name = 'waiting-api'
 
