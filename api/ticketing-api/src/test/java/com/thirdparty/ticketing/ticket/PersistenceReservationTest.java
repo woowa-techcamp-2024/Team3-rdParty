@@ -27,12 +27,13 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.exception.TicketingException;
+import com.thirdparty.ticketing.testcontainer.RedisTestContainerStarter;
 import com.thirdparty.ticketing.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.ticket.service.ReservationService;
 
 @SpringBootTest
-public class PersistenceReservationTest {
+public class PersistenceReservationTest extends RedisTestContainerStarter {
     private static final Logger log = LoggerFactory.getLogger(PersistenceReservationTest.class);
 
     @Autowired

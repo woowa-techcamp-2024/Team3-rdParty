@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.thirdparty.ticketing.testcontainer.RedisTestContainerStarter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,7 @@ import com.thirdparty.ticketing.jpa.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.jpa.zone.Zone;
 import com.thirdparty.ticketing.jpa.zone.repository.ZoneRepository;
 import com.thirdparty.ticketing.redis.repository.LettuceSeatLockRepository;
+import com.thirdparty.ticketing.testcontainer.RedisTestContainerStarter;
 import com.thirdparty.ticketing.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.ticket.service.ReservationService;
 
