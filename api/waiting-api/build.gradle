@@ -1,0 +1,12 @@
+bootJar { enabled = true }
+jar { enabled = true }
+
+dependencies {
+    implementation project (':core:exception-core')
+    implementation project (':core:test-container-core')
+    implementation project (':domain:jpa-domain')
+    implementation project (':domain:redis-domain')
+    implementation project (':support:event-support')
+    implementation project(':api:api-support:security-support')
+    implementation project(':api:api-support:rest-docs-support')
+}

@@ -1,0 +1,12 @@
+package com.thirdparty.ticketing.ticket.service;
+
+import com.thirdparty.ticketing.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.ticket.dto.request.TicketPaymentRequest;
+
+public interface ReservationService {
+    void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest);
+
+    void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest);
+
+    void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest);
+}

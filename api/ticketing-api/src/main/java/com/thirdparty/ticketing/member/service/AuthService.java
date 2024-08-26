@@ -1,0 +1,35 @@
+package com.thirdparty.ticketing.member.service;
+
+import java.util.NoSuchElementException;
+
+import jakarta.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.thirdparty.ticketing.jpa.member.Member;
+import com.thirdparty.ticketing.jpa.member.repository.MemberRepository;
+import com.thirdparty.ticketing.member.dto.response.LoginResponse;
+import com.thirdparty.ticketing.security.jwt.JwtProvider;
+import com.thirdparty.ticketing.security.service.PasswordEncoder;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+
+    public LoginResponse login(String email, String rawPassword) {
+        Member member =
+                memberRepository
+                        .findByEmail(email)
+                        .orElseThrow(() -> new NoSuchElementException("이메일/비밀번호가 일치하지 않습니다."));
+        passwordEncoder.checkMatches(member, rawPassword);
+        String accessToken = jwtProvider.createAccessToken(member);
+        return LoginResponse.of(member, accessToken);
+    }
+}
