@@ -62,7 +62,8 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             LettuceSeatRepository lettuceSeatRepository,
             EventPublisher eventPublisher,
-            ReservationManager reservationManager) {
+            @Qualifier("reservationManagerTransactionalImpl")
+                    ReservationManager reservationManager) {
         return new ReservationRedisService(
                 memberRepository,
                 eventPublisher,
@@ -79,7 +80,8 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             SeatRepository seatRepository,
             EventPublisher eventPublisher,
-            ReservationManager reservationManager) {
+            @Qualifier("reservationManagerTransactionalImpl")
+                    ReservationManager reservationManager) {
         LockSeatStrategy lockSeatStrategy = new NaiveSeatStrategy(seatRepository);
         return new ReservationTransactionService(
                 ticketRepository,
@@ -97,7 +99,7 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             SeatRepository seatRepository,
             EventPublisher eventPublisher,
-            ReservationManager reservationManager) {
+            ReservationManagerTransactionalImpl reservationManagerTransactionalImpl) {
         LockSeatStrategy lockSeatStrategy = new OptimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
                 ticketRepository,
@@ -105,7 +107,7 @@ public class ReservationServiceContainer {
                 paymentProcessor,
                 lockSeatStrategy,
                 eventPublisher,
-                reservationManager);
+                reservationManagerTransactionalImpl);
     }
 
     @Bean
@@ -115,7 +117,7 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             SeatRepository seatRepository,
             EventPublisher eventPublisher,
-            ReservationManager reservationManager) {
+            ReservationManagerTransactionalImpl reservationManagerTransactionalImpl) {
         LockSeatStrategy lockSeatStrategy = new PessimisticLockSeatStrategy(seatRepository);
         return new ReservationTransactionService(
                 ticketRepository,
@@ -123,6 +125,6 @@ public class ReservationServiceContainer {
                 paymentProcessor,
                 lockSeatStrategy,
                 eventPublisher,
-                reservationManager);
+                reservationManagerTransactionalImpl);
     }
 }
