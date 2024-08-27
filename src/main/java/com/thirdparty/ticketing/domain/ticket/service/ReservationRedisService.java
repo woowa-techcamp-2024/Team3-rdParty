@@ -69,7 +69,6 @@ public class ReservationRedisService implements ReservationService {
                 () -> reservationManager.releaseSeat(member, seatId),
                 reservationReleaseDelay,
                 TimeUnit.SECONDS);
-        // 좌석 release는 주석처리
     }
 
     @Override
@@ -94,10 +93,16 @@ public class ReservationRedisService implements ReservationService {
                         .seat(Seat.builder().seatId(seat.getSeatId()).build())
                         .member(loginMember)
                         .build();
-
-        lettuceSeatRepository.save(seat);
-        // 나중에 티켓이 저장이 안되었을 때 강제로 저장하는 방법 고민
-        ticketRepository.save(ticket);
+        try {
+            seat.markAsPaid();
+            ticketRepository.save(ticket);
+        } catch (Exception e) {
+            log.error("Failed to save ticket: {}", e.getMessage());
+            seat.markAsSelected();
+            throw new TicketingException(ErrorCode.PAYMENT_FAILED);
+        } finally {
+            lettuceSeatRepository.save(seat);
+        }
     }
 
     @Override
@@ -109,10 +114,7 @@ public class ReservationRedisService implements ReservationService {
         if (!seat.isAssignedByMember(loginMember)) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
-
-        seat.markAsPendingPayment();
         paymentProcessor.processPayment(new PaymentRequest());
-        seat.markAsPaid();
         PaymentEvent paymentEvent = new PaymentEvent(loginMember.getEmail());
         eventPublisher.publish(paymentEvent);
     }
