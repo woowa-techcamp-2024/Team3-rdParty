@@ -9,8 +9,10 @@ import com.thirdparty.ticketing.dto.SettingInfo;
 public class Test {
     public static void main(String[] args) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        String value =
-                objectMapper.writeValueAsString(new SettingInfo("http://localhost:8080", 0, 1, 5));
+        String value = objectMapper.writeValueAsString(new SettingInfo("http://localhost:8080",
+                0,
+                1,
+                5));
         APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent();
         request.setBody(value);
 
