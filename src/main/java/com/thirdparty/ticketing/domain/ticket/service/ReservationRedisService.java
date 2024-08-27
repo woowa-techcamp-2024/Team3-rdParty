@@ -45,7 +45,6 @@ public class ReservationRedisService implements ReservationService {
                 lettuceSeatRepository
                         .findBySeatId(seatId)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
-        redisSeat.checkSelectable(); // 좌석이 선택 가능한지 확인 -> 디비 부하를 줄이기 위해 배치
 
         Member member =
                 memberRepository
@@ -53,7 +52,8 @@ public class ReservationRedisService implements ReservationService {
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         redisSeat.assignByMember(member);
-        lettuceSeatRepository.update(redisSeat);
+        lettuceSeatRepository.selectSeat(redisSeat);
+        // event publish
         eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
     }
 

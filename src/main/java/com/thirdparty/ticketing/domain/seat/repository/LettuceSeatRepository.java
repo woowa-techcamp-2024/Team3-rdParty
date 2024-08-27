@@ -13,7 +13,10 @@ import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.seat.RedisSeat;
 import com.thirdparty.ticketing.domain.seat.SeatStatus;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class LettuceSeatRepository {
     private static final String SEAT_DATA_KEY = "seat-data-";
     private final HashOperations<String, String, String> seatData;
@@ -38,6 +41,11 @@ public class LettuceSeatRepository {
                         SeatStatus.valueOf(seatMap.get("seatStatus")));
 
         return Optional.of(redisSeat);
+    }
+
+    public void selectSeat(RedisSeat redisSeat) {
+        update(redisSeat);
+        log.info("Seat {} selected by member {}", redisSeat.getSeatId(), redisSeat.getMemberId());
     }
 
     public void update(RedisSeat redisSeat) {

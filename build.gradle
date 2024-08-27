@@ -114,6 +114,6 @@ tasks.register('copyYml') {
 }
 
 build {
-    dependsOn copyDocument
+    mustRunAfter copyDocument
     dependsOn copyYml
 }

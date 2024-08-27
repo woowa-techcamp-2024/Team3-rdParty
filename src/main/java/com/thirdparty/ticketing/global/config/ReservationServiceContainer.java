@@ -23,13 +23,13 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 @Configuration
 public class ReservationServiceContainer {
     @Bean
+    @Primary
     public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient, ReservationRedisService reservationRedisService) {
         return new RedissonReservationServiceProxy(redissonClient, reservationRedisService);
     }
 
     @Bean
-    @Primary
     public ReservationService lettuceReservationServiceProxy(
             LettuceRepository lettuceRepository, ReservationRedisService reservationRedisService) {
         return new LettuceReservationServiceProxy(lettuceRepository, reservationRedisService);
