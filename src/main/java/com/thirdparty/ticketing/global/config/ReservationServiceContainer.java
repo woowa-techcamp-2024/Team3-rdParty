@@ -24,20 +24,14 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 public class ReservationServiceContainer {
     @Bean
     public ReservationService redissonReservationServiceProxy(
-            RedissonClient redissonClient,
-            @Qualifier("cacheReservationTransactionService")
-                    ReservationTransactionService cacheReservationTransactionService) {
-        return new RedissonReservationServiceProxy(
-                redissonClient, cacheReservationTransactionService);
+            RedissonClient redissonClient, ReservationRedisService reservationRedisService) {
+        return new RedissonReservationServiceProxy(redissonClient, reservationRedisService);
     }
 
     @Bean
     public ReservationService lettuceReservationServiceProxy(
-            LettuceRepository lettuceRepository,
-            @Qualifier("cacheReservationTransactionService")
-                    ReservationTransactionService cacheReservationTransactionService) {
-        return new LettuceReservationServiceProxy(
-                lettuceRepository, cacheReservationTransactionService);
+            LettuceRepository lettuceRepository, ReservationRedisService reservationRedisService) {
+        return new LettuceReservationServiceProxy(lettuceRepository, reservationRedisService);
     }
 
     @Primary
@@ -62,14 +56,13 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             LettuceSeatRepository lettuceSeatRepository,
             EventPublisher eventPublisher,
-            @Qualifier("reservationManagerTransactionalImpl")
-                    ReservationManager reservationManager) {
+            SeatRepository seatRepository) {
         return new ReservationRedisService(
                 memberRepository,
                 eventPublisher,
                 paymentProcessor,
                 lettuceSeatRepository,
-                reservationManager,
+                seatRepository,
                 ticketRepository);
     }
 

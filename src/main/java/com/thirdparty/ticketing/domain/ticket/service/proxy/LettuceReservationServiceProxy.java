@@ -5,7 +5,7 @@ import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
-import com.thirdparty.ticketing.domain.ticket.service.ReservationTransactionService;
+import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class LettuceReservationServiceProxy implements ReservationServiceProxy {
 
     private final LettuceRepository lettuceRepository;
-    private final ReservationTransactionService reservationTransactionService;
+    private final ReservationService reservationService;
 
     private void performSeatAction(String seatId, Runnable action) {
         int retryLimit = 5;
@@ -43,20 +43,18 @@ public class LettuceReservationServiceProxy implements ReservationServiceProxy {
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         performSeatAction(
                 seatSelectionRequest.getSeatId().toString(),
-                () -> reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest));
+                () -> reservationService.selectSeat(memberEmail, seatSelectionRequest));
     }
 
     @Override
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
         performSeatAction(
                 ticketPaymentRequest.getSeatId().toString(),
-                () ->
-                        reservationTransactionService.reservationTicket(
-                                memberEmail, ticketPaymentRequest));
+                () -> reservationService.reservationTicket(memberEmail, ticketPaymentRequest));
     }
 
     @Override
     public void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        reservationTransactionService.releaseSeat(memberEmail, seatSelectionRequest);
+        reservationService.releaseSeat(memberEmail, seatSelectionRequest);
     }
 }

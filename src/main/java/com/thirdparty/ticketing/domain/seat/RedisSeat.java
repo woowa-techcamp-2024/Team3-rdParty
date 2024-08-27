@@ -59,4 +59,13 @@ public class RedisSeat {
     public void markAsSelected() {
         this.seatStatus = SeatStatus.SELECTED;
     }
+
+    public void releaseSeat(Member loginMember) {
+        if (!isAssignedByMember(loginMember)) {
+            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
+        }
+
+        this.memberId = null;
+        this.seatStatus = SeatStatus.SELECTABLE;
+    }
 }

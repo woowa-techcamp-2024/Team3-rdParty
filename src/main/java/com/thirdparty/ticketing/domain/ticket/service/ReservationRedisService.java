@@ -1,11 +1,7 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -18,6 +14,7 @@ import com.thirdparty.ticketing.domain.payment.dto.PaymentRequest;
 import com.thirdparty.ticketing.domain.seat.RedisSeat;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.repository.LettuceSeatRepository;
+import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.Ticket;
 import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
 import com.thirdparty.ticketing.domain.ticket.dto.event.SeatEvent;
@@ -36,13 +33,8 @@ public class ReservationRedisService implements ReservationService {
     private final EventPublisher eventPublisher;
     private final PaymentProcessor paymentProcessor;
     private final LettuceSeatRepository lettuceSeatRepository;
-    private final ReservationManager reservationManager;
+    private final SeatRepository seatRepository;
     private final TicketRepository ticketRepository;
-
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
-
-    @Value("${ticketing.reservation.release-delay-seconds}")
-    private int reservationReleaseDelay;
 
     @Override
     @Transactional
@@ -61,22 +53,20 @@ public class ReservationRedisService implements ReservationService {
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
         seat.assignByMember(member);
-
-        // 좌석 선택 이벤트 발행
         eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
-
-        scheduler.schedule(
-                () -> reservationManager.releaseSeat(member, seatId),
-                reservationReleaseDelay,
-                TimeUnit.SECONDS);
     }
 
     @Override
     @Transactional
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
         Long seatId = ticketPaymentRequest.getSeatId();
-        RedisSeat seat =
+        RedisSeat redisSeat =
                 lettuceSeatRepository
+                        .findById(seatId)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
+
+        Seat seat =
+                seatRepository
                         .findById(seatId)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
 
@@ -85,23 +75,27 @@ public class ReservationRedisService implements ReservationService {
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-        processPayment(seat, loginMember);
+        processPayment(redisSeat, loginMember);
 
         Ticket ticket =
                 Ticket.builder()
                         .ticketSerialNumber(UUID.randomUUID())
-                        .seat(Seat.builder().seatId(seat.getSeatId()).build())
+                        .seat(Seat.builder().seatId(redisSeat.getSeatId()).build())
                         .member(loginMember)
                         .build();
         try {
+            // 이벤트 기반으로 하는게 제일 이상적이지만... 일단은 이렇게 -> 강제로 정합성을 통일함.
+            redisSeat.markAsPaid();
+            seat.assignByMember(loginMember);
             seat.markAsPaid();
             ticketRepository.save(ticket);
+            seatRepository.save(seat);
         } catch (Exception e) {
             log.error("Failed to save ticket: {}", e.getMessage());
-            seat.markAsSelected();
+            redisSeat.markAsSelected();
             throw new TicketingException(ErrorCode.PAYMENT_FAILED);
         } finally {
-            lettuceSeatRepository.save(seat);
+            lettuceSeatRepository.save(redisSeat);
         }
     }
 
