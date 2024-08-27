@@ -12,22 +12,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.performance.Performance;
 import com.thirdparty.ticketing.domain.performance.repository.PerformanceRepository;
+import com.thirdparty.ticketing.domain.seat.RedisSeat;
 import com.thirdparty.ticketing.domain.seat.Seat;
 import com.thirdparty.ticketing.domain.seat.SeatGrade;
 import com.thirdparty.ticketing.domain.seat.SeatStatus;
+import com.thirdparty.ticketing.domain.seat.repository.LettuceSeatRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatGradeRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
@@ -48,9 +48,9 @@ public class CacheReservationTest extends TestContainerStarter {
 
     @Autowired private PerformanceRepository performanceRepository;
 
-    @Autowired private LettuceRepository lettuceRepository;
+    @Autowired private StringRedisTemplate stringRedisTemplate;
 
-    @Autowired private RedissonClient redissonClient;
+    @Autowired private LettuceSeatRepository lettuceSeatRepository;
 
     @Autowired
     @Qualifier("lettuceReservationServiceProxy")
@@ -68,8 +68,6 @@ public class CacheReservationTest extends TestContainerStarter {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         members =
                 memberRepository.saveAllAndFlush(
                         List.of(
@@ -99,6 +97,9 @@ public class CacheReservationTest extends TestContainerStarter {
                                 .seatCode("R")
                                 .seatStatus(SeatStatus.SELECTABLE)
                                 .build());
+        // seat의 id가 1인
+        RedisSeat redisSeat = new RedisSeat(seat.getSeatId(), null, SeatStatus.SELECTABLE);
+        lettuceSeatRepository.update(redisSeat);
     }
 
     @AfterEach
@@ -108,6 +109,7 @@ public class CacheReservationTest extends TestContainerStarter {
         seatGradeRepository.deleteAll();
         performanceRepository.deleteAll();
         memberRepository.deleteAll();
+        stringRedisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test
@@ -153,8 +155,8 @@ public class CacheReservationTest extends TestContainerStarter {
 
         latch.await();
 
-        Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
-        assertThat(reservedSeat.getMember()).isNotNull();
+        RedisSeat reservedSeat = lettuceSeatRepository.findBySeatId(seat.getSeatId()).orElseThrow();
+        assertThat(reservedSeat.getMemberId()).isNotNull();
         assertThat(successfulSelections.get()).isEqualTo(1);
         assertThat(failureSelections.get()).isEqualTo(4);
     }
