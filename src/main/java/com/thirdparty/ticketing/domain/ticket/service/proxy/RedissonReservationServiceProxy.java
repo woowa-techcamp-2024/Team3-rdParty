@@ -1,15 +1,9 @@
 package com.thirdparty.ticketing.domain.ticket.service.proxy;
 
-import java.util.concurrent.TimeUnit;
-
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-
-import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
+import com.thirdparty.ticketing.global.lock.redisson.RedissonLockAnnotation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,40 +12,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedissonReservationServiceProxy implements ReservationServiceProxy {
 
-    private final RedissonClient redissonClient;
     private final ReservationService reservationService;
 
-    private void performSeatAction(String seatId, Runnable action) {
-        String lockPrefix = "seat:";
-        RLock lock = redissonClient.getLock(lockPrefix + seatId);
-
-        int tryTime = 1;
-        int releaseTime = 60;
-
-        try {
-            if (!lock.tryLock(tryTime, releaseTime, TimeUnit.SECONDS)) {
-                return;
-            }
-            action.run();
-        } catch (InterruptedException e) {
-            throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT, e);
-        } finally {
-            lock.unlock();
-        }
-    }
-
     @Override
+    @RedissonLockAnnotation(key = "#seatSelectionRequest.seatId")
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        performSeatAction(
-                seatSelectionRequest.getSeatId().toString(),
-                () -> reservationService.selectSeat(memberEmail, seatSelectionRequest));
+        reservationService.selectSeat(memberEmail, seatSelectionRequest);
     }
 
     @Override
+    @RedissonLockAnnotation(key = "#ticketPaymentRequest.seatId")
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
-        performSeatAction(
-                ticketPaymentRequest.getSeatId().toString(),
-                () -> reservationService.reservationTicket(memberEmail, ticketPaymentRequest));
+        reservationService.reservationTicket(memberEmail, ticketPaymentRequest);
     }
 
     @Override

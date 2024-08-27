@@ -1,6 +1,5 @@
 package com.thirdparty.ticketing.global.config;
 
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +24,8 @@ public class ReservationServiceContainer {
     @Bean
     @Primary
     public ReservationService redissonReservationServiceProxy(
-            RedissonClient redissonClient, ReservationRedisService reservationRedisService) {
-        return new RedissonReservationServiceProxy(redissonClient, reservationRedisService);
+            ReservationRedisService reservationRedisService) {
+        return new RedissonReservationServiceProxy(reservationRedisService);
     }
 
     @Bean
