@@ -2,6 +2,10 @@ package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -9,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,13 +28,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
-import com.thirdparty.ticketing.support.TestContainerStarter;
-
-@SpringBootTest
-public class PersistenceReservationTest extends TestContainerStarter {
+public class PersistenceReservationTest extends BaseIntegrationTest {
     private static final Logger log = LoggerFactory.getLogger(PersistenceReservationTest.class);
 
     @Autowired

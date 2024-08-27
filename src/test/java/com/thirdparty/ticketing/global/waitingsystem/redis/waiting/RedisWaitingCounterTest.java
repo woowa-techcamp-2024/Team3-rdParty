@@ -2,22 +2,18 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.support.TestContainerStarter;
-
-@SpringBootTest
-class RedisWaitingCounterTest extends TestContainerStarter {
+class RedisWaitingCounterTest extends BaseIntegrationTest {
 
     @Autowired private RedisWaitingCounter waitingCounter;
 

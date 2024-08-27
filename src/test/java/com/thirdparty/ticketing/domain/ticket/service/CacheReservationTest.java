@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -35,8 +36,7 @@ import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-public class CacheReservationTest extends TestContainerStarter {
+public class CacheReservationTest extends BaseIntegrationTest {
 
     @Autowired private SeatRepository seatRepository;
 

@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,8 +20,7 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class RedisRunningCounterTest extends TestContainerStarter {
+class RedisRunningCounterTest extends BaseIntegrationTest {
 
     @Autowired private RedisRunningCounter runningCounter;
 

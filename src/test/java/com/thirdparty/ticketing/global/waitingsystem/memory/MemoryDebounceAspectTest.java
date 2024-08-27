@@ -2,13 +2,13 @@ package com.thirdparty.ticketing.global.waitingsystem.memory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.domain.waitingsystem.Debounce;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import com.thirdparty.ticketing.domain.waitingsystem.Debounce;
 
 @ExtendWith(SpringExtension.class)
 @Import(MemoryDebounceAspectTest.MemoryDebounceAopConfig.class)

@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -27,8 +28,7 @@ import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class RedisWaitingManagerTest extends TestContainerStarter {
+class RedisWaitingManagerTest extends BaseIntegrationTest {
 
     @Autowired private RedisWaitingManager waitingManager;
 

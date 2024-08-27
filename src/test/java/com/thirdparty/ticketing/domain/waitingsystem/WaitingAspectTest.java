@@ -4,37 +4,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
+import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspectTest.TestController;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
-import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
-import com.thirdparty.ticketing.support.TestContainerStarter;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@Import(TestController.class)
-class WaitingAspectTest extends TestContainerStarter {
+class WaitingAspectTest extends BaseIntegrationTest {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -47,16 +35,6 @@ class WaitingAspectTest extends TestContainerStarter {
     @Autowired private RedisRunningRoom runningRoom;
 
     @Autowired private RedisWaitingLine waitingLine;
-
-    @RestController
-    static class TestController {
-
-        @Waiting
-        @GetMapping("/api/waiting/test")
-        public ResponseEntity<String> test() {
-            return ResponseEntity.ok("test");
-        }
-    }
 
     @BeforeEach
     void setUp() {

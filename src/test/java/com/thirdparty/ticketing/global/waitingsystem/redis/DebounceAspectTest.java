@@ -2,56 +2,20 @@ package com.thirdparty.ticketing.global.waitingsystem.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
+import com.thirdparty.ticketing.support.integration.AspectTestConfig.DebounceTarget;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
-import com.thirdparty.ticketing.domain.waitingsystem.Debounce;
-import com.thirdparty.ticketing.global.waitingsystem.redis.DebounceAspectTest.TestConfig;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+class DebounceAspectTest extends BaseIntegrationTest {
 
-@SpringBootTest
-@Import(TestConfig.class)
-class DebounceAspectTest extends TestContainerStarter {
-
-    @Autowired private DebounceTarget debounceTarget;
-
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        public DebounceTarget debounceTarget() {
-            return new DebounceTarget();
-        }
-    }
-
-    static class DebounceTarget {
-
-        private final AtomicInteger counter;
-
-        public DebounceTarget() {
-            counter = new AtomicInteger(0);
-        }
-
-        @Debounce
-        public void increment() {
-            counter.incrementAndGet();
-        }
-
-        public int get() {
-            return counter.get();
-        }
-    }
+    @Autowired
+    private DebounceTarget debounceTarget;
 
     @Nested
     @DisplayName("디바운스 aop 적용 시")

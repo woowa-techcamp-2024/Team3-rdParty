@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -29,8 +30,7 @@ import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.SpyEventPublisher;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class WaitingSystemTest extends TestContainerStarter {
+class WaitingSystemTest extends BaseIntegrationTest {
 
     private WaitingSystem waitingSystem;
 

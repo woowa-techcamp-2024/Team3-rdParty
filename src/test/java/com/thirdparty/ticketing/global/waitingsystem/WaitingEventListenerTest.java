@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.global.waitingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +18,7 @@ import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class WaitingEventListenerTest extends TestContainerStarter {
+class WaitingEventListenerTest extends BaseIntegrationTest {
 
     @Autowired private WaitingSystem waitingSystem;
 

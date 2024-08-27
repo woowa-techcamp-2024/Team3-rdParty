@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +20,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class RedisRunningManagerTest extends TestContainerStarter {
+class RedisRunningManagerTest extends BaseIntegrationTest {
 
     @Autowired private RedisRunningManager runningManager;
 
