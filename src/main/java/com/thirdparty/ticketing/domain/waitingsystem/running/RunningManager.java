@@ -16,4 +16,6 @@ public interface RunningManager {
     void pullOutRunningMember(String email, long performanceId);
 
     Set<String> removeExpiredMemberInfo(long performanceId);
+
+    void updateRunningMemberExpiredTime(String email, long performanceId);
 }

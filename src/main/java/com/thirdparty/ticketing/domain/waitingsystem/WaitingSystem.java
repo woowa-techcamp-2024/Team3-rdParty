@@ -27,8 +27,12 @@ public class WaitingSystem {
     public long getRemainingCount(String email, long performanceId) {
         WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
         long runningCount = runningManager.getRunningCount(performanceId);
+        long remainingCount = waitingMember.getWaitingCount() - runningCount;
         eventPublisher.publish(new PollingEvent(performanceId));
-        return waitingMember.getWaitingCount() - runningCount;
+        if (remainingCount <= 0) {
+            eventPublisher.publish(new LastPollingEvent(email, performanceId));
+        }
+        return remainingCount;
     }
 
     public void moveUserToRunning(long performanceId) {
@@ -43,5 +47,9 @@ public class WaitingSystem {
     public void pullOutRunningMember(String email, long performanceId) {
         runningManager.pullOutRunningMember(email, performanceId);
         waitingManager.removeMemberInfo(email, performanceId);
+    }
+
+    public void updateRunningMemberExpiredTime(String email, long performanceId) {
+        runningManager.updateRunningMemberExpiredTime(email, performanceId);
     }
 }
