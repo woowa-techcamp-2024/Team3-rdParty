@@ -1,6 +1,6 @@
 package com.thirdparty.ticketing.domain.performance.controller;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -11,20 +11,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
-import com.thirdparty.ticketing.domain.performance.service.UserPerformanceService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(UserPerformanceController.class)
 class UserPerformanceControllerTest extends BaseControllerTest {
-
-    @MockBean private UserPerformanceService userPerformanceService;
 
     @Test
     @DisplayName("GET /api/performances")

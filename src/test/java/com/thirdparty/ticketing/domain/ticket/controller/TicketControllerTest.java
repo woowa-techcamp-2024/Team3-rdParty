@@ -17,8 +17,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,17 +28,11 @@ import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.response.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.response.TicketSeatDetail;
-import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
-import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(controllers = TicketController.class)
 class TicketControllerTest extends BaseControllerTest {
 
     public static final String PERFORMANCE_ID = "performanceId";
-    @MockBean private TicketService ticketService;
-
-    @MockBean private ReservationService reservationService;
 
     @Test
     @DisplayName("티켓 조회 API 호출 시")

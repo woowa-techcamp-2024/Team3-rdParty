@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -33,10 +32,9 @@ import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
-@SpringBootTest
-public class CacheReservationTest extends TestContainerStarter {
+public class CacheReservationTest extends BaseIntegrationTest {
 
     @Autowired private SeatRepository seatRepository;
 
@@ -97,9 +95,6 @@ public class CacheReservationTest extends TestContainerStarter {
                                 .seatCode("R")
                                 .seatStatus(SeatStatus.SELECTABLE)
                                 .build());
-        // seat의 id가 1인
-        RedisSeat redisSeat = new RedisSeat(seat.getSeatId(), null, SeatStatus.SELECTABLE);
-        lettuceSeatRepository.update(redisSeat);
     }
 
     @AfterEach
@@ -109,7 +104,6 @@ public class CacheReservationTest extends TestContainerStarter {
         seatGradeRepository.deleteAll();
         performanceRepository.deleteAll();
         memberRepository.deleteAll();
-        stringRedisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test

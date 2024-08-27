@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -26,11 +25,10 @@ import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 
-@SpringBootTest
-class WaitingSystemTest extends TestContainerStarter {
+class WaitingSystemTest extends BaseIntegrationTest {
 
     private WaitingSystem waitingSystem;
 
