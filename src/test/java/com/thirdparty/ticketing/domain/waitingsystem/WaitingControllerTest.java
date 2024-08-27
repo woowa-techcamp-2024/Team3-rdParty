@@ -21,12 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(controllers = WaitingController.class)
 class WaitingControllerTest extends BaseControllerTest {
 
     public static final String PERFORMANCE_ID = "performanceId";
-
-    @MockBean private WaitingSystem waitingSystem;
 
     @Test
     @DisplayName("남은 대기 순번 조회 API 호출 시")

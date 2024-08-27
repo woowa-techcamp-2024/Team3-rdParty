@@ -7,25 +7,17 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 import java.time.ZonedDateTime;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.thirdparty.ticketing.domain.performance.dto.request.PerformanceCreationRequest;
-import com.thirdparty.ticketing.domain.performance.service.AdminPerformanceService;
-import com.thirdparty.ticketing.support.BaseControllerTest;
-
-@WebMvcTest(AdminPerformanceController.class)
 class AdminPerformanceControllerTest extends BaseControllerTest {
-
-    @MockBean private AdminPerformanceService adminPerformanceService;
 
     @Test
     @DisplayName("POST /api/performances")

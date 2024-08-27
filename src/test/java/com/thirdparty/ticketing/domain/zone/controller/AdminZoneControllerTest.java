@@ -9,27 +9,18 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.thirdparty.ticketing.domain.zone.contoller.AdminZoneController;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationElement;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneCreationRequest;
-import com.thirdparty.ticketing.domain.zone.service.AdminZoneService;
-import com.thirdparty.ticketing.support.BaseControllerTest;
-
-@WebMvcTest(AdminZoneController.class)
 public class AdminZoneControllerTest extends BaseControllerTest {
-
-    @MockBean private AdminZoneService adminZoneService;
 
     @Test
     @DisplayName("POST /api/performances/{performanceId}/zones")

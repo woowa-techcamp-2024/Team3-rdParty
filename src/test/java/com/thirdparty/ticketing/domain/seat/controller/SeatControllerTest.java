@@ -11,27 +11,19 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultActions;
-
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatElement;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
-import com.thirdparty.ticketing.domain.seat.service.SeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(SeatController.class)
 public class SeatControllerTest extends BaseControllerTest {
 
     public static final String PERFORMANCE_ID = "performanceId";
-
-    @MockBean private SeatService seatService;
 
     @Test
     @DisplayName("구역의 좌석 목록을 조회한다.")

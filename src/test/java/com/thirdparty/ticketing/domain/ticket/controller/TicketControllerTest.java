@@ -11,18 +11,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultActions;
-
 import com.thirdparty.ticketing.domain.ItemResult;
 import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
 import com.thirdparty.ticketing.domain.seat.dto.response.SeatGradeElement;
@@ -30,17 +18,19 @@ import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.response.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.dto.response.TicketSeatDetail;
-import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
-import com.thirdparty.ticketing.domain.ticket.service.TicketService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(controllers = TicketController.class)
 class TicketControllerTest extends BaseControllerTest {
 
     public static final String PERFORMANCE_ID = "performanceId";
-    @MockBean private TicketService ticketService;
-
-    @MockBean private ReservationService reservationService;
 
     @Test
     @DisplayName("티켓 조회 API 호출 시")
