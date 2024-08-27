@@ -95,6 +95,9 @@ public class CacheReservationTest extends BaseIntegrationTest {
                                 .seatCode("R")
                                 .seatStatus(SeatStatus.SELECTABLE)
                                 .build());
+        // seat의 id가
+        RedisSeat redisSeat = new RedisSeat(seat.getSeatId(), null, SeatStatus.SELECTABLE);
+        lettuceSeatRepository.update(redisSeat);
     }
 
     @AfterEach
@@ -104,6 +107,7 @@ public class CacheReservationTest extends BaseIntegrationTest {
         seatGradeRepository.deleteAll();
         performanceRepository.deleteAll();
         memberRepository.deleteAll();
+        stringRedisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test

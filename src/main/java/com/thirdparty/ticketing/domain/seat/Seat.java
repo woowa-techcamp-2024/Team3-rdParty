@@ -47,7 +47,7 @@ public class Seat extends BaseEntity {
     @Column(length = 16, nullable = false)
     private SeatStatus seatStatus = SeatStatus.SELECTABLE;
 
-    private Long version;
+    @Version private Long version;
 
     public Seat(String seatCode, SeatStatus seatStatus) {
         this.seatCode = seatCode;
