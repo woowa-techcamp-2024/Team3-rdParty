@@ -69,4 +69,20 @@ public class MemoryRunningRoom implements RunningRoom {
         removeMemberEmails.forEach(performanceRoom::remove);
         return removeMemberEmails;
     }
+
+    public void updateRunningMemberExpiredTime(String email, long performanceId) {
+        room.computeIfPresent(performanceId,
+                (key, room) -> {
+                    room.computeIfPresent(email, (k, waitingMember) ->
+                            new WaitingMember(
+                                    email,
+                                    performanceId,
+                                    waitingMember.getWaitingCount(),
+                                    ZonedDateTime.now().plusMinutes(5)
+                            ));
+                    return room;
+                }
+        );
+
+    }
 }
