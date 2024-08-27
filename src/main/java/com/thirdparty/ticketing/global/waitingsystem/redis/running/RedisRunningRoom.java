@@ -17,6 +17,7 @@ public class RedisRunningRoom implements RunningRoom {
     private static final int MAX_RUNNING_ROOM_SIZE = 100;
     private static final String RUNNING_ROOM_KEY = "running_room:";
     private static final int EXPIRED_MINUTE = 5;
+    private static final int MINIMUM_RUNNING_TIME = 30;
 
     private final ZSetOperations<String, String> runningRoom;
 
@@ -37,13 +38,15 @@ public class RedisRunningRoom implements RunningRoom {
         if (waitingMembers.isEmpty()) {
             return;
         }
+        ZonedDateTime minimumRunningTime = ZonedDateTime.now()
+                .plusSeconds(MINIMUM_RUNNING_TIME);
         Set<TypedTuple<String>> collect =
                 waitingMembers.stream()
                         .map(
                                 member ->
                                         TypedTuple.of(
                                                 member.getEmail(),
-                                                (double) ZonedDateTime.now().toEpochSecond()))
+                                                (double) minimumRunningTime.toEpochSecond()))
                         .collect(Collectors.toSet());
         runningRoom.add(getRunningRoomKey(performanceId), collect);
     }
@@ -57,7 +60,7 @@ public class RedisRunningRoom implements RunningRoom {
     }
 
     public Set<String> removeExpiredMemberInfo(long performanceId) {
-        long removeRange = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE).toEpochSecond();
+        long removeRange = ZonedDateTime.now().toEpochSecond();
         String runningRoomKey = getRunningRoomKey(performanceId);
         Set<String> removedMemberEmails = runningRoom.rangeByScore(runningRoomKey, 0, removeRange);
         runningRoom.removeRangeByScore(runningRoomKey, 0, removeRange);
