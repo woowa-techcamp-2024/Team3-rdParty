@@ -10,25 +10,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.member.dto.request.MemberCreationRequest;
 import com.thirdparty.ticketing.domain.member.dto.response.CreateMemberResponse;
-import com.thirdparty.ticketing.domain.member.service.MemberService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest extends BaseControllerTest {
-
-    @Autowired private ObjectMapper objectMapper;
-
-    @MockBean private MemberService memberService;
 
     @Test
     @DisplayName("회원 생성 API 호출")

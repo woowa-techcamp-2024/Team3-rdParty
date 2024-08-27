@@ -10,21 +10,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.thirdparty.ticketing.domain.member.dto.request.LoginRequest;
 import com.thirdparty.ticketing.domain.member.dto.response.LoginResponse;
-import com.thirdparty.ticketing.domain.member.service.AuthService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(controllers = AuthController.class)
 class AuthControllerTest extends BaseControllerTest {
-
-    @MockBean private AuthService authService;
 
     @Test
     @DisplayName("로그인 API 호출 시")

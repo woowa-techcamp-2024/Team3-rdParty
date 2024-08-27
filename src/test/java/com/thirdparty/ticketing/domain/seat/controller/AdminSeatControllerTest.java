@@ -13,8 +13,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,13 +22,9 @@ import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationRequest;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationRequest;
-import com.thirdparty.ticketing.domain.seat.service.AdminSeatService;
 import com.thirdparty.ticketing.support.BaseControllerTest;
 
-@WebMvcTest(AdminSeatController.class)
 public class AdminSeatControllerTest extends BaseControllerTest {
-
-    @MockBean private AdminSeatService adminSeatService;
 
     @Test
     @DisplayName("관리자 좌석 생성 API")

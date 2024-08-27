@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
-@SpringBootTest
-class ProductionRedisConfigTest extends TestContainerStarter {
+class ProductionRedisConfigTest extends BaseIntegrationTest {
 
     @Autowired private RedissonClient redissonClient;
 
