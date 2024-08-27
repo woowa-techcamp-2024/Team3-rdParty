@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
-import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
 import com.thirdparty.ticketing.domain.seat.repository.LettuceSeatRepository;
@@ -22,6 +21,7 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 
 @Configuration
 public class ReservationServiceContainer {
+
     @Bean
     @Primary
     public ReservationService redissonReservationServiceProxy(
@@ -31,8 +31,8 @@ public class ReservationServiceContainer {
 
     @Bean
     public ReservationService lettuceReservationServiceProxy(
-            LettuceRepository lettuceRepository, ReservationRedisService reservationRedisService) {
-        return new LettuceReservationServiceProxy(lettuceRepository, reservationRedisService);
+            ReservationRedisService reservationRedisService) {
+        return new LettuceReservationServiceProxy(reservationRedisService);
     }
 
     @Bean
