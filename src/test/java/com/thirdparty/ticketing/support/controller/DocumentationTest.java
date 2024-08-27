@@ -10,13 +10,14 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.support.BaseControllerTest;
-import com.thirdparty.ticketing.support.controller.DocsController.HelloRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.thirdparty.ticketing.support.BaseControllerTest;
+import com.thirdparty.ticketing.support.controller.DocsController.HelloRequest;
 
 @DisplayName("API 문서 테스트 코드 작성 시")
 public class DocumentationTest extends BaseControllerTest {

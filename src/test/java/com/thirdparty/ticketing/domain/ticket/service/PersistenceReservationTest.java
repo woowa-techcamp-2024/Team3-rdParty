@@ -2,10 +2,6 @@ package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
-import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -13,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.thirdparty.ticketing.domain.common.TicketingException;
+import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
+import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 public class PersistenceReservationTest extends BaseIntegrationTest {
     private static final Logger log = LoggerFactory.getLogger(PersistenceReservationTest.class);

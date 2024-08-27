@@ -6,15 +6,17 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import java.time.ZonedDateTime;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.performance.dto.PerformanceElement;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 
 class UserPerformanceControllerTest extends BaseControllerTest {
 

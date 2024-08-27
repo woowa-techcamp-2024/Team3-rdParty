@@ -8,14 +8,15 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.domain.member.dto.request.LoginRequest;
-import com.thirdparty.ticketing.domain.member.dto.response.LoginResponse;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.thirdparty.ticketing.domain.member.dto.request.LoginRequest;
+import com.thirdparty.ticketing.domain.member.dto.response.LoginResponse;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 
 class AuthControllerTest extends BaseControllerTest {
 

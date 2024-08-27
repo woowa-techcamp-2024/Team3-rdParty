@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.domain.ticket.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -17,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -34,7 +32,7 @@ import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.dto.request.SeatSelectionRequest;
 import com.thirdparty.ticketing.domain.zone.Zone;
 import com.thirdparty.ticketing.domain.zone.repository.ZoneRepository;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 public class CacheReservationTest extends BaseIntegrationTest {
 

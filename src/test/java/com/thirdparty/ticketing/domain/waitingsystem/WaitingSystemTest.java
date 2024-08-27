@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -27,8 +25,8 @@ import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import com.thirdparty.ticketing.support.SpyEventPublisher;
-import com.thirdparty.ticketing.support.TestContainerStarter;
 
 class WaitingSystemTest extends BaseIntegrationTest {
 

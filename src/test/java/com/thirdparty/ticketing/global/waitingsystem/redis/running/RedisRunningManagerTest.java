@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,13 +11,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisRunningManagerTest extends BaseIntegrationTest {
 

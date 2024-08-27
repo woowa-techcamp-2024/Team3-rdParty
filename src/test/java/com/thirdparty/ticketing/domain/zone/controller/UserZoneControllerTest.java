@@ -10,13 +10,15 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.domain.ItemResult;
-import com.thirdparty.ticketing.domain.zone.dto.ZoneElement;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.thirdparty.ticketing.domain.ItemResult;
+import com.thirdparty.ticketing.domain.zone.dto.ZoneElement;
+import com.thirdparty.ticketing.support.BaseControllerTest;
 
 class UserZoneControllerTest extends BaseControllerTest {
 

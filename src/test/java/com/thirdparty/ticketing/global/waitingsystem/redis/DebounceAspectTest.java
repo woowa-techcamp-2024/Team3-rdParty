@@ -2,20 +2,21 @@ package com.thirdparty.ticketing.global.waitingsystem.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
-import com.thirdparty.ticketing.support.integration.AspectTestConfig.DebounceTarget;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
+import com.thirdparty.ticketing.support.integration.AspectTestConfig.DebounceTarget;
+
 class DebounceAspectTest extends BaseIntegrationTest {
 
-    @Autowired
-    private DebounceTarget debounceTarget;
+    @Autowired private DebounceTarget debounceTarget;
 
     @Nested
     @DisplayName("디바운스 aop 적용 시")

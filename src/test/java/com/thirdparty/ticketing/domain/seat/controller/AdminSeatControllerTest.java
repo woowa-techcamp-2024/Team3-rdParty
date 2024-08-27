@@ -9,18 +9,20 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatCreationRequest;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationElement;
 import com.thirdparty.ticketing.domain.seat.dto.request.SeatGradeCreationRequest;
 import com.thirdparty.ticketing.support.BaseControllerTest;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultActions;
 
 public class AdminSeatControllerTest extends BaseControllerTest {
 

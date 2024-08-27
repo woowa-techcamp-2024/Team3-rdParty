@@ -3,9 +3,6 @@ package com.thirdparty.ticketing.global.security;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.support.BaseControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.support.BaseControllerTest;
+
 class LoginMemberArgumentResolverTest extends BaseControllerTest {
-
-
 
     @Nested
     @DisplayName("핸들러 메서드 파라미터에 @LoginMember가 포함되어 있으면")

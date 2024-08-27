@@ -4,15 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.thirdparty.ticketing.domain.member.Member;
-import com.thirdparty.ticketing.domain.member.MemberRole;
-import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
-import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.time.ZonedDateTime;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.thirdparty.ticketing.domain.member.Member;
+import com.thirdparty.ticketing.domain.member.MemberRole;
+import com.thirdparty.ticketing.domain.member.service.JwtProvider;
+import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
+import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class WaitingAspectTest extends BaseIntegrationTest {
 

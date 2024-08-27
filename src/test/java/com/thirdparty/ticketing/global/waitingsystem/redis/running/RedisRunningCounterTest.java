@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -14,11 +13,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisRunningCounterTest extends BaseIntegrationTest {
 
