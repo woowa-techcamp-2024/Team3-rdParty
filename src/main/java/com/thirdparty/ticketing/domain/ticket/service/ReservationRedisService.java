@@ -3,6 +3,7 @@ package com.thirdparty.ticketing.domain.ticket.service;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class ReservationRedisService implements ReservationService {
     private final EventPublisher eventPublisher;
     private final PaymentProcessor paymentProcessor;
     private final LettuceSeatRepository lettuceSeatRepository;
+    private final ReservationManager reservationManager;
     private final TicketRepository ticketRepository;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
@@ -63,10 +65,10 @@ public class ReservationRedisService implements ReservationService {
         // 좌석 선택 이벤트 발행
         eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
 
-        //        scheduler.schedule(
-        //                () -> reservationManager.releaseSeat(member, seatId),
-        //                reservationReleaseDelay,
-        //                TimeUnit.SECONDS);
+        scheduler.schedule(
+                () -> reservationManager.releaseSeat(member, seatId),
+                reservationReleaseDelay,
+                TimeUnit.SECONDS);
         // 좌석 release는 주석처리
     }
 

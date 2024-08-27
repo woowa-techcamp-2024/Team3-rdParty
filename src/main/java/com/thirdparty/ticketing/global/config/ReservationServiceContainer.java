@@ -10,6 +10,7 @@ import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
 import com.thirdparty.ticketing.domain.payment.PaymentProcessor;
+import com.thirdparty.ticketing.domain.seat.repository.LettuceSeatRepository;
 import com.thirdparty.ticketing.domain.seat.repository.SeatRepository;
 import com.thirdparty.ticketing.domain.ticket.repository.TicketRepository;
 import com.thirdparty.ticketing.domain.ticket.service.*;
@@ -52,6 +53,23 @@ public class ReservationServiceContainer {
             @Qualifier("persistencePessimisticReservationService")
                     ReservationTransactionService persistencePessimisticReservationService) {
         return new PessimisticReservationServiceProxy(persistencePessimisticReservationService);
+    }
+
+    @Bean
+    public ReservationRedisService reservationRedisService(
+            TicketRepository ticketRepository,
+            PaymentProcessor paymentProcessor,
+            MemberRepository memberRepository,
+            LettuceSeatRepository lettuceSeatRepository,
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
+        return new ReservationRedisService(
+                memberRepository,
+                eventPublisher,
+                paymentProcessor,
+                lettuceSeatRepository,
+                reservationManager,
+                ticketRepository);
     }
 
     @Bean
