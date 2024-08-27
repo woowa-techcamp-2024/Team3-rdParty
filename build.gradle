@@ -1,123 +1,119 @@
 plugins {
     id 'java'
-    id 'java-library'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.diffplug.spotless' version '6.23.3'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-bootJar {
-    enabled = false
-}
-jar {
-    enabled = false
-}
+group = 'com.thirdparty'
+version = '0.0.1-SNAPSHOT'
 
-allprojects {
-    group = 'com.thirdparty'
-    version = '0.0.1-SNAPSHOT'
-
-    repositories {
-        mavenCentral()
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'com.diffplug.spotless'
-
-    bootJar {
-        enabled = false
+configurations {
+    asciidoctorExt
+    compileOnly {
+        extendsFrom annotationProcessor
     }
-    jar {
-        enabled = false
-    }
+}
 
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
-        }
-    }
+repositories {
+    mavenCentral()
+}
 
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.17.6'
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    //security
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //test
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation "org.testcontainers:testcontainers:1.20.1"
+    testImplementation 'org.testcontainers:mysql:1.20.1'
+    testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+}
+
+spotless {
     java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+        target 'src/**/*.java' // 대상 파일 지정
+        googleJavaFormat().aosp()
+        importOrder('java', 'javax', 'jakarta', 'org', 'com')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('spotlessJava') {
+    dependsOn 'copyYml'
+}
+
+tasks.register('copyDocument', Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+tasks.register('copyYml') {
+    def dupStr = DuplicatesStrategy.INCLUDE
+    def src = "backend-config"
+    def fileExt = "**/*.yml"
+    copy {
+        duplicatesStrategy = dupStr
+        from(src) {
+            include(fileExt)
         }
+        into("src/main/resources")
     }
+}
 
-    ext {
-        set('snippetsDir', file("build/generated-snippets"))
-    }
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'io.micrometer:micrometer-registry-prometheus'
-
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        //security
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testImplementation 'org.springframework.security:spring-security-test'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-        //test
-        implementation "org.testcontainers:testcontainers:1.20.1"
-        implementation 'org.testcontainers:junit-jupiter:1.20.1'
-        testImplementation 'org.testcontainers:mysql:1.20.1'
-    }
-
-    spotless {
-        java {
-            target 'src/**/*.java'
-            googleJavaFormat().aosp()
-            importOrder('java', 'javax', 'jakarta', 'org', 'com')
-            removeUnusedImports()
-            trimTrailingWhitespace()
-            endWithNewline()
-        }
-    }
-
-    tasks.named('test') {
-        useJUnitPlatform()
-    }
-
-    tasks.named('spotlessJava') {
-        dependsOn 'copyYml'
-    }
-
-    tasks.register('copyYml') {
-        doLast {
-            def dupStr = DuplicatesStrategy.INCLUDE
-            def src = "${rootProject.projectDir}/backend-config"
-            def fileExt = "**/*.yml"
-
-            def modulePath = project.path.replace(':', '/')
-            if (modulePath.startsWith('/')) {
-                modulePath = modulePath.substring(1)
-            }
-
-            def srcPath = src
-            def destPath = "${project.projectDir}/src/main/resources"
-
-            copy {
-                duplicatesStrategy = dupStr
-                from(srcPath) {
-                    include(fileExt)
-                }
-                into(destPath)
-            }
-
-            println "Copied YML files from ${srcPath} to ${destPath}"
-        }
-    }
-
-    build {
-        dependsOn copyYml
-    }
+build {
+    dependsOn copyDocument
+    dependsOn copyYml
 }

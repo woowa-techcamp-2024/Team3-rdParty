@@ -1,6 +1,0 @@
-bootJar { enabled = false }
-jar { enabled = true }
-
-dependencies {
-    api project (':core:exception-core')
-}
