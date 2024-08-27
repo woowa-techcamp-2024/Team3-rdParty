@@ -15,6 +15,10 @@ java {
     }
 }
 
+jar {
+    enabled = false
+}
+
 configurations {
     asciidoctorExt
     compileOnly {
