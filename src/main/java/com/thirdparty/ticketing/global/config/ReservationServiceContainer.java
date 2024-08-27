@@ -29,12 +29,12 @@ public class ReservationServiceContainer {
     }
 
     @Bean
+    @Primary
     public ReservationService lettuceReservationServiceProxy(
             LettuceRepository lettuceRepository, ReservationRedisService reservationRedisService) {
         return new LettuceReservationServiceProxy(lettuceRepository, reservationRedisService);
     }
 
-    @Primary
     @Bean
     ReservationService optimisticReservationServiceProxy(
             @Qualifier("persistenceOptimisticReservationService")

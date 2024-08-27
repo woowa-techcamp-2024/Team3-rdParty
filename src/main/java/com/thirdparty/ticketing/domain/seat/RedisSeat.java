@@ -1,14 +1,11 @@
 package com.thirdparty.ticketing.domain.seat;
 
-import org.springframework.data.redis.core.RedisHash;
-
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.member.Member;
 
 import lombok.Getter;
 
-@RedisHash("seat-data")
 @Getter
 public class RedisSeat {
 
@@ -22,8 +19,8 @@ public class RedisSeat {
         this.seatStatus = seatStatus;
     }
 
-    public void checkValid() {
-        if (this.seatStatus != SeatStatus.SELECTED) {
+    public void checkSelectable() {
+        if (this.seatStatus != SeatStatus.SELECTABLE) {
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
     }

@@ -41,18 +41,19 @@ public class ReservationRedisService implements ReservationService {
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         Long seatId = seatSelectionRequest.getSeatId();
 
-        RedisSeat seat =
+        RedisSeat redisSeat =
                 lettuceSeatRepository
                         .findBySeatId(seatId)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
-        seat.checkValid(); // 좌석이 선택 가능한지 확인 -> 디비 부하를 줄이기 위해 배치
+        redisSeat.checkSelectable(); // 좌석이 선택 가능한지 확인 -> 디비 부하를 줄이기 위해 배치
 
         Member member =
                 memberRepository
                         .findByEmail(memberEmail)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
 
-        seat.assignByMember(member);
+        redisSeat.assignByMember(member);
+        lettuceSeatRepository.update(redisSeat);
         eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
     }
 
@@ -62,7 +63,7 @@ public class ReservationRedisService implements ReservationService {
         Long seatId = ticketPaymentRequest.getSeatId();
         RedisSeat redisSeat =
                 lettuceSeatRepository
-                        .findById(seatId)
+                        .findBySeatId(seatId)
                         .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
 
         Seat seat =
@@ -95,13 +96,25 @@ public class ReservationRedisService implements ReservationService {
             redisSeat.markAsSelected();
             throw new TicketingException(ErrorCode.PAYMENT_FAILED);
         } finally {
-            lettuceSeatRepository.save(redisSeat);
+            lettuceSeatRepository.update(redisSeat);
         }
     }
 
     @Override
     public void releaseSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
-        // TODO 구현하기 후순위
+        RedisSeat redisSeat =
+                lettuceSeatRepository
+                        .findBySeatId(seatSelectionRequest.getSeatId())
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_SEAT));
+
+        Member loginMember =
+                memberRepository
+                        .findByEmail(memberEmail)
+                        .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_MEMBER));
+
+        redisSeat.releaseSeat(loginMember);
+
+        lettuceSeatRepository.update(redisSeat);
     }
 
     private void processPayment(RedisSeat seat, Member loginMember) {
