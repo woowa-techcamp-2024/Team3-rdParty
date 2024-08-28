@@ -38,8 +38,7 @@ public class RedisRunningRoom implements RunningRoom {
         if (waitingMembers.isEmpty()) {
             return;
         }
-        ZonedDateTime minimumRunningTime = ZonedDateTime.now()
-                .plusSeconds(MINIMUM_RUNNING_TIME);
+        ZonedDateTime minimumRunningTime = ZonedDateTime.now().plusSeconds(MINIMUM_RUNNING_TIME);
         Set<TypedTuple<String>> collect =
                 waitingMembers.stream()
                         .map(
@@ -61,6 +60,7 @@ public class RedisRunningRoom implements RunningRoom {
 
     /**
      * 주어진 공연에 해당하는 러닝룸에서 만료 시간이 현재 시간 이전인 사람들을 제거한다.
+     *
      * @param performanceId
      * @return
      */
@@ -73,14 +73,16 @@ public class RedisRunningRoom implements RunningRoom {
     }
 
     /**
-     * 주어진 공연 - 이메일에 해당하는 사용자의 러닝룸 만료시간을 5분뒤로 업데이트 한다.
-     * 동시성 문제가 발생할 수 있다.
+     * 주어진 공연 - 이메일에 해당하는 사용자의 러닝룸 만료시간을 5분뒤로 업데이트 한다. 동시성 문제가 발생할 수 있다.
+     *
      * @param email 사용자의 이메일
      * @param performanceId 공연 ID
      */
     public void updateRunningMemberExpiredTime(String email, long performanceId) {
-        if(runningRoom.score(getRunningRoomKey(performanceId), email) != null) {
-            runningRoom.add(getRunningRoomKey(performanceId), email,
+        if (runningRoom.score(getRunningRoomKey(performanceId), email) != null) {
+            runningRoom.add(
+                    getRunningRoomKey(performanceId),
+                    email,
                     ZonedDateTime.now().plusMinutes(EXPIRED_MINUTE).toEpochSecond());
         }
     }

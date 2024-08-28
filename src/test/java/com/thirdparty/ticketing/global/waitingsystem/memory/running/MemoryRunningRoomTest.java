@@ -227,33 +227,34 @@ class MemoryRunningRoomTest {
         @Test
         @DisplayName("사용자의 만료 시간을 5분으로 업데이트 한다.")
         void updateRunningMemberExpiredTime() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             runningRoom.enter(performanceId, Set.of(new WaitingMember(email, performanceId)));
 
-            //when
+            // when
             runningRoom.updateRunningMemberExpiredTime(email, performanceId);
 
-            //then
+            // then
             WaitingMember waitingMember = room.get(performanceId).get(email);
-            assertThat(waitingMember.getEnteredAt()).isCloseTo(ZonedDateTime.now().plusMinutes(5),
-                    within(1, ChronoUnit.SECONDS));
+            assertThat(waitingMember.getEnteredAt())
+                    .isCloseTo(ZonedDateTime.now().plusMinutes(5), within(1, ChronoUnit.SECONDS));
         }
 
         @Test
         @DisplayName("사용자가 작업 공간에 존재하지 않으면 무시한다.")
         void ignore_notExistsMember() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             room.put(performanceId, new ConcurrentHashMap<>());
 
-            //when
-            Exception exception = catchException(
-                    () -> runningRoom.updateRunningMemberExpiredTime(email, performanceId));
+            // when
+            Exception exception =
+                    catchException(
+                            () -> runningRoom.updateRunningMemberExpiredTime(email, performanceId));
 
-            //then
+            // then
             assertThat(exception).doesNotThrowAnyException();
         }
     }

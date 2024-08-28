@@ -16,22 +16,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
-import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
 class WaitingEventListenerTest extends BaseIntegrationTest {
 
-    @Autowired
-    private WaitingSystem waitingSystem;
+    @Autowired private WaitingSystem waitingSystem;
 
-    @Autowired
-    private EventPublisher eventPublisher;
+    @Autowired private EventPublisher eventPublisher;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     private ZSetOperations<String, String> rawRunningRoom;
 
@@ -75,36 +72,39 @@ class WaitingEventListenerTest extends BaseIntegrationTest {
         @Test
         @DisplayName("작업 공간의 사용자 만료 시간을 업데이트한다.")
         void updateRunningMemberExpiredTime() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
 
             waitingSystem.enterWaitingRoom(email, performanceId);
             waitingSystem.moveUserToRunning(performanceId);
 
-            //when
+            // when
             waitingSystem.getRemainingCount(email, performanceId);
 
-            //then
-            Set<TypedTuple<String>> tuples = rawRunningRoom.rangeWithScores(getRunningRoomKey(performanceId), 0,
-                    -1);
+            // then
+            Set<TypedTuple<String>> tuples =
+                    rawRunningRoom.rangeWithScores(getRunningRoomKey(performanceId), 0, -1);
             assertThat(tuples)
                     .hasSize(1)
                     .first()
-                    .satisfies(tuple -> {
-                        ZonedDateTime memberExpiredTime = ZonedDateTime.ofInstant(
-                                Instant.ofEpochSecond(tuple.getScore().longValue()),
-                                ZoneId.of("Asia/Seoul"));
-                        assertThat(memberExpiredTime)
-                                .isCloseTo(ZonedDateTime.now().plusMinutes(5),
-                                        within(5, ChronoUnit.MINUTES));
-                    });
+                    .satisfies(
+                            tuple -> {
+                                ZonedDateTime memberExpiredTime =
+                                        ZonedDateTime.ofInstant(
+                                                Instant.ofEpochSecond(tuple.getScore().longValue()),
+                                                ZoneId.of("Asia/Seoul"));
+                                assertThat(memberExpiredTime)
+                                        .isCloseTo(
+                                                ZonedDateTime.now().plusMinutes(5),
+                                                within(5, ChronoUnit.MINUTES));
+                            });
         }
 
         @Test
         @DisplayName("이메일에 해당하는 사용자만 업데이트한다.")
         void updateOnlyInputMember() {
-            //given
+            // given
             long performanceId = 1;
             String email = "email@email.com";
             String anotherEmail = "anotherEmail@email.com";
@@ -113,25 +113,31 @@ class WaitingEventListenerTest extends BaseIntegrationTest {
             waitingSystem.enterWaitingRoom(anotherEmail, performanceId);
             waitingSystem.moveUserToRunning(performanceId);
 
-            //when
+            // when
             waitingSystem.getRemainingCount(email, performanceId);
 
-            //then
-            Set<TypedTuple<String>> tuples = rawRunningRoom.rangeWithScores(getRunningRoomKey(performanceId), 0,
-                    -1);
-            TypedTuple<String> emailMember = tuples.stream().filter(tuple -> tuple.getValue().equals(email))
-                    .findFirst().get();
-            TypedTuple<String> anotherEmailMember = tuples.stream()
-                    .filter(tuple -> tuple.getValue().equals(anotherEmail))
-                    .findFirst().get();
-            assertThat(getTime(emailMember.getScore())).isCloseTo(ZonedDateTime.now().plusMinutes(5),
-                    within(1, ChronoUnit.MINUTES));
-            assertThat(getTime(anotherEmailMember.getScore())).isCloseTo(ZonedDateTime.now().plusSeconds(30),
-                    within(5, ChronoUnit.SECONDS));
+            // then
+            Set<TypedTuple<String>> tuples =
+                    rawRunningRoom.rangeWithScores(getRunningRoomKey(performanceId), 0, -1);
+            TypedTuple<String> emailMember =
+                    tuples.stream()
+                            .filter(tuple -> tuple.getValue().equals(email))
+                            .findFirst()
+                            .get();
+            TypedTuple<String> anotherEmailMember =
+                    tuples.stream()
+                            .filter(tuple -> tuple.getValue().equals(anotherEmail))
+                            .findFirst()
+                            .get();
+            assertThat(getTime(emailMember.getScore()))
+                    .isCloseTo(ZonedDateTime.now().plusMinutes(5), within(1, ChronoUnit.MINUTES));
+            assertThat(getTime(anotherEmailMember.getScore()))
+                    .isCloseTo(ZonedDateTime.now().plusSeconds(30), within(5, ChronoUnit.SECONDS));
         }
 
         private ZonedDateTime getTime(Double score) {
-            return ZonedDateTime.ofInstant(Instant.ofEpochSecond(score.longValue()), ZoneId.of("Asia/Seoul"));
+            return ZonedDateTime.ofInstant(
+                    Instant.ofEpochSecond(score.longValue()), ZoneId.of("Asia/Seoul"));
         }
     }
 }

@@ -51,6 +51,7 @@ public class WaitingSystem {
 
     /**
      * 공연에 해당하는 사용자의 작업 공간 만료 시간을 5분 뒤로 업데이트한다.
+     *
      * @param email 사용자의 이메일
      * @param performanceId 공연 ID
      */

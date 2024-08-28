@@ -1,6 +1,5 @@
 package com.thirdparty.ticketing.global.waitingsystem;
 
-import com.thirdparty.ticketing.domain.waitingsystem.LastPollingEvent;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
+import com.thirdparty.ticketing.domain.waitingsystem.LastPollingEvent;
 import com.thirdparty.ticketing.domain.waitingsystem.PollingEvent;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 
