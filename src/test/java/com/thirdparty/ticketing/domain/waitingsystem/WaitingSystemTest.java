@@ -137,7 +137,7 @@ class WaitingSystemTest extends BaseIntegrationTest {
         void removeExpiredMemberInfoFromRunningRoom() {
             // given
             String anotherEmail = "anotherEmail@email.com";
-            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime now = ZonedDateTime.now().plusSeconds(30);
             rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
 
             // when
@@ -153,7 +153,7 @@ class WaitingSystemTest extends BaseIntegrationTest {
         void removeExpiredMemberInfoFromWaitingRoom() throws JsonProcessingException {
             // given
             String anotherEmail = "anotherEmail@email.com";
-            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime now = ZonedDateTime.now().plusSeconds(30);
             WaitingMember waitingMember = new WaitingMember(anotherEmail, performanceId, 2, now);
             rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
             rawWaitingRoom.put(

@@ -31,8 +31,8 @@ public class RedisRunningManager implements RunningManager {
 
     @Override
     public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
-        runningCounter.increment(performanceId, waitingMembers.size());
         runningRoom.enter(performanceId, waitingMembers);
+        runningCounter.increment(performanceId, waitingMembers.size());
     }
 
     @Override
@@ -43,5 +43,10 @@ public class RedisRunningManager implements RunningManager {
     @Override
     public Set<String> removeExpiredMemberInfo(long performanceId) {
         return runningRoom.removeExpiredMemberInfo(performanceId);
+    }
+
+    @Override
+    public void updateRunningMemberExpiredTime(String email, long performanceId) {
+        runningRoom.updateRunningMemberExpiredTime(email, performanceId);
     }
 }

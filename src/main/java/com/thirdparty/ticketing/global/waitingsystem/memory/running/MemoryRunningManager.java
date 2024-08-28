@@ -44,4 +44,9 @@ public class MemoryRunningManager implements RunningManager {
     public Set<String> removeExpiredMemberInfo(long performanceId) {
         return runningRoom.removeExpiredMemberInfo(performanceId);
     }
+
+    @Override
+    public void updateRunningMemberExpiredTime(String email, long performanceId) {
+        runningRoom.updateRunningMemberExpiredTime(email, performanceId);
+    }
 }

@@ -27,8 +27,12 @@ public class WaitingSystem {
     public long getRemainingCount(String email, long performanceId) {
         WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
         long runningCount = runningManager.getRunningCount(performanceId);
+        long remainingCount = waitingMember.getWaitingCount() - runningCount;
         eventPublisher.publish(new PollingEvent(performanceId));
-        return waitingMember.getWaitingCount() - runningCount;
+        if (remainingCount <= 0) {
+            eventPublisher.publish(new LastPollingEvent(email, performanceId));
+        }
+        return remainingCount;
     }
 
     public void moveUserToRunning(long performanceId) {
@@ -43,5 +47,15 @@ public class WaitingSystem {
     public void pullOutRunningMember(String email, long performanceId) {
         runningManager.pullOutRunningMember(email, performanceId);
         waitingManager.removeMemberInfo(email, performanceId);
+    }
+
+    /**
+     * 공연에 해당하는 사용자의 작업 공간 만료 시간을 5분 뒤로 업데이트한다.
+     *
+     * @param email 사용자의 이메일
+     * @param performanceId 공연 ID
+     */
+    public void updateRunningMemberExpiredTime(String email, long performanceId) {
+        runningManager.updateRunningMemberExpiredTime(email, performanceId);
     }
 }

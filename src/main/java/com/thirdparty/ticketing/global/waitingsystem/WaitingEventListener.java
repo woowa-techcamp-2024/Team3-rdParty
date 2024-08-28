@@ -12,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.ticket.dto.event.PaymentEvent;
+import com.thirdparty.ticketing.domain.waitingsystem.LastPollingEvent;
 import com.thirdparty.ticketing.domain.waitingsystem.PollingEvent;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
 
@@ -25,6 +26,11 @@ public class WaitingEventListener {
     @EventListener(PollingEvent.class)
     public void moveUserToRunningRoom(PollingEvent event) {
         waitingSystem.moveUserToRunning(event.getPerformanceId());
+    }
+
+    @EventListener(LastPollingEvent.class)
+    public void updateRunningMemberExpiredTime(LastPollingEvent event) {
+        waitingSystem.updateRunningMemberExpiredTime(event.getEmail(), event.getPerformanceId());
     }
 
     @TransactionalEventListener(PaymentEvent.class)
