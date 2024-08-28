@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DebounceAspect {
 
     private static final String DEBOUNCE_KEY = "debounce_performance:";
+    public static final int DEBOUNCE_TIME = 5;
 
     private final ValueOperations<String, String> debounce;
 
@@ -40,7 +41,8 @@ public class DebounceAspect {
                 performanceId = (long) arg;
             }
         }
-        if (debounce.setIfAbsent(getDebounceKey(performanceId), "debounce", 10, TimeUnit.SECONDS)) {
+        if (debounce.setIfAbsent(
+                getDebounceKey(performanceId), "debounce", DEBOUNCE_TIME, TimeUnit.SECONDS)) {
             log.info("[waiting] 디바운스 요청 실행. 공연 ID={}", performanceId);
             return joinPoint.proceed();
         }
