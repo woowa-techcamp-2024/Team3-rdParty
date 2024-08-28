@@ -6,12 +6,15 @@ import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class WaitingSystem {
 
+    private final Map<Long, PollingEvent> pollingEventCache = new ConcurrentHashMap<>();
     private final WaitingManager waitingManager;
     private final RunningManager runningManager;
     private final EventPublisher eventPublisher;
@@ -27,6 +30,8 @@ public class WaitingSystem {
     public long getRemainingCount(String email, long performanceId) {
         WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
         long runningCount = runningManager.getRunningCount(performanceId);
+        PollingEvent pollingEvent = pollingEventCache.computeIfAbsent(performanceId, PollingEvent::new);
+        eventPublisher.publish(pollingEvent);
         long remainingCount = waitingMember.getWaitingCount() - runningCount;
         eventPublisher.publish(new PollingEvent(performanceId));
         if (remainingCount <= 0) {
