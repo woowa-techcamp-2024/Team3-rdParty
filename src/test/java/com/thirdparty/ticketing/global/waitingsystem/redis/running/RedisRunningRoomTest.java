@@ -1,10 +1,12 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 import static org.assertj.core.api.Assertions.within;
 
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.support.TestContainerStarter;
+import com.thirdparty.ticketing.support.BaseIntegrationTest;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -13,7 +15,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,21 +22,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.support.BaseIntegrationTest;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 class RedisRunningRoomTest extends BaseIntegrationTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired private RedisRunningRoom runningRoom;
+    @Autowired
+    private RedisRunningRoom runningRoom;
 
-    @Autowired private StringRedisTemplate redisTemplate;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     private ZSetOperations<String, String> rawRunningRoom;
 
@@ -265,6 +264,52 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
                     .hasSize(1)
                     .first()
                     .isEqualTo(email);
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자 만료 시간 업데이트 시")
+    class UpdateRunningMemberExpiredTimeTest {
+
+        @Test
+        @DisplayName("사용자의 만료 시간을 5분으로 업데이트 한다.")
+        void updateRunningMemberExpiredTime() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+            runningRoom.enter(performanceId, Set.of(new WaitingMember(email, performanceId)));
+
+            //when
+            runningRoom.updateRunningMemberExpiredTime(email, performanceId);
+
+            //then
+            assertThat(rawRunningRoom.rangeByScoreWithScores(getRunningRoomKey(performanceId), 0, Double.MAX_VALUE))
+                    .hasSize(1)
+                    .first()
+                    .satisfies(tuple -> {
+                        ZonedDateTime memberExpiredAt = ZonedDateTime.ofInstant(
+                                Instant.ofEpochSecond(tuple.getScore().longValue()),
+                                ZoneId.of("Asia/Seoul"));
+                        assertThat(memberExpiredAt).isCloseTo(
+                                ZonedDateTime.now().plusMinutes(5),
+                                within(1, ChronoUnit.MINUTES));
+                    });
+        }
+
+        @Test
+        @DisplayName("사용자가 작업 공간에 존재하지 않으면 무시한다.")
+        void ignore_notExistsMember() {
+            //given
+            long performanceId = 1;
+            String email = "email@email.com";
+
+            //when
+            Exception exception = catchException(
+                    () -> runningRoom.updateRunningMemberExpiredTime(email, performanceId));
+
+            //then
+            assertThat(exception).doesNotThrowAnyException();
+            assertThat(rawRunningRoom.zCard(getRunningRoomKey(performanceId))).isZero();
         }
     }
 }

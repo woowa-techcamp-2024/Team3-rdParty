@@ -47,6 +47,6 @@ public class RedisRunningManager implements RunningManager {
 
     @Override
     public void updateRunningMemberExpiredTime(String email, long performanceId) {
-
+        runningRoom.updateRunningMemberExpiredTime(email, performanceId);
     }
 }
