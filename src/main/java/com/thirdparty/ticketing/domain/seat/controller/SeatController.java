@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class SeatController {
     private final SeatService seatService;
 
+    @Waiting
     @GetMapping("/performances/{performanceId}/zones/{zoneId}/seats")
     public ResponseEntity<ItemResult<SeatElement>> getSeats(@PathVariable("zoneId") long zoneId) {
         ItemResult<SeatElement> seats = seatService.getSeats(zoneId);
