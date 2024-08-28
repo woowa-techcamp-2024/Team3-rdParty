@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
@@ -24,8 +23,6 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
     @Autowired private RedisWaitingRoom waitingRoom;
 
     @Autowired private StringRedisTemplate redisTemplate;
-
-    @Autowired private ObjectMapper objectMapper;
 
     private HashOperations<String, String, String> rawWaitingRoom;
 

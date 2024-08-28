@@ -18,7 +18,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisWaitingManagerTest extends BaseIntegrationTest {
@@ -26,8 +25,6 @@ class RedisWaitingManagerTest extends BaseIntegrationTest {
     @Autowired private RedisWaitingManager waitingManager;
 
     @Autowired private StringRedisTemplate redisTemplate;
-
-    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

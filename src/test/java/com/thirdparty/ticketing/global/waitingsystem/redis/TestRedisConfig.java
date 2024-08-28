@@ -41,7 +41,7 @@ public class TestRedisConfig {
 
     @Bean
     public RedisWaitingRoom waitingRoom() {
-        return new RedisWaitingRoom(redisTemplate, objectMapper);
+        return new RedisWaitingRoom(redisTemplate);
     }
 
     @Bean
