@@ -1,9 +1,9 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,8 +16,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisWaitingRoomTest extends BaseIntegrationTest {
@@ -90,70 +89,19 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
             long performanceId = 1;
             long waitingCount = 1;
             boolean enter = waitingRoom.enter(email, performanceId);
-            WaitingMember waitingMember =
-                    new WaitingMember(email, performanceId, waitingCount, ZonedDateTime.now());
 
             // when
-            waitingRoom.updateMemberInfo(waitingMember);
+            waitingRoom.updateMemberInfo(email, performanceId, waitingCount);
 
             // then
             String value = rawWaitingRoom.get(getWaitingRoomKey(performanceId), email);
             assertThat(Optional.ofNullable(value))
                     .isNotEmpty()
-                    .map(v -> ObjectMapperUtils.readValue(objectMapper, v, WaitingMember.class))
                     .get()
                     .satisfies(
-                            member -> {
-                                assertThat(member.getEmail()).isEqualTo(email);
-                                assertThat(member.getPerformanceId()).isEqualTo(performanceId);
-                                assertThat(member.getWaitingCount()).isEqualTo(waitingCount);
+                            count -> {
+                                assertThat(count).isEqualTo(String.valueOf(waitingCount));
                             });
-        }
-    }
-
-    @Nested
-    @DisplayName("대기 중인 사용자 조회 시")
-    class FindWaitingMemberTest {
-
-        @Test
-        @DisplayName("사용자가 존재하면 반환한다.")
-        void returnWaitingMember() {
-            // given
-            String email = "email@email.com";
-            long performanceId = 1;
-            waitingRoom.enter(email, performanceId);
-            waitingRoom.updateMemberInfo(
-                    new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
-
-            // when
-            Optional<WaitingMember> optionalWaitingMember =
-                    waitingRoom.findWaitingMember(email, performanceId);
-
-            // then
-            assertThat(optionalWaitingMember)
-                    .isNotEmpty()
-                    .get()
-                    .satisfies(
-                            waitingMember -> {
-                                assertThat(waitingMember.getEmail()).isEqualTo(email);
-                                assertThat(waitingMember.getPerformanceId())
-                                        .isEqualTo(performanceId);
-                            });
-        }
-
-        @Test
-        @DisplayName("사용자가 존재하지 않으면 빈 값을 반환한다.")
-        void returnEmpty() {
-            // given
-            String email = "email@email.com";
-            long performanceId = 1;
-
-            // when
-            Optional<WaitingMember> optionalWaitingMember =
-                    waitingRoom.findWaitingMember(email, performanceId);
-
-            // then
-            assertThat(optionalWaitingMember).isEmpty();
         }
     }
 
@@ -173,7 +121,8 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
             waitingRoom.removeMemberInfo(email, performanceId);
 
             // then
-            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+            assertThatThrownBy(() -> waitingRoom.getMemberWaitingCount(email, performanceId))
+                    .isInstanceOf(TicketingException.class);
         }
 
         @Test
@@ -190,7 +139,8 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
             waitingRoom.removeMemberInfo(email, performanceId);
 
             // then
-            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+            assertThatThrownBy(() -> waitingRoom.getMemberWaitingCount(email, performanceId))
+                    .isInstanceOf(TicketingException.class);
         }
 
         @Test
@@ -204,7 +154,8 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
             waitingRoom.removeMemberInfo(email, performanceId);
 
             // then
-            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
+            assertThatThrownBy(() -> waitingRoom.getMemberWaitingCount(email, performanceId))
+                    .isInstanceOf(TicketingException.class);
         }
     }
 
@@ -226,8 +177,10 @@ class RedisWaitingRoomTest extends BaseIntegrationTest {
             waitingRoom.removeMemberInfo(Set.of(email, email2), performanceId);
 
             // then
-            assertThat(waitingRoom.findWaitingMember(email, performanceId)).isEmpty();
-            assertThat(waitingRoom.findWaitingMember(email2, performanceId)).isEmpty();
+            assertThatThrownBy(() -> waitingRoom.getMemberWaitingCount(email, performanceId))
+                    .isInstanceOf(TicketingException.class);
+            assertThatThrownBy(() -> waitingRoom.getMemberWaitingCount(email2, performanceId))
+                    .isInstanceOf(TicketingException.class);
         }
 
         @Test

@@ -46,7 +46,7 @@ public class TestRedisConfig {
 
     @Bean
     public RedisWaitingLine waitingLine() {
-        return new RedisWaitingLine(redisTemplate, objectMapper);
+        return new RedisWaitingLine(redisTemplate);
     }
 
     @Bean

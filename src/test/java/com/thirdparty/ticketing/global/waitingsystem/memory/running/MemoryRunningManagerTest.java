@@ -13,12 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-
 class MemoryRunningManagerTest {
 
     private MemoryRunningManager runningManager;
-    private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
+    private ConcurrentMap<Long, ConcurrentMap<String, ZonedDateTime>> room;
     private ConcurrentMap<Long, Long> counter;
 
     @BeforeEach
@@ -71,11 +69,10 @@ class MemoryRunningManagerTest {
         void returnZero_WhenLessThanZero() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 150; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
@@ -91,11 +88,10 @@ class MemoryRunningManagerTest {
         void returnAvailable_WhenGreaterThanZero() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 20; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
@@ -111,7 +107,7 @@ class MemoryRunningManagerTest {
     @DisplayName("작업 가능 공간 입장 호출 시")
     class EnterRunningRoomTest {
 
-        private Set<WaitingMember> waitingMembers;
+        private Set<String> waitingMembers;
         private int waitingMemberCount;
         private long performanceId;
 
@@ -121,9 +117,7 @@ class MemoryRunningManagerTest {
             performanceId = 1;
             waitingMembers = new HashSet<>();
             for (int i = 0; i < waitingMemberCount; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                waitingMembers.add("email" + i + "@email.com");
             }
         }
 

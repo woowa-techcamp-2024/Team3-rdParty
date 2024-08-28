@@ -3,7 +3,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 import java.util.Set;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,9 +29,9 @@ public class RedisRunningManager implements RunningManager {
     }
 
     @Override
-    public void enterRunningRoom(long performanceId, Set<WaitingMember> waitingMembers) {
-        runningRoom.enter(performanceId, waitingMembers);
-        runningCounter.increment(performanceId, waitingMembers.size());
+    public void enterRunningRoom(long performanceId, Set<String> emails) {
+        runningCounter.increment(performanceId, emails.size());
+        runningRoom.enter(performanceId, emails);
     }
 
     @Override

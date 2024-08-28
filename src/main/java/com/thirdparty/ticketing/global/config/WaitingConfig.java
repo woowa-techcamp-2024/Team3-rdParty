@@ -49,9 +49,8 @@ public class WaitingConfig {
     }
 
     @Bean
-    public RedisWaitingLine waitingLine(
-            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
-        return new RedisWaitingLine(redisTemplate, objectMapper);
+    public RedisWaitingLine waitingLine(StringRedisTemplate redisTemplate) {
+        return new RedisWaitingLine(redisTemplate);
     }
 
     @Bean

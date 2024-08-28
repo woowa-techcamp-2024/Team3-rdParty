@@ -7,9 +7,9 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingRoom;
-import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
 
 public class RedisWaitingRoom implements WaitingRoom {
 
@@ -27,24 +27,12 @@ public class RedisWaitingRoom implements WaitingRoom {
         return waitingRoom.putIfAbsent(getWaitingRoomKey(performanceId), email, email);
     }
 
-    public void updateMemberInfo(WaitingMember waitingMember) {
-        String value = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
-        waitingRoom.put(
-                getWaitingRoomKey(waitingMember.getPerformanceId()),
-                waitingMember.getEmail(),
-                value);
+    public void updateMemberInfo(String email, long performanceId, long waitingCount) {
+        waitingRoom.put(getWaitingRoomKey(performanceId), email, String.valueOf(waitingCount));
     }
 
     private String getWaitingRoomKey(long performanceId) {
         return WAITING_ROOM_KEY + performanceId;
-    }
-
-    public Optional<WaitingMember> findWaitingMember(String email, long performanceId) {
-        return Optional.ofNullable(waitingRoom.get(getWaitingRoomKey(performanceId), email))
-                .map(
-                        waitingMember ->
-                                ObjectMapperUtils.readValue(
-                                        objectMapper, waitingMember, WaitingMember.class));
     }
 
     public void removeMemberInfo(String email, long performanceId) {
@@ -56,5 +44,11 @@ public class RedisWaitingRoom implements WaitingRoom {
             return;
         }
         waitingRoom.delete(getWaitingRoomKey(performanceId), emails.toArray(String[]::new));
+    }
+
+    public long getMemberWaitingCount(String email, long performanceId) {
+        return Optional.ofNullable(waitingRoom.get(getWaitingRoomKey(performanceId), email))
+                .map(Long::parseLong)
+                .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_WAITING_MEMBER));
     }
 }

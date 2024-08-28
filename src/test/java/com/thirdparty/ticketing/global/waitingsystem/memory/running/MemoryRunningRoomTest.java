@@ -18,12 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-
 class MemoryRunningRoomTest {
 
     private MemoryRunningRoom runningRoom;
-    private ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
+    private ConcurrentMap<Long, ConcurrentMap<String, ZonedDateTime>> room;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +40,7 @@ class MemoryRunningRoomTest {
             long performanceId = 1;
             String email = "email@email.com";
             room.putIfAbsent(performanceId, new ConcurrentHashMap<>());
-            room.get(performanceId).putIfAbsent(email, new WaitingMember());
+            room.get(performanceId).putIfAbsent(email, ZonedDateTime.now());
 
             // when
             boolean contains = runningRoom.contains(email, performanceId);
@@ -73,7 +71,7 @@ class MemoryRunningRoomTest {
             long performanceIdB = 2;
             String email = "email@email.com";
             room.putIfAbsent(performanceIdA, new ConcurrentHashMap<>());
-            room.get(performanceIdA).putIfAbsent(email, new WaitingMember());
+            room.get(performanceIdA).putIfAbsent(email, ZonedDateTime.now());
 
             // when
             boolean contains = runningRoom.contains(email, performanceIdB);
@@ -96,7 +94,7 @@ class MemoryRunningRoomTest {
             room.putIfAbsent(performanceId, new ConcurrentHashMap<>());
             for (int i = 0; i < membersCount; i++) {
                 room.get(performanceId)
-                        .putIfAbsent("email" + i + "@email.com", new WaitingMember());
+                        .putIfAbsent("email" + i + "@email.com", ZonedDateTime.now());
             }
 
             // when
@@ -116,19 +114,17 @@ class MemoryRunningRoomTest {
         void putEmailInfo() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 10; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
 
             // when
             runningRoom.enter(performanceId, waitingMembers);
 
             // then
-            String[] emails =
-                    waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
+            String[] emails = waitingMembers.stream().toArray(String[]::new);
             // 각 이메일이 runningRoom 에 존재하는지 확인
             for (String email : emails) {
                 assertThat(runningRoom.contains(email, performanceId)).isTrue();
@@ -148,9 +144,7 @@ class MemoryRunningRoomTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            Set<WaitingMember> waitingMembers =
-                    Set.of(new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
-            runningRoom.enter(performanceId, waitingMembers);
+            runningRoom.enter(performanceId, Set.of(email));
             assertThat(room.get(performanceId)).hasSize(1);
 
             // when
@@ -166,9 +160,7 @@ class MemoryRunningRoomTest {
             // given
             long performanceId = 1;
             String anotherEmail = "email@email.com";
-            Set<WaitingMember> waitingMembers =
-                    Set.of(new WaitingMember(anotherEmail, performanceId, 1, ZonedDateTime.now()));
-            runningRoom.enter(performanceId, waitingMembers);
+            runningRoom.enter(performanceId, Set.of(anotherEmail));
 
             String email = "email" + 1 + "@email.com";
 
@@ -185,14 +177,14 @@ class MemoryRunningRoomTest {
     class RemoveExpiredMemberInfoTest {
 
         @Test
-        @DisplayName("입장한지 5분이 지난 사용자 정보를 제거한다.")
+        @DisplayName("만료 시간이 현재 이전인 사용자는 제거한다.")
         void removeExpiredMemberInfo() {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            ZonedDateTime fiveMinuteAgo = ZonedDateTime.now().minusMinutes(5).minusSeconds(1);
-            WaitingMember waitingMember = new WaitingMember(email, performanceId, 1, fiveMinuteAgo);
-            runningRoom.enter(performanceId, Set.of(waitingMember));
+            ConcurrentHashMap<String, ZonedDateTime> performanceRunning = new ConcurrentHashMap<>();
+            performanceRunning.put(email, ZonedDateTime.now().minusMinutes(1));
+            room.put(performanceId, performanceRunning);
 
             // when
             runningRoom.removeExpiredMemberInfo(performanceId);
@@ -202,21 +194,20 @@ class MemoryRunningRoomTest {
         }
 
         @Test
-        @DisplayName("입장한지 5분이 지나지 않은 사용자 정보는 제거하지 않는다.")
+        @DisplayName("만료 시간이 현재 시간 이후인 사용자는 제거하지 않는다..")
         void notRemoveMemberInfo() {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            ZonedDateTime nearFiveMinuteAgo = ZonedDateTime.now().minusMinutes(5).plusSeconds(2);
-            WaitingMember waitingMember =
-                    new WaitingMember(email, performanceId, 1, nearFiveMinuteAgo);
-            runningRoom.enter(performanceId, Set.of(waitingMember));
+            ConcurrentHashMap<String, ZonedDateTime> performanceRunning = new ConcurrentHashMap<>();
+            performanceRunning.put(email, ZonedDateTime.now().plusMinutes(1));
+            room.put(performanceId, performanceRunning);
 
             // when
             runningRoom.removeExpiredMemberInfo(performanceId);
 
             // then
-            assertThat(room.get(performanceId).get(email)).isEqualTo(waitingMember);
+            assertThat(room.get(performanceId).get(email)).isNotNull();
         }
     }
 
@@ -230,15 +221,15 @@ class MemoryRunningRoomTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            runningRoom.enter(performanceId, Set.of(new WaitingMember(email, performanceId)));
+            runningRoom.enter(performanceId, Set.of(email));
 
             // when
             runningRoom.updateRunningMemberExpiredTime(email, performanceId);
 
             // then
-            WaitingMember waitingMember = room.get(performanceId).get(email);
-            assertThat(waitingMember.getEnteredAt())
-                    .isCloseTo(ZonedDateTime.now().plusMinutes(5), within(1, ChronoUnit.SECONDS));
+            ZonedDateTime expiredAt = room.get(performanceId).get(email);
+            assertThat(expiredAt)
+                    .isCloseTo(ZonedDateTime.now().plusMinutes(5), within(1, ChronoUnit.MINUTES));
         }
 
         @Test

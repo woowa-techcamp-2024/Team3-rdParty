@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 public class RedisRunningRoom implements RunningRoom {
 
@@ -34,18 +33,17 @@ public class RedisRunningRoom implements RunningRoom {
         return MAX_RUNNING_ROOM_SIZE - runningRoom.size(getRunningRoomKey(performanceId));
     }
 
-    public void enter(long performanceId, Set<WaitingMember> waitingMembers) {
-        if (waitingMembers.isEmpty()) {
+    public void enter(long performanceId, Set<String> emails) {
+        if (emails.isEmpty()) {
             return;
         }
         ZonedDateTime minimumRunningTime = ZonedDateTime.now().plusSeconds(MINIMUM_RUNNING_TIME);
         Set<TypedTuple<String>> collect =
-                waitingMembers.stream()
+                emails.stream()
                         .map(
-                                member ->
+                                email ->
                                         TypedTuple.of(
-                                                member.getEmail(),
-                                                (double) minimumRunningTime.toEpochSecond()))
+                                                email, (double) minimumRunningTime.toEpochSecond()))
                         .collect(Collectors.toSet());
         runningRoom.add(getRunningRoomKey(performanceId), collect);
     }

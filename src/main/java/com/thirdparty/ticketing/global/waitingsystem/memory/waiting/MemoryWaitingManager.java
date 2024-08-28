@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.global.waitingsystem.memory.waiting;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -28,16 +29,10 @@ public class MemoryWaitingManager implements WaitingManager {
         }
     }
 
-    @Override
     public WaitingMember findWaitingMember(String email, long performanceId) {
         return waitingRoom
                 .findWaitingMember(email, performanceId)
                 .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_WAITING_MEMBER));
-    }
-
-    @Override
-    public Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning) {
-        return waitingLine.pullOutMembers(performanceId, availableToRunning);
     }
 
     @Override
@@ -48,5 +43,17 @@ public class MemoryWaitingManager implements WaitingManager {
     @Override
     public void removeMemberInfo(Set<String> emails, long performanceId) {
         waitingRoom.removeMemberInfo(emails, performanceId);
+    }
+
+    @Override
+    public long getMemberWaitingCount(String email, long performanceId) {
+        return waitingRoom.getMemberWaitingCount(email, performanceId);
+    }
+
+    @Override
+    public Set<String> pullOutMemberEmails(long performanceId, long availableToRunning) {
+        return waitingLine.pullOutMembers(performanceId, availableToRunning).stream()
+                .map(WaitingMember::getEmail)
+                .collect(Collectors.toSet());
     }
 }
