@@ -1,5 +1,6 @@
 package com.thirdparty.ticketing.global.waitingsystem;
 
+import com.thirdparty.ticketing.domain.waitingsystem.LastPollingEvent;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,11 @@ public class WaitingEventListener {
     @EventListener(PollingEvent.class)
     public void moveUserToRunningRoom(PollingEvent event) {
         waitingSystem.moveUserToRunning(event.getPerformanceId());
+    }
+
+    @EventListener(LastPollingEvent.class)
+    public void updateRunningMemberExpiredTime(LastPollingEvent event) {
+        waitingSystem.updateRunningMemberExpiredTime(event.getEmail(), event.getPerformanceId());
     }
 
     @TransactionalEventListener(PaymentEvent.class)
