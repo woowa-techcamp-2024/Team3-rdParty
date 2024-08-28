@@ -1,7 +1,10 @@
 package com.thirdparty.ticketing.domain.ticket.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
@@ -35,6 +38,7 @@ public class ReservationRedisService implements ReservationService {
     private final LettuceSeatRepository lettuceSeatRepository;
     private final SeatRepository seatRepository;
     private final TicketRepository ticketRepository;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -55,6 +59,9 @@ public class ReservationRedisService implements ReservationService {
         lettuceSeatRepository.selectSeat(redisSeat);
         // event publish
         eventPublisher.publish(new SeatEvent(memberEmail, seatId, SeatEvent.EventType.SELECT));
+        Map<String, String> map = new HashMap<>();
+        map.put("occupy", seatId.toString());
+        redisTemplate.opsForStream().add("seat-stream", map);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.member.repository.MemberRepository;
@@ -55,14 +56,16 @@ public class ReservationServiceContainer {
             MemberRepository memberRepository,
             LettuceSeatRepository lettuceSeatRepository,
             EventPublisher eventPublisher,
-            SeatRepository seatRepository) {
+            SeatRepository seatRepository,
+            StringRedisTemplate redisTemplate) {
         return new ReservationRedisService(
                 memberRepository,
                 eventPublisher,
                 paymentProcessor,
                 lettuceSeatRepository,
                 seatRepository,
-                ticketRepository);
+                ticketRepository,
+                redisTemplate);
     }
 
     @Bean
