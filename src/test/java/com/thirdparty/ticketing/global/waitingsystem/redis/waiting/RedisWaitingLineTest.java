@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisWaitingLineTest extends BaseIntegrationTest {
@@ -35,7 +32,7 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
-    private String getWaitingLineKey(String performanceId) {
+    private String getWaitingLineKey(long performanceId) {
         return WAITING_LINE_KEY + performanceId;
     }
 
@@ -52,53 +49,40 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("사용자를 대기열에 추가한다.")
-        void addWaitingLine() throws JsonProcessingException {
+        void addWaitingLine() {
             // given
-            String performanceId = "1";
-            long waitingCounter = 1;
-            WaitingMember waitingMember = new WaitingMember("email@email.com", performanceId);
-            waitingMember.updateWaitingInfo(waitingCounter, ZonedDateTime.now());
+            long performanceId = 1;
+            long waitingCount = 1;
+            String email = "email@email.com";
 
             // when
-            waitingLine.enter(waitingMember);
+            waitingLine.enter(email, performanceId, waitingCount);
 
             // then
             String performanceWaitingLineKey = getWaitingLineKey(performanceId);
             assertThat(rawWaitingLine.size(performanceWaitingLineKey)).isEqualTo(1);
             assertThat(rawWaitingLine.popMax(performanceWaitingLineKey).getValue())
-                    .isEqualTo(objectMapper.writeValueAsString(waitingMember));
+                    .isEqualTo(email);
         }
 
         @Test
         @DisplayName("사용자를 순차적으로 대기열에 추가한다.")
         void addWaitingLineSequentially() {
             // given
-            String performanceId = "1";
-            List<WaitingMember> waitingMembers = new ArrayList<>();
+            long performanceId = 1;
+            List<String> memberEmails = new ArrayList<>();
             int waitedMemberCount = 5;
             for (int i = 0; i < waitedMemberCount; i++) {
-                waitingMembers.add(new WaitingMember("email" + i + "@email.com", performanceId));
+                memberEmails.add("email" + i + "@email.com");
             }
 
             // when
             for (int i = 0; i < waitedMemberCount; i++) {
-                WaitingMember waitingMember = waitingMembers.get(i);
-                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
-                waitingLine.enter(waitingMember);
+                waitingLine.enter(memberEmails.get(i), performanceId, waitedMemberCount);
             }
 
             // then
-            List<String> expected =
-                    waitingMembers.stream()
-                            .map(
-                                    member -> {
-                                        try {
-                                            return objectMapper.writeValueAsString(member);
-                                        } catch (JsonProcessingException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    })
-                            .toList();
+            List<String> expected = memberEmails.stream().toList();
             String performanceWaitingLineKey = getWaitingLineKey(performanceId);
             Set<String> values =
                     rawWaitingLine.range(performanceWaitingLineKey, 0, Integer.MAX_VALUE);
@@ -110,24 +94,21 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
         @DisplayName("서로 다른 공연은 같은 대기열을 공유하지 않는다.")
         void notSharedWaitingLine() {
             // given
-            String performanceAId = "1";
-            int performanceAWaitedMemberCount = 5;
-            String performanceBId = "2";
-            int performanceBWaitedMemberCount = 10;
+            long performanceAId = 1;
+            int countA = 5;
+
+            long performanceBId = 2;
+            int countB = 10;
 
             // when
-            for (int i = 0; i < performanceAWaitedMemberCount; i++) {
-                WaitingMember waitingMember =
-                        new WaitingMember("email" + i + "@email.com", performanceAId);
-                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
-                waitingLine.enter(waitingMember);
+            for (int i = 0; i < countA; i++) {
+                String email = "email" + i + "@email.com";
+                waitingLine.enter(email, performanceAId, i);
             }
 
-            for (int i = 0; i < performanceBWaitedMemberCount; i++) {
-                WaitingMember waitingMember =
-                        new WaitingMember("email" + i + "@email.com", performanceBId);
-                waitingMember.updateWaitingInfo(i, ZonedDateTime.now());
-                waitingLine.enter(waitingMember);
+            for (int i = countA; i < countA + countB; i++) {
+                String email = "email" + i * 10 + "@email.com";
+                waitingLine.enter(email, performanceBId, i);
             }
 
             // then
@@ -138,8 +119,8 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
 
             assertThat(performanceAWaitedMembers)
                     .doesNotContainAnyElementsOf(performanceBWaitedMembers);
-            assertThat(performanceAWaitedMembers).hasSize(performanceAWaitedMemberCount);
-            assertThat(performanceBWaitedMembers).hasSize(performanceBWaitedMemberCount);
+            assertThat(performanceAWaitedMembers).hasSize(countA);
+            assertThat(performanceBWaitedMembers).hasSize(countB);
         }
     }
 
@@ -153,20 +134,20 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             int memberCount = 20;
+            List<String> waitingMembers = new ArrayList<>();
             for (int i = 1; i <= memberCount; i++) {
-                WaitingMember waitingMember =
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now());
-                waitingLine.enter(waitingMember);
+                String email = "email" + i + "@email.com";
+                waitingLine.enter(email, performanceId, i);
+                waitingMembers.add(email);
             }
 
             // when
-            Set<WaitingMember> waitingMembers = waitingLine.pullOutMembers(performanceId, 5);
+            Set<String> emails = waitingLine.pullOutMembers(performanceId, 5);
 
             // then
-            assertThat(waitingMembers)
-                    .map(WaitingMember::getWaitingCount)
-                    .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
+            waitingMembers.stream().limit(5);
+            assertThat(emails)
+                    .containsExactlyInAnyOrderElementsOf(waitingMembers.stream().limit(5).toList());
         }
 
         @Test
@@ -175,21 +156,18 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             int memberCount = 5;
+            List<String> waitingMembers = new ArrayList<>();
             for (int i = 1; i <= memberCount; i++) {
-                WaitingMember waitingMember =
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now());
-                waitingLine.enter(waitingMember);
+                String email = "email" + i + "@email.com";
+                waitingLine.enter(email, performanceId, i);
+                waitingMembers.add(email);
             }
 
             // when
-            Set<WaitingMember> waitingMembers =
-                    waitingLine.pullOutMembers(performanceId, memberCount + 20);
+            Set<String> emails = waitingLine.pullOutMembers(performanceId, memberCount + 20);
 
             // then
-            assertThat(waitingMembers)
-                    .map(WaitingMember::getWaitingCount)
-                    .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
+            assertThat(emails).containsExactlyInAnyOrderElementsOf(waitingMembers);
         }
 
         @Test
@@ -199,10 +177,10 @@ class RedisWaitingLineTest extends BaseIntegrationTest {
             long performanceId = 1;
 
             // when
-            Set<WaitingMember> waitingMembers = waitingLine.pullOutMembers(performanceId, 20);
+            Set<String> emails = waitingLine.pullOutMembers(performanceId, 20);
 
             // then
-            assertThat(waitingMembers).isEmpty();
+            assertThat(emails).isEmpty();
         }
     }
 }

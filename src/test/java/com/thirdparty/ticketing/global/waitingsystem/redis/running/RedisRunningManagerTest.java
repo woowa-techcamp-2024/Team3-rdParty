@@ -2,7 +2,6 @@ package com.thirdparty.ticketing.global.waitingsystem.redis.running;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisRunningManagerTest extends BaseIntegrationTest {
@@ -83,11 +81,10 @@ class RedisRunningManagerTest extends BaseIntegrationTest {
         void returnZero_WhenLessThanZero() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 150; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
@@ -103,11 +100,10 @@ class RedisRunningManagerTest extends BaseIntegrationTest {
         void returnAvailable_WhenGreaterThanZero() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 20; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
             runningManager.enterRunningRoom(performanceId, waitingMembers);
 
@@ -123,7 +119,7 @@ class RedisRunningManagerTest extends BaseIntegrationTest {
     @DisplayName("작업 가능 공간 입장 호출 시")
     class EnterRunningRoomTest {
 
-        private Set<WaitingMember> waitingMembers;
+        private Set<String> waitingMembers;
         private int waitingMemberCount;
         private long performanceId;
 
@@ -133,9 +129,8 @@ class RedisRunningManagerTest extends BaseIntegrationTest {
             performanceId = 1;
             waitingMembers = new HashSet<>();
             for (int i = 0; i < waitingMemberCount; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                String email = "email" + i + "@email.com";
+                waitingMembers.add(email);
             }
         }
 

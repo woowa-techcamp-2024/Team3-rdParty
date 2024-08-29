@@ -25,7 +25,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisRunningRoomTest extends BaseIntegrationTest {
@@ -134,19 +133,16 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
         void putEmailInfo() {
             // given
             long performanceId = 1;
-            Set<WaitingMember> waitingMembers = new HashSet<>();
+            Set<String> waitingMembers = new HashSet<>();
             for (int i = 0; i < 10; i++) {
-                waitingMembers.add(
-                        new WaitingMember(
-                                "email" + i + "@email.com", performanceId, i, ZonedDateTime.now()));
+                waitingMembers.add("email" + i + "@email.com");
             }
 
             // when
             runningRoom.enter(performanceId, waitingMembers);
 
             // then
-            String[] emails =
-                    waitingMembers.stream().map(WaitingMember::getEmail).toArray(String[]::new);
+            String[] emails = waitingMembers.stream().toArray(String[]::new);
             List<Double> score = rawRunningRoom.score(getRunningRoomKey(performanceId), emails);
             assertThat(score).allSatisfy(value -> assertThat(value).isNotNull());
         }
@@ -157,11 +153,9 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            Set<WaitingMember> waitingMembers =
-                    Set.of(new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
 
             // when
-            runningRoom.enter(performanceId, waitingMembers);
+            runningRoom.enter(performanceId, Set.of(email));
 
             // then
             Double score = rawRunningRoom.score(getRunningRoomKey(performanceId), email);
@@ -185,9 +179,7 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            Set<WaitingMember> waitingMembers =
-                    Set.of(new WaitingMember(email, performanceId, 1, ZonedDateTime.now()));
-            runningRoom.enter(performanceId, waitingMembers);
+            runningRoom.enter(performanceId, Set.of(email));
 
             // when
             runningRoom.pullOutRunningMember(email, performanceId);
@@ -202,8 +194,7 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             String anotherEmail = "email@email.com";
-            Set<WaitingMember> waitingMembers =
-                    Set.of(new WaitingMember(anotherEmail, performanceId, 1, ZonedDateTime.now()));
+            Set<String> waitingMembers = Set.of(anotherEmail);
             runningRoom.enter(performanceId, waitingMembers);
 
             String email = "email" + 1 + "@email.com";
@@ -280,7 +271,7 @@ class RedisRunningRoomTest extends BaseIntegrationTest {
             // given
             long performanceId = 1;
             String email = "email@email.com";
-            runningRoom.enter(performanceId, Set.of(new WaitingMember(email, performanceId)));
+            runningRoom.enter(performanceId, Set.of(email));
 
             // when
             runningRoom.updateRunningMemberExpiredTime(email, performanceId);

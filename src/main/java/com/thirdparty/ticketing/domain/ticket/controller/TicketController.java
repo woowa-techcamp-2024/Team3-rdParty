@@ -16,6 +16,7 @@ import com.thirdparty.ticketing.domain.ticket.dto.request.TicketPaymentRequest;
 import com.thirdparty.ticketing.domain.ticket.dto.response.TicketElement;
 import com.thirdparty.ticketing.domain.ticket.service.ReservationService;
 import com.thirdparty.ticketing.domain.ticket.service.TicketService;
+import com.thirdparty.ticketing.domain.waitingsystem.Waiting;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +42,7 @@ public class TicketController {
         return ResponseEntity.ok().build();
     }
 
+    @Waiting
     @PostMapping("/seats/select")
     public ResponseEntity<Void> selectSeat(
             @LoginMember String memberEmail,
@@ -49,6 +51,7 @@ public class TicketController {
         return ResponseEntity.ok().build();
     }
 
+    @Waiting
     @PostMapping("/tickets")
     public ResponseEntity<Void> reservationTicket(
             @LoginMember String memberEmail,

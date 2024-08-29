@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingAspect;
 import com.thirdparty.ticketing.domain.waitingsystem.WaitingSystem;
@@ -43,15 +42,13 @@ public class WaitingConfig {
     }
 
     @Bean
-    public RedisWaitingRoom waitingRoom(
-            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
-        return new RedisWaitingRoom(redisTemplate, objectMapper);
+    public RedisWaitingRoom waitingRoom(StringRedisTemplate redisTemplate) {
+        return new RedisWaitingRoom(redisTemplate);
     }
 
     @Bean
-    public RedisWaitingLine waitingLine(
-            StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
-        return new RedisWaitingLine(redisTemplate, objectMapper);
+    public RedisWaitingLine waitingLine(StringRedisTemplate redisTemplate) {
+        return new RedisWaitingLine(redisTemplate);
     }
 
     @Bean

@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningRoom;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +17,7 @@ public class MemoryRunningRoom implements RunningRoom {
     private static final int MAX_MEMORY_RUNNING_ROOM_SIZE = 100;
     private static final int EXPIRED_MINUTE = 5;
 
-    private final ConcurrentMap<Long, ConcurrentMap<String, WaitingMember>> room;
+    private final ConcurrentMap<Long, ConcurrentMap<String, ZonedDateTime>> room;
 
     public boolean contains(String email, long performanceId) {
         if (!room.containsKey(performanceId)) {
@@ -34,13 +33,14 @@ public class MemoryRunningRoom implements RunningRoom {
                         - (room.containsKey(performanceId) ? room.get(performanceId).size() : 0));
     }
 
-    public void enter(long performanceId, Set<WaitingMember> waitingMembers) {
+    public void enter(long performanceId, Set<String> emails) {
         room.compute(
                 performanceId,
                 (key, room) -> {
-                    ConcurrentMap<String, WaitingMember> runningRoom =
+                    ConcurrentMap<String, ZonedDateTime> runningRoom =
                             (room != null) ? room : new ConcurrentHashMap<>();
-                    waitingMembers.forEach(member -> runningRoom.put(member.getEmail(), member));
+                    emails.forEach(
+                            email -> runningRoom.put(email, ZonedDateTime.now().plusSeconds(30)));
                     return runningRoom;
                 });
     }
@@ -55,15 +55,15 @@ public class MemoryRunningRoom implements RunningRoom {
     }
 
     public Set<String> removeExpiredMemberInfo(long performanceId) {
-        ConcurrentMap<String, WaitingMember> performanceRoom = room.get(performanceId);
+        ConcurrentMap<String, ZonedDateTime> performanceRoom = room.get(performanceId);
         if (performanceRoom == null) {
             return Set.of();
         }
 
-        ZonedDateTime fiveMinutesAgo = ZonedDateTime.now().minusMinutes(EXPIRED_MINUTE);
+        ZonedDateTime now = ZonedDateTime.now();
         Set<String> removeMemberEmails =
                 performanceRoom.entrySet().stream()
-                        .filter(entry -> entry.getValue().getEnteredAt().isBefore(fiveMinutesAgo))
+                        .filter(entry -> entry.getValue().isBefore(now))
                         .map(Entry::getKey)
                         .collect(Collectors.toSet());
         removeMemberEmails.forEach(performanceRoom::remove);
@@ -74,14 +74,7 @@ public class MemoryRunningRoom implements RunningRoom {
         room.computeIfPresent(
                 performanceId,
                 (key, room) -> {
-                    room.computeIfPresent(
-                            email,
-                            (k, waitingMember) ->
-                                    new WaitingMember(
-                                            email,
-                                            performanceId,
-                                            waitingMember.getWaitingCount(),
-                                            ZonedDateTime.now().plusMinutes(5)));
+                    room.put(email, ZonedDateTime.now().plusMinutes(EXPIRED_MINUTE));
                     return room;
                 });
     }

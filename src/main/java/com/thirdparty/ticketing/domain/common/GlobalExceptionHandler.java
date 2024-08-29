@@ -2,6 +2,7 @@ package com.thirdparty.ticketing.domain.common;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse<Void>> handleAllExceptions(Exception e) {
+        log.error("예측하지 못한 예외 발생. 메시지={}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
 
     @ExceptionHandler(TicketingException.class)
     public ResponseEntity<ErrorResponse<Void>> handleTicketingException(TicketingException e) {

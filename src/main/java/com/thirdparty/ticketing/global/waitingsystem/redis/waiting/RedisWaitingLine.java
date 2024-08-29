@@ -6,49 +6,32 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingLine;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
 
 public class RedisWaitingLine implements WaitingLine {
 
     private static final String WAITING_LINE_KEY = "waiting_line:";
 
     private final ZSetOperations<String, String> waitingLine;
-    private final ObjectMapper objectMapper;
 
-    public RedisWaitingLine(StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
+    public RedisWaitingLine(StringRedisTemplate redisTemplate) {
         this.waitingLine = redisTemplate.opsForZSet();
-        this.objectMapper = objectMapper;
     }
 
-    public void enter(WaitingMember waitingMember) {
-        String value = ObjectMapperUtils.writeValueAsString(objectMapper, waitingMember);
-        waitingLine.add(
-                getWaitingLineKey(waitingMember.getPerformanceId()),
-                value,
-                waitingMember.getWaitingCount());
+    public void enter(String email, long performanceId, long waitingCount) {
+        waitingLine.add(getWaitingLineKey(performanceId), email, waitingCount);
     }
 
     private String getWaitingLineKey(long performanceId) {
         return WAITING_LINE_KEY + performanceId;
     }
 
-    public Set<WaitingMember> pullOutMembers(long performanceId, long availableToRunning) {
+    public Set<String> pullOutMembers(long performanceId, long availableToRunning) {
         return Optional.ofNullable(
                         waitingLine.popMin(getWaitingLineKey(performanceId), availableToRunning))
-                .map(
-                        set ->
-                                set.stream()
-                                        .map(
-                                                value ->
-                                                        ObjectMapperUtils.readValue(
-                                                                objectMapper,
-                                                                value.getValue(),
-                                                                WaitingMember.class))
-                                        .collect(Collectors.toSet()))
+                .map(set -> set.stream().map(TypedTuple::getValue).collect(Collectors.toSet()))
                 .orElseGet(Set::of);
     }
 }

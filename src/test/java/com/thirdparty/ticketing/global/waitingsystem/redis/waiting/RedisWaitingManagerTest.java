@@ -1,7 +1,6 @@
 package com.thirdparty.ticketing.global.waitingsystem.redis.waiting;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,11 +18,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thirdparty.ticketing.domain.common.ErrorCode;
-import com.thirdparty.ticketing.domain.common.TicketingException;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
-import com.thirdparty.ticketing.global.waitingsystem.ObjectMapperUtils;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 class RedisWaitingManagerTest extends BaseIntegrationTest {
@@ -31,8 +25,6 @@ class RedisWaitingManagerTest extends BaseIntegrationTest {
     @Autowired private RedisWaitingManager waitingManager;
 
     @Autowired private StringRedisTemplate redisTemplate;
-
-    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -74,12 +66,10 @@ class RedisWaitingManagerTest extends BaseIntegrationTest {
             String value = rawWaitingRoom.get(getWaitingRoomKey(performanceId), email);
             assertThat(Optional.ofNullable(value))
                     .isNotEmpty()
-                    .map(v -> ObjectMapperUtils.readValue(objectMapper, v, WaitingMember.class))
                     .get()
                     .satisfies(
-                            member -> {
-                                assertThat(member.getPerformanceId()).isEqualTo(performanceId);
-                                assertThat(member.getEmail()).isEqualTo(email);
+                            waitingCount -> {
+                                assertThat(waitingCount).isEqualTo("1");
                             });
         }
 
@@ -99,9 +89,8 @@ class RedisWaitingManagerTest extends BaseIntegrationTest {
                     rawWaitingLine.range(getWaitingLineKey(performanceId), 0, Integer.MAX_VALUE);
             assertThat(values)
                     .hasSize(1)
-                    .map(value -> objectMapper.readValue(value, WaitingMember.class))
                     .first()
-                    .satisfies(member -> assertThat(member.getWaitingCount()).isEqualTo(1));
+                    .satisfies(waitingMember -> assertThat(waitingMember).isEqualTo(email));
         }
 
         @Test
@@ -150,48 +139,6 @@ class RedisWaitingManagerTest extends BaseIntegrationTest {
 
             // then
             assertThat(rawWaitingRoom.entries(getWaitingRoomKey(performanceId))).hasSize(1);
-        }
-    }
-
-    @Nested
-    @DisplayName("대기중인 사용자 조회 시")
-    class FindWaitingMemberTest {
-
-        @Test
-        @DisplayName("사용자가 존재하면 반환한다.")
-        void returnWaitingMember() {
-            // given
-            long performanceId = 1;
-            String email = "email@email.com";
-            waitingManager.enterWaitingRoom(email, performanceId);
-
-            // when
-            WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
-
-            // then
-            assertThat(waitingMember.getEmail()).isEqualTo(email);
-            assertThat(waitingMember.getPerformanceId()).isEqualTo(performanceId);
-        }
-
-        @Test
-        @DisplayName("예외(NOT_FOUND_WAITING_MEMBER): 사용자가 존재하지 않으면")
-        void notFoundWaitingMember() {
-            // given
-            long performanceId = 1;
-            String email = "email@email.com";
-
-            // when
-            Exception exception =
-                    catchException(() -> waitingManager.findWaitingMember(email, performanceId));
-
-            // then
-            assertThat(exception)
-                    .isInstanceOf(TicketingException.class)
-                    .extracting(e -> ((TicketingException) e).getErrorCode())
-                    .satisfies(
-                            errorCode -> {
-                                assertThat(errorCode).isEqualTo(ErrorCode.NOT_FOUND_WAITING_MEMBER);
-                            });
         }
     }
 }

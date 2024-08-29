@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.ZonedDateTime;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.thirdparty.ticketing.domain.member.Member;
 import com.thirdparty.ticketing.domain.member.MemberRole;
 import com.thirdparty.ticketing.domain.member.service.JwtProvider;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.global.waitingsystem.redis.running.RedisRunningRoom;
 import com.thirdparty.ticketing.global.waitingsystem.redis.waiting.RedisWaitingLine;
 import com.thirdparty.ticketing.support.BaseIntegrationTest;
@@ -101,7 +99,6 @@ class WaitingAspectTest extends BaseIntegrationTest {
 
                 // then
                 assertThat(waitingLine.pullOutMembers(performanceId, 1))
-                        .map(WaitingMember::getEmail)
                         .hasSize(1)
                         .first()
                         .satisfies(email -> assertThat(email).isEqualTo(member.getEmail()));
@@ -120,11 +117,7 @@ class WaitingAspectTest extends BaseIntegrationTest {
                             .memberRole(MemberRole.USER)
                             .build();
             String bearerToken = getBearerToken(member);
-            runningRoom.enter(
-                    performanceId,
-                    Set.of(
-                            new WaitingMember(
-                                    member.getEmail(), performanceId, 1, ZonedDateTime.now())));
+            runningRoom.enter(performanceId, Set.of(member.getEmail()));
 
             // when
             ResultActions result =

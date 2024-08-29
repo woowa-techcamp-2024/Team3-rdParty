@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.thirdparty.ticketing.domain.common.ErrorCode;
+import com.thirdparty.ticketing.domain.common.TicketingException;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingRoom;
 
@@ -46,5 +48,11 @@ public class MemoryWaitingRoom implements WaitingRoom {
                     emails.forEach(room::remove);
                     return room;
                 });
+    }
+
+    public long getMemberWaitingCount(String email, long performanceId) {
+        return findWaitingMember(email, performanceId)
+                .map(WaitingMember::getWaitingCount)
+                .orElseThrow(() -> new TicketingException(ErrorCode.NOT_FOUND_WAITING_MEMBER));
     }
 }

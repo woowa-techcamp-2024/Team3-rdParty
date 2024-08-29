@@ -154,12 +154,11 @@ class WaitingSystemTest extends BaseIntegrationTest {
             // given
             String anotherEmail = "anotherEmail@email.com";
             ZonedDateTime now = ZonedDateTime.now().plusSeconds(30);
-            WaitingMember waitingMember = new WaitingMember(anotherEmail, performanceId, 2, now);
-            rawRunningRoom.add(getRunningRoomKey(performanceId), anotherEmail, now.toEpochSecond());
-            rawWaitingRoom.put(
-                    getWaitingRoomKey(performanceId),
+            rawRunningRoom.add(
+                    getRunningRoomKey(performanceId),
                     anotherEmail,
-                    objectMapper.writeValueAsString(waitingMember));
+                    now.plusMinutes(1).toEpochSecond());
+            rawWaitingRoom.put(getWaitingRoomKey(performanceId), anotherEmail, String.valueOf(2));
 
             // when
             waitingSystem.moveUserToRunning(performanceId);
@@ -223,14 +222,14 @@ class WaitingSystemTest extends BaseIntegrationTest {
             waitingManager.enterWaitingRoom(email, performanceId);
             WaitingMember waitingMember =
                     new WaitingMember(email, performanceId, 1, ZonedDateTime.now());
-            runningManager.enterRunningRoom(performanceId, Set.of(waitingMember));
+            runningManager.enterRunningRoom(performanceId, Set.of(waitingMember.getEmail()));
 
             // when
             waitingSystem.pullOutRunningMember(email, performanceId);
 
             // then
             assertThat(runningManager.isReadyToHandle(email, performanceId)).isFalse();
-            assertThatThrownBy(() -> waitingManager.findWaitingMember(email, performanceId))
+            assertThatThrownBy(() -> waitingManager.getMemberWaitingCount(email, performanceId))
                     .isInstanceOf(TicketingException.class);
         }
 

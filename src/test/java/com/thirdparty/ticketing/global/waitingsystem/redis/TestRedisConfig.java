@@ -41,12 +41,12 @@ public class TestRedisConfig {
 
     @Bean
     public RedisWaitingRoom waitingRoom() {
-        return new RedisWaitingRoom(redisTemplate, objectMapper);
+        return new RedisWaitingRoom(redisTemplate);
     }
 
     @Bean
     public RedisWaitingLine waitingLine() {
-        return new RedisWaitingLine(redisTemplate, objectMapper);
+        return new RedisWaitingLine(redisTemplate);
     }
 
     @Bean

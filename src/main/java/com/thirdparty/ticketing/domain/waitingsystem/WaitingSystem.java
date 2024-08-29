@@ -1,17 +1,19 @@
 package com.thirdparty.ticketing.domain.waitingsystem;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.waitingsystem.running.RunningManager;
 import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingManager;
-import com.thirdparty.ticketing.domain.waitingsystem.waiting.WaitingMember;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class WaitingSystem {
 
+    private final Map<Long, PollingEvent> pollingEventCache = new ConcurrentHashMap<>();
     private final WaitingManager waitingManager;
     private final RunningManager runningManager;
     private final EventPublisher eventPublisher;
@@ -25,10 +27,12 @@ public class WaitingSystem {
     }
 
     public long getRemainingCount(String email, long performanceId) {
-        WaitingMember waitingMember = waitingManager.findWaitingMember(email, performanceId);
+        long memberWaitingCount = waitingManager.getMemberWaitingCount(email, performanceId);
         long runningCount = runningManager.getRunningCount(performanceId);
-        long remainingCount = waitingMember.getWaitingCount() - runningCount;
-        eventPublisher.publish(new PollingEvent(performanceId));
+        long remainingCount = memberWaitingCount - runningCount;
+        PollingEvent pollingEvent =
+                pollingEventCache.computeIfAbsent(performanceId, PollingEvent::new);
+        eventPublisher.publish(pollingEvent);
         if (remainingCount <= 0) {
             eventPublisher.publish(new LastPollingEvent(email, performanceId));
         }
@@ -39,9 +43,8 @@ public class WaitingSystem {
         Set<String> removeMemberEmails = runningManager.removeExpiredMemberInfo(performanceId);
         waitingManager.removeMemberInfo(removeMemberEmails, performanceId);
         long availableToRunning = runningManager.getAvailableToRunning(performanceId);
-        Set<WaitingMember> waitingMembers =
-                waitingManager.pullOutMembers(performanceId, availableToRunning);
-        runningManager.enterRunningRoom(performanceId, waitingMembers);
+        Set<String> emails = waitingManager.pullOutMemberEmails(performanceId, availableToRunning);
+        runningManager.enterRunningRoom(performanceId, emails);
     }
 
     public void pullOutRunningMember(String email, long performanceId) {
