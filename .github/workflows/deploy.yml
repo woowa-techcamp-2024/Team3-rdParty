@@ -52,7 +52,7 @@ jobs:
             echo "Stopping existing application with PID $PID"
             kill -9 $PID
             fi
-            nohup java -jar /home/ubuntu/deploy/*.jar &
+            nohup java -jar -Dspring.profiles.active=prod /home/ubuntu/deploy/*.jar &
 
       - name: Deploy Prod use SCP
         uses: appleboy/scp-action@master
@@ -76,4 +76,4 @@ jobs:
             echo "Stopping existing application with PID $PID"
             kill -9 $PID
             fi
-            nohup java -jar /home/ubuntu/deploy/*.jar &
+            nohup java -jar -Dspring.profiles.active=prod /home/ubuntu/deploy/*.jar &
