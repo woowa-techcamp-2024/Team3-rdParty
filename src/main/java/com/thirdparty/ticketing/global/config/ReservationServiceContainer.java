@@ -39,7 +39,6 @@ public class ReservationServiceContainer {
                 lettuceRepository, cacheReservationTransactionService);
     }
 
-    @Primary
     @Bean
     ReservationService optimisticReservationServiceProxy(
             @Qualifier("persistenceOptimisticReservationService")
@@ -47,6 +46,7 @@ public class ReservationServiceContainer {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
+    @Primary
     @Bean
     ReservationService pessimisticReservationServiceProxy(
             @Qualifier("persistencePessimisticReservationService")
