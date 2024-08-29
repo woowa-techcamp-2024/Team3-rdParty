@@ -31,6 +31,20 @@
     </tr>
 </table>
 
+### 데모
+
+#### 대기열 화면
+<img src="https://github.com/user-attachments/assets/7420a4f7-e5f3-40f6-ad5d-02c14739b4e7" width="444" height="507"/>
+
+#### 좌석 선택 화면
+<img src="https://github.com/user-attachments/assets/87a1ed80-2a65-4836-a0be-f75dc9fccdcf" width="444" height="507"/>
+
+#### 전체 시나리오
+https://github.com/user-attachments/assets/eb29c948-4a1c-41fd-a7b5-b6f4d167969c
+
+### ERD
+![스키마](https://github.com/user-attachments/assets/cc43dfd9-3135-47a4-b584-5e8184f1024d)
+
 ### 📜 그라운드 룰
 
 - 스크럼과 회고는 10분 이내로 한다.
