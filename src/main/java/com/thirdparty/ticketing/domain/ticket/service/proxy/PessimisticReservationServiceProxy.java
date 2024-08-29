@@ -2,7 +2,7 @@ package com.thirdparty.ticketing.domain.ticket.service.proxy;
 
 import jakarta.persistence.LockTimeoutException;
 
-import org.hibernate.PessimisticLockException;
+import org.springframework.dao.PessimisticLockingFailureException;
 
 import com.thirdparty.ticketing.domain.common.ErrorCode;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -22,7 +22,7 @@ public class PessimisticReservationServiceProxy implements ReservationServicePro
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {
         try {
             reservationTransactionService.selectSeat(memberEmail, seatSelectionRequest);
-        } catch (PessimisticLockException | LockTimeoutException e) {
+        } catch (PessimisticLockingFailureException | LockTimeoutException e) {
             log.error(e.getMessage(), e);
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
@@ -32,7 +32,7 @@ public class PessimisticReservationServiceProxy implements ReservationServicePro
     public void reservationTicket(String memberEmail, TicketPaymentRequest ticketPaymentRequest) {
         try {
             reservationTransactionService.reservationTicket(memberEmail, ticketPaymentRequest);
-        } catch (PessimisticLockException | LockTimeoutException e) {
+        } catch (PessimisticLockingFailureException | LockTimeoutException e) {
             log.error(e.getMessage(), e);
             throw new TicketingException(ErrorCode.NOT_SELECTABLE_SEAT);
         }
