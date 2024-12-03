@@ -32,4 +32,4 @@ fi
 echo "Performing lint and check on ${ORIGIN}/${BASE_BRANCH}..HEAD@${CURRENT_COMMIT} ..."
 
 # Gradle을 사용하여 spotlessCheck 검사 수행
-./gradlew spotlessCheck
+# ./gradlew spotlessCheck

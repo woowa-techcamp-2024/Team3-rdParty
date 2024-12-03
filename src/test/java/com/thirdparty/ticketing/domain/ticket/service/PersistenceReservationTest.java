@@ -41,6 +41,10 @@ public class PersistenceReservationTest extends BaseIntegrationTest {
     @Qualifier("pessimisticReservationServiceProxy")
     private ReservationService pessimisticReservationService;
 
+    @Autowired
+    @Qualifier("newOptimisticReservationServiceProxy")
+    private ReservationService newOptimisticReservationService;
+
     private String memberEmail = "test@gmail.com";
     private Long seatId = 1L;
 
@@ -50,6 +54,17 @@ public class PersistenceReservationTest extends BaseIntegrationTest {
             scripts = "/db/select-seat-test.sql",
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     class SelectSeatTest {
+        @Nested
+        @DisplayName("트랜색션이 없는 낙관 락을 사용하면")
+        class NonTransactionalOptimisticLockTest {
+            @Test
+            @DisplayName("여러개의 동시 요청 중 한 명만 좌석을 성공적으로 선택해야 한다.")
+            void selectSeat_optimistic() throws InterruptedException {
+                selectSeat_ConcurrencyTest(newOptimisticReservationService);
+            }
+        }
+
+
         @Nested
         @DisplayName("낙관 락을 사용하면")
         class OptimisticLockTest {

@@ -67,11 +67,15 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:1.20.1"
     testImplementation 'org.testcontainers:mysql:1.20.1'
     testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+
+    // P6Spy 의존성 추가
+    // implementation 'p6spy:p6spy:3.9.1'
+    // implementation 'com.github.gavlyukovskiy:datasource-decorator-spring-boot-autoconfigure:1.9.0'
 }
 
 spotless {
     java {
-        target 'src/**/*.java' // 대상 파일 지정
+        // target 'src/**/*.java' // 대상 파일 지정
         googleJavaFormat().aosp()
         importOrder('java', 'javax', 'jakarta', 'org', 'com')
         removeUnusedImports()

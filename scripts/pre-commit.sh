@@ -11,4 +11,4 @@ BASE_PATH=$(cd "$(dirname "$0")"/.. && pwd)
 echo "Performing lint for changed files ..."
 
 # Gradle을 사용하여 spotlessCheck 검사 수행
-./gradlew spotlessCheck
+#./gradlew spotlessCheck

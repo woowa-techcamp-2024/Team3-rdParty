@@ -21,11 +21,12 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 
 @Configuration
 public class ReservationServiceContainer {
+
     @Bean
     public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient,
             @Qualifier("cacheReservationTransactionService")
-                    ReservationTransactionService cacheReservationTransactionService) {
+            ReservationTransactionService cacheReservationTransactionService) {
         return new RedissonReservationServiceProxy(
                 redissonClient, cacheReservationTransactionService);
     }
@@ -34,24 +35,46 @@ public class ReservationServiceContainer {
     public ReservationService lettuceReservationServiceProxy(
             LettuceRepository lettuceRepository,
             @Qualifier("cacheReservationTransactionService")
-                    ReservationTransactionService cacheReservationTransactionService) {
+            ReservationTransactionService cacheReservationTransactionService) {
         return new LettuceReservationServiceProxy(
                 lettuceRepository, cacheReservationTransactionService);
     }
 
     @Bean
+    ReservationService newOptimisticReservationServiceProxy(
+            @Qualifier("newOptimisticReservationService")
+            ReservationService reservationNonTransactionService) {
+        return reservationNonTransactionService;
+    }
+
+    @Bean
+    @Primary
     ReservationService optimisticReservationServiceProxy(
             @Qualifier("persistenceOptimisticReservationService")
-                    ReservationTransactionService persistenceOptimisticReservationService) {
+            ReservationTransactionService persistenceOptimisticReservationService) {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
-    @Primary
+
     @Bean
     ReservationService pessimisticReservationServiceProxy(
             @Qualifier("persistencePessimisticReservationService")
-                    ReservationTransactionService persistencePessimisticReservationService) {
+            ReservationTransactionService persistencePessimisticReservationService) {
         return new PessimisticReservationServiceProxy(persistencePessimisticReservationService);
+    }
+
+    @Bean
+    ReservationService newOptimisticReservationService(
+            MemberRepository memberRepository,
+            SeatRepository seatRepository,
+            EventPublisher eventPublisher,
+            ReservationManager reservationManager) {
+        return new ReservationNonTransactionService(
+                memberRepository,
+                seatRepository,
+                eventPublisher,
+                reservationManager
+        );
     }
 
     @Bean
