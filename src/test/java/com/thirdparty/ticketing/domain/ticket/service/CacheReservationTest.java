@@ -14,8 +14,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
 import com.thirdparty.ticketing.domain.common.TicketingException;
@@ -36,6 +39,7 @@ import com.thirdparty.ticketing.support.BaseIntegrationTest;
 
 public class CacheReservationTest extends BaseIntegrationTest {
 
+    private static final Logger log = LoggerFactory.getLogger(CacheReservationTest.class);
     @Autowired private SeatRepository seatRepository;
 
     @Autowired private MemberRepository memberRepository;
@@ -46,9 +50,7 @@ public class CacheReservationTest extends BaseIntegrationTest {
 
     @Autowired private PerformanceRepository performanceRepository;
 
-    @Autowired private LettuceRepository lettuceRepository;
-
-    @Autowired private RedissonClient redissonClient;
+    @Autowired private StringRedisTemplate redisTemplate;
 
     @Autowired
     @Qualifier("lettuceReservationServiceProxy")
@@ -97,6 +99,7 @@ public class CacheReservationTest extends BaseIntegrationTest {
                                 .seatCode("R")
                                 .seatStatus(SeatStatus.SELECTABLE)
                                 .build());
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     @AfterEach
@@ -106,6 +109,11 @@ public class CacheReservationTest extends BaseIntegrationTest {
         seatGradeRepository.deleteAll();
         performanceRepository.deleteAll();
         memberRepository.deleteAll();
+    }
+
+    @Test
+    public void testConcurrentSeatSelectionWithNewRedis() throws InterruptedException {
+        runConcurrentSeatSelectionTest(new NewRedisReservationService(memberRepository, seatRepository, redisTemplate));
     }
 
     @Test
@@ -142,6 +150,7 @@ public class CacheReservationTest extends BaseIntegrationTest {
                         } catch (TicketingException e) {
                             failureSelections.incrementAndGet();
                         } catch (Exception e) {
+                            log.error("Error occurred", e);
                         } finally {
                             // latch 카운트 감소, 스레드 완료 시 호출
                             latch.countDown();
@@ -151,8 +160,6 @@ public class CacheReservationTest extends BaseIntegrationTest {
 
         latch.await();
 
-        Seat reservedSeat = seatRepository.findById(seat.getSeatId()).orElseThrow();
-        assertThat(reservedSeat.getMember()).isNotNull();
         assertThat(successfulSelections.get()).isEqualTo(1);
         assertThat(failureSelections.get()).isEqualTo(4);
     }

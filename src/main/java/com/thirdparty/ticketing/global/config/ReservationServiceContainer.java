@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
@@ -21,6 +22,17 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 
 @Configuration
 public class ReservationServiceContainer {
+
+    @Bean
+    @Primary
+    public ReservationService newRedisReservationService(
+            MemberRepository memberRepository,
+            SeatRepository seatRepository,
+            StringRedisTemplate redisTemplate) {
+        return new NewRedisReservationService(memberRepository, seatRepository, redisTemplate);
+    }
+
+
     @Bean
     public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient,
@@ -46,7 +58,6 @@ public class ReservationServiceContainer {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
-    @Primary
     @Bean
     ReservationService pessimisticReservationServiceProxy(
             @Qualifier("persistencePessimisticReservationService")
