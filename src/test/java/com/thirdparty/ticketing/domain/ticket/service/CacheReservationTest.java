@@ -60,6 +60,10 @@ public class CacheReservationTest extends BaseIntegrationTest {
     @Qualifier("redissonReservationServiceProxy")
     private ReservationService redissonReservationServiceProxy;
 
+    @Autowired
+    @Qualifier("newRedisReservationService")
+    private ReservationService newRedisReservationService;
+
     private List<Member> members;
     private Seat seat;
     private Zone zone;
@@ -113,7 +117,7 @@ public class CacheReservationTest extends BaseIntegrationTest {
 
     @Test
     public void testConcurrentSeatSelectionWithNewRedis() throws InterruptedException {
-        runConcurrentSeatSelectionTest(new NewRedisReservationService(memberRepository, seatRepository, redisTemplate));
+        runConcurrentSeatSelectionTest(newRedisReservationService);
     }
 
     @Test
