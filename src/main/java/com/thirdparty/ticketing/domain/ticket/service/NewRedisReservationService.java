@@ -25,10 +25,9 @@ public class NewRedisReservationService implements ReservationService{
     private final MemberRepository memberRepository;
     private final SeatRepository seatRepository;
     private final StringRedisTemplate redisTemplate;
-    private final String SEAT_CONST = "seat-selected-number:";
+    private final int reservationReleaseDelay;
 
-    @Value("${ticketing.reservation.release-delay-seconds}")
-    private int reservationReleaseDelay;
+    private final static String SEAT_CONST = "seat-selected-number:";
 
     @Override
     public void selectSeat(String memberEmail, SeatSelectionRequest seatSelectionRequest) {

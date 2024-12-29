@@ -35,12 +35,10 @@ public class ReservationTransactionService implements ReservationService {
     private final PaymentProcessor paymentProcessor;
     private final LockSeatStrategy lockSeatStrategy;
     private final EventPublisher eventPublisher;
-
     private final ReservationManager reservationManager;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    private final int reservationReleaseDelay;
 
-    @Value("${ticketing.reservation.release-delay-seconds}")
-    private int reservationReleaseDelay;
+    private final ScheduledExecutorService scheduler;
 
     @Override
     @Transactional
