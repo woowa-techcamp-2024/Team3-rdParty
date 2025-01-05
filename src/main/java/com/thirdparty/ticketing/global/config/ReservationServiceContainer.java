@@ -1,10 +1,15 @@
 package com.thirdparty.ticketing.global.config;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.thirdparty.ticketing.domain.common.EventPublisher;
 import com.thirdparty.ticketing.domain.common.LettuceRepository;
@@ -21,6 +26,22 @@ import com.thirdparty.ticketing.domain.ticket.service.strategy.PessimisticLockSe
 
 @Configuration
 public class ReservationServiceContainer {
+
+    @Value("${ticketing.reservation.release-delay-seconds}")
+    private int reservationReleaseDelay;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+
+    @Bean
+    @Primary
+    public ReservationService newRedisReservationService(
+            MemberRepository memberRepository,
+            SeatRepository seatRepository,
+            StringRedisTemplate redisTemplate) {
+        return new NewRedisReservationService(memberRepository, seatRepository, redisTemplate, reservationReleaseDelay);
+    }
+
+
     @Bean
     public ReservationService redissonReservationServiceProxy(
             RedissonClient redissonClient,
@@ -46,7 +67,6 @@ public class ReservationServiceContainer {
         return new OptimisticReservationServiceProxy(persistenceOptimisticReservationService);
     }
 
-    @Primary
     @Bean
     ReservationService pessimisticReservationServiceProxy(
             @Qualifier("persistencePessimisticReservationService")
@@ -69,7 +89,10 @@ public class ReservationServiceContainer {
                 paymentProcessor,
                 lockSeatStrategy,
                 eventPublisher,
-                reservationManager);
+                reservationManager,
+                reservationReleaseDelay,
+                scheduler
+        );
     }
 
     @Bean
@@ -87,7 +110,10 @@ public class ReservationServiceContainer {
                 paymentProcessor,
                 lockSeatStrategy,
                 eventPublisher,
-                reservationManager);
+                reservationManager,
+                reservationReleaseDelay,
+                scheduler
+        );
     }
 
     @Bean
@@ -105,6 +131,9 @@ public class ReservationServiceContainer {
                 paymentProcessor,
                 lockSeatStrategy,
                 eventPublisher,
-                reservationManager);
+                reservationManager,
+                reservationReleaseDelay,
+                scheduler
+        );
     }
 }

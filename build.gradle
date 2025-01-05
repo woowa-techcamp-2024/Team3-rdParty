@@ -69,17 +69,6 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
 }
 
-spotless {
-    java {
-        target 'src/**/*.java' // 대상 파일 지정
-        googleJavaFormat().aosp()
-        importOrder('java', 'javax', 'jakarta', 'org', 'com')
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-}
-
 asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
@@ -92,10 +81,6 @@ asciidoctor.doFirst {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-tasks.named('spotlessJava') {
-    dependsOn 'copyYml'
 }
 
 tasks.register('copyDocument', Copy) {
